@@ -1,4 +1,4 @@
-package com.journaldev.spring.form.validator;
+package uk.co.yottr.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

@@ -18,9 +18,12 @@
     <h2>YOTTR</h2>
     <hr>
     <div>Where do you want to go?</div>
-    <h3><a href='listings/new.htm'>Add a listing</a></h3>
-    <h3><a href='listings/all.htm'>View all listings</a></h3>
+    <h3><a href='s/listings/new.htm'>Add a listing</a></h3>
+    <h3><a href='s/listings/all.htm'>View all listings</a></h3>
     <hr>
+
+    <a href='/yottr/j_spring_security_logout'>Logout</a><br><br>
+
     &copy;YOTTR 2014
 </body>
 </html>

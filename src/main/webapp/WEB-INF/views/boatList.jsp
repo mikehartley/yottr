@@ -21,6 +21,8 @@
             <hr>
         </c:forEach>
 
+        <a href='/yottr/j_spring_security_logout'>Logout</a><br><br>
+
         &copy;YOTTR 2014
     </body>
 </html>
