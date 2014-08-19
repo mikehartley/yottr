@@ -22,6 +22,9 @@
 				<td colspan='2'><input name="submit" type="submit"
 					value="Login" /></td>
 			</tr>
+			<tr>
+			    <td colspan='2'><h3><a href='signup.htm'>Join for free</a></h3></td>
+			</tr>
 		</table>
 	</form>
 </body>

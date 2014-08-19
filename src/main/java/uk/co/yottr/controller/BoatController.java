@@ -9,6 +9,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import uk.co.yottr.model.User;
+import uk.co.yottr.tempDatastore.Database;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -19,12 +21,7 @@ public class BoatController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BoatController.class);
 
-	private Collection<Boat> boats = null;
-
-	public BoatController(){
-		boats = new ArrayList<Boat>();
-        boats.addAll(dummyData());
-	}
+    private final Database database = new Database();
 
 	@RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
 	public String newListingPage(Model model) {
@@ -42,7 +39,7 @@ public class BoatController {
 		}
 		LOG.info("Returning newListingSuccess.jsp page");
 		model.addAttribute("boat", boat);
-		boats.add(boat);
+		database.getBoats().add(boat);
 		return "newListingSuccess";
 	}
 
@@ -51,7 +48,17 @@ public class BoatController {
         LOG.info("All listings page");
 
         ModelAndView model = new ModelAndView("boatList");
-        model.addObject("boats", boats);
+        model.addObject("boats", database.getBoats());
+
+        return model;
+    }
+
+    @RequestMapping(value = "/signup", method = RequestMethod.GET)
+    public ModelAndView signup() {
+        LOG.info("Signup page");
+
+        ModelAndView model = new ModelAndView("signup");
+        model.addObject("users", database.getUsers());
 
         return model;
     }
@@ -79,27 +86,4 @@ public class BoatController {
         LOG.info("Access denied!");
         return "denied";
     }
-
-    private Collection<Boat> dummyData() {
-        List<Boat> dummyList = new ArrayList<>();
-
-        dummyList.add(createBoat("Y0001", "Halberg Rassy", "HR42", 42, Boat.HullType.MONO, "Looking for some crew to do some sailing."));
-        dummyList.add(createBoat("Y0002", "Jaguar", "SeaCat", 55, Boat.HullType.MULTI, "I just like to motor about then have some lunch."));
-
-        return dummyList;
-    }
-
-    private Boat createBoat(String reference, String manufacturer, String model, int length,
-                            Boat.HullType hullType, String description) {
-        Boat boat = new Boat();
-        boat.setReference(reference);
-        boat.setManufacturer(manufacturer);
-        boat.setModel(model);
-        boat.setLength(length);
-        boat.setHullType(hullType);
-        boat.setDesc(description);
-        return boat;
-    }
-
-
 }
