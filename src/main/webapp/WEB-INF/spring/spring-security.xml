@@ -13,7 +13,8 @@
 	</beans:bean>
 
 	<http authentication-manager-ref="dao-auth" access-decision-manager-ref="accessDecisionManager">
-		<intercept-url pattern="/s/**" access="FREE" />
+        <intercept-url pattern="/s/**" access="FREE" />
+        <intercept-url pattern="/admin/**" access="ADMIN" />
 		<form-login login-page="/login.htm" authentication-failure-url="/denied.htm"
 			username-parameter="username" password-parameter="password" default-target-url="/index.htm" />
 		<logout invalidate-session="true" logout-success-url="/logout.htm" logout-url="/j_spring_security_logout" />

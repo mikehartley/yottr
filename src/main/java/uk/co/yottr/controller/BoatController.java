@@ -49,20 +49,20 @@ public class BoatController {
     public ModelAndView listBoats() {
         LOG.info("All listings page");
 
-        ModelAndView model = new ModelAndView("boatList");
-        model.addObject("boats", database.getBoats());
+        ModelAndView modelAndView = new ModelAndView("boatList");
+        modelAndView.addObject("boats", database.getBoats());
 
-        return model;
+        return modelAndView;
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public ModelAndView signup() {
         LOG.info("Signup page (GET)");
 
-        ModelAndView model = new ModelAndView("signup");
-        model.addObject("user", new User());
+        ModelAndView modelAndView = new ModelAndView("signup");
+        modelAndView.addObject("user", new User());
 
-        return model;
+        return modelAndView;
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)

@@ -4,6 +4,7 @@ TODO list
 Tech:
     Enable Postgres backend.
     Tests.
+    Validation.
     Support for pictures.
     List of all UK marinas.
     Missing details:
@@ -17,15 +18,18 @@ UI:
     Styling.
 
 User:
+    Can only sign-up if not signed in.
     Edit/Delete profile.
     Edit/Delete/Suspend ad.
     Searches.
     Saved searches.
     Favourites / watch list.
     Send message to admin.
+    Password rules.
 
 Admin:
     Edit/Delete/Suspend user profile.
+    IP address blocking.
     Edit/Delete/Suspend ad
 
 Long term:
