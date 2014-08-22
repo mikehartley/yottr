@@ -1,5 +1,7 @@
 package uk.co.yottr.tempDatastore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
@@ -11,6 +13,8 @@ import java.util.*;
  * For in-memory testing when a database isn't required.
  */
 public class Database {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Database.class);
 
     private static Map<String, User> users = new HashMap<>();
     private static Collection<Boat> boats = new ArrayList<>();
@@ -50,7 +54,9 @@ public class Database {
     }
 
     private static void addUser(final String usernamePassword) {
-        users.put(usernamePassword, createUser(usernamePassword));
+        User newUser = createUser(usernamePassword);
+        users.put(usernamePassword, newUser);
+        LOG.info("added user: " + newUser);
     }
 
     private static User createUser(final String usernamePassword) {

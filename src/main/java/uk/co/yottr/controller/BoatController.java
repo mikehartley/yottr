@@ -80,6 +80,9 @@ public class BoatController {
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
         database.getUsers().put(user.getUsername(), user);
+
+        LOG.info("Signed up new user: " + user);
+
         return "signupSuccess";
     }
 
