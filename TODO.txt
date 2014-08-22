@@ -1,0 +1,34 @@
+TODO list
+=========
+
+Tech:
+    Enable Postgres backend.
+    Tests.
+    Support for pictures.
+    List of all UK marinas.
+    Missing details:
+        boat length units
+        date posted
+        date relevant
+        qualifications
+        sailing style
+
+UI:
+    Styling.
+
+User:
+    Edit/Delete profile.
+    Edit/Delete/Suspend ad.
+    Searches.
+    Saved searches.
+    Favourites / watch list.
+    Send message to admin.
+
+Admin:
+    Edit/Delete/Suspend user profile.
+    Edit/Delete/Suspend ad
+
+Long term:
+    Android and iOS app.
+    Internal messaging.
+    Email when search hit found.
