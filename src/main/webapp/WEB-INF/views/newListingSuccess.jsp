@@ -23,5 +23,9 @@
         <br>
 
         <a href='all.htm'>All boats</a>
+
+        <br>
+        <a href='/yottr/'>Home</a><br>
+        &copy;YOTTR 2014
     </body>
 </html>

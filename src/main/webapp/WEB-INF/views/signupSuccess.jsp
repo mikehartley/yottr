@@ -19,5 +19,8 @@
         <br>
 
         <a href='login.htm'>Log in</a>
+
+        <br>
+        &copy;YOTTR 2014
     </body>
 </html>
