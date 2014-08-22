@@ -1,9 +1,9 @@
 package uk.co.yottr.tempDatastore;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.security.Roles;
 
 import java.util.*;
 
@@ -11,7 +11,6 @@ import java.util.*;
  * For in-memory testing when a database isn't required.
  */
 public class Database {
-    public static final String ROLE_ADMIN = "Admin";
 
     private static Map<String, User> users = new HashMap<>();
     private static Collection<Boat> boats = new ArrayList<>();
@@ -51,46 +50,31 @@ public class Database {
     }
 
     private static void addUser(final String usernamePassword) {
-        User newUser = new User() {
+        users.put(usernamePassword, createUser(usernamePassword));
+    }
 
-            @Override
-            public boolean isEnabled() {
-                return true;
-            }
+    private static User createUser(final String usernamePassword) {
+        User user = new User();
+        user.setUsername(usernamePassword);
+        user.setPassword(usernamePassword);
+        user.setAuthorities(Arrays.asList(
+                new SimpleGrantedAuthority(Roles.FREE.name()),
+                new SimpleGrantedAuthority(Roles.CREW.name()),
+                new SimpleGrantedAuthority(Roles.ADMIN.name())));
+        user.setEnabled(true);
+        user.setCredentialsNonExpired(true);
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
 
-            @Override
-            public boolean isCredentialsNonExpired() {
-                return true;
-            }
+        user.setTitle("Mr");
+        user.setFirstName("Stephen");
+        user.setLastName("Clark");
+        user.setCountry(User.Country.UK);
+        user.setPostcode("W12 8QT");
+        user.setEmail("test@null.and.void");
+        user.setMobile("07123 456789");
+        user.setAboutMe("I like to sail.");
 
-            @Override
-            public boolean isAccountNonLocked() {
-                return true;
-            }
-
-            @Override
-            public boolean isAccountNonExpired() {
-                return true;
-            }
-
-            @Override
-            public String getUsername() {
-                return usernamePassword;
-            }
-
-            @Override
-            public String getPassword() {
-                return usernamePassword;
-            }
-
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(ROLE_ADMIN));
-                return authorities;
-            }
-        };
-
-        users.put(usernamePassword, newUser);
+        return user;
     }
 }

@@ -1,20 +1,22 @@
 package uk.co.yottr.controller;
 
-import uk.co.yottr.model.Boat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.security.Roles;
 import uk.co.yottr.tempDatastore.Database;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Arrays;
 
 @Controller
 public class BoatController {
@@ -55,12 +57,30 @@ public class BoatController {
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public ModelAndView signup() {
-        LOG.info("Signup page");
+        LOG.info("Signup page (GET)");
 
         ModelAndView model = new ModelAndView("signup");
-        model.addObject("users", database.getUsers());
+        model.addObject("user", new User());
 
         return model;
+    }
+
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public String signupAction(@Valid User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            LOG.info(bindingResult.toString());
+            LOG.info("Returning signup.jsp page from signupAction");
+            return "signup";
+        }
+        LOG.info("Returning signupSuccess.jsp page");
+        model.addAttribute("user", user);
+        user.setAuthorities(Arrays.asList(new SimpleGrantedAuthority(Roles.FREE.name())));
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(true);
+        database.getUsers().put(user.getUsername(), user);
+        return "signupSuccess";
     }
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
