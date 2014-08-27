@@ -44,10 +44,7 @@ public class AdminController {
 
         LOG.info("deleting user with ID " + id);
 
-        if (!database.getUsers().containsKey(id)) {
-            LOG.warn("User does not exist with ID " + id);
-            throw new ResourceNotFoundException("User does not exist with ID " + id);
-        }
+        checkUserExists(id);
 
         database.getUsers().remove(id);
 
@@ -58,5 +55,30 @@ public class AdminController {
         LOG.info("Have put users into ModelAndView: " + allUsers);
 
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/admin/user/{id}/enabled/{enabled}", method = RequestMethod.GET)
+    public ModelAndView updateUserEnabledStatus(@PathVariable long id, @PathVariable boolean enabled) throws ResourceNotFoundException {
+
+        LOG.info("updating enabled status for user with ID " + id);
+
+        checkUserExists(id);
+
+        database.getUsers().remove(id);
+
+        ModelAndView modelAndView = new ModelAndView("manageUsers");
+        Collection<User> allUsers = database.getUsers().values();
+        modelAndView.addObject("users", allUsers);
+
+        LOG.info("Have put users into ModelAndView: " + allUsers);
+
+        return modelAndView;
+    }
+
+    private void checkUserExists(long id) throws ResourceNotFoundException {
+        if (!database.getUsers().containsKey(id)) {
+            LOG.warn("User does not exist with ID " + id);
+            throw new ResourceNotFoundException("User does not exist with ID " + id);
+        }
     }
 }
