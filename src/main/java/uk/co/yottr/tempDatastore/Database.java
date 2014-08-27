@@ -9,6 +9,11 @@ import uk.co.yottr.security.Roles;
 
 import java.util.*;
 
+/*
+ * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * All rights reserved.
+ */
+
 /**
  * For in-memory testing when a database isn't required.
  */
@@ -16,7 +21,7 @@ public class Database {
 
     private static final Logger LOG = LoggerFactory.getLogger(Database.class);
 
-    private static Map<String, User> users = new HashMap<>();
+    private static Map<Long, User> users = new HashMap<>();
     private static Collection<Boat> boats = new ArrayList<>();
 
     static {
@@ -24,7 +29,7 @@ public class Database {
         initialiseBoats();
     }
 
-    public Map<String, User> getUsers() {
+    public Map<Long, User> getUsers() {
         return users;
     }
 
@@ -55,7 +60,7 @@ public class Database {
 
     private static void addUser(final String usernamePassword) {
         User newUser = createUser(usernamePassword);
-        users.put(usernamePassword, newUser);
+        users.put(newUser.getId(), newUser);
         LOG.info("added user: " + newUser);
     }
 

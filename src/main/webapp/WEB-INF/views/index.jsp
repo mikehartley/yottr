@@ -23,7 +23,7 @@
         <div>&nbsp;</div>
         <h3><a href='signup.htm'>Join for free</a></h3>
         <div>&nbsp;</div>
-        <h3><a href='admin/manageUsers.htm'>Manage Users (ADMIN only)</a></h3>
+        <h3><a href='admin/users.htm'>Manage Users (ADMIN only)</a></h3>
         <hr>
 
         <a href='/yottr/j_spring_security_logout'>Logout</a><br><br>

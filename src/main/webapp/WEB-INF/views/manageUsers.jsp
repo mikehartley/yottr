@@ -31,8 +31,9 @@
                 <tr><td>Authorities</td><td>${user.authorities}</td></tr>
                 <tr><td>Account enabled</td><td>${user.enabled}</td></tr>
                 <tr><td>Account non-locked</td><td>${user.accountNonLocked}</td></tr>
+                <tr><td>Boat adverts</td><td>TODO (max 3) <click to see></td></tr>
             </table>
-            EDIT | SUSPEND | DELETE<br>
+            EDIT | SUSPEND | <a href='/yottr/admin/user/${user.id}/delete.htm'>DELETE</a><br>
             <hr>
         </c:forEach>
         <hr>

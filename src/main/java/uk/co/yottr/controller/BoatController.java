@@ -18,6 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Arrays;
 
+/*
+ * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * All rights reserved.
+ */
+
 @Controller
 public class BoatController {
 
@@ -79,7 +84,7 @@ public class BoatController {
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
-        database.getUsers().put(user.getUsername(), user);
+        database.getUsers().put(user.getId(), user);
 
         LOG.info("Signed up new user: " + user);
 

@@ -2,15 +2,20 @@ package uk.co.yottr.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import uk.co.yottr.tempDatastore.Sequence;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * Created by mike on 18/08/14.
+/*
+ * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * All rights reserved.
  */
+
 public class User implements UserDetails {
+
+
 
     // As required by UserDetails interface
     private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
@@ -22,6 +27,7 @@ public class User implements UserDetails {
     private boolean enabled;
 
     // further fields
+    private long id;
     private String title;
     private String firstName;
     private String lastName;
@@ -34,9 +40,16 @@ public class User implements UserDetails {
 
     @NotNull
     private Country country;
-
     private String postcode;
     private String aboutMe;
+
+    public User() {
+        id = Sequence.next();
+    }
+
+    public long getId() {
+        return id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

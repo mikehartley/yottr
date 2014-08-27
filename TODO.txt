@@ -26,6 +26,8 @@ User:
     Favourites / watch list.
     Send message to admin.
     Password rules.
+    Can post a maximum of 3 adverts by default.
+    Signup has some kind of captcha type thing.
 
 Admin:
     Edit/Delete/Suspend user profile.

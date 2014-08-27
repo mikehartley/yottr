@@ -78,6 +78,9 @@
                 <tr>
                     <td colspan="3"><input type="submit" value="Save your details"></td>
                 </tr>
+                <tr>
+                    <td colspan="3">Some kind of challenge goes here to avoid bots signing up.</td>
+                </tr>
             </table>
 
         </springForm:form>
