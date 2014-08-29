@@ -30,7 +30,7 @@ User:
     Signup has some kind of captcha type thing.
 
 Admin:
-    Edit/Delete/Suspend user profile.
+    Edit user profile.
     IP address blocking.
     Edit/Delete/Suspend ad
 
@@ -38,3 +38,7 @@ Long term:
     Android and iOS app.
     Internal messaging.
     Email when search hit found.
+    Twitter feeds.
+    Commercial adverts.
+    Resale channel.
+    Google Maps
