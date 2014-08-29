@@ -30,13 +30,7 @@ public class AdminController {
 
         LOG.info("landed in [get] users method");
 
-        ModelAndView modelAndView = new ModelAndView("manageUsers");
-        Collection<User> allUsers = database.getUsers().values();
-        modelAndView.addObject("users", allUsers);
-
-        LOG.info("Have put users into ModelAndView: " + allUsers);
-
-		return modelAndView;
+        return modelAndViewForAllUsers();
 	}
 
     @RequestMapping(value = "/admin/user/{id}/delete", method = RequestMethod.GET)
@@ -48,31 +42,20 @@ public class AdminController {
 
         database.getUsers().remove(id);
 
-        ModelAndView modelAndView = new ModelAndView("manageUsers");
-        Collection<User> allUsers = database.getUsers().values();
-        modelAndView.addObject("users", allUsers);
-
-        LOG.info("Have put users into ModelAndView: " + allUsers);
-
-        return modelAndView;
+        return modelAndViewForAllUsers();
     }
 
-    @RequestMapping(value = "/admin/user/{id}/enabled/{enabled}", method = RequestMethod.GET)
-    public ModelAndView updateUserEnabledStatus(@PathVariable long id, @PathVariable boolean enabled) throws ResourceNotFoundException {
+    @RequestMapping(value = "/admin/user/{id}/enabled/flip", method = RequestMethod.GET)
+    public ModelAndView updateUserEnabledStatus(@PathVariable long id) throws ResourceNotFoundException {
 
         LOG.info("updating enabled status for user with ID " + id);
 
         checkUserExists(id);
 
-        database.getUsers().remove(id);
+        User user = database.getUsers().get(id);
+        user.setEnabled(!user.isEnabled());
 
-        ModelAndView modelAndView = new ModelAndView("manageUsers");
-        Collection<User> allUsers = database.getUsers().values();
-        modelAndView.addObject("users", allUsers);
-
-        LOG.info("Have put users into ModelAndView: " + allUsers);
-
-        return modelAndView;
+        return modelAndViewForAllUsers();
     }
 
     private void checkUserExists(long id) throws ResourceNotFoundException {
@@ -80,5 +63,12 @@ public class AdminController {
             LOG.warn("User does not exist with ID " + id);
             throw new ResourceNotFoundException("User does not exist with ID " + id);
         }
+    }
+
+    private ModelAndView modelAndViewForAllUsers() {
+        ModelAndView modelAndView = new ModelAndView("manageUsers");
+        Collection<User> allUsers = database.getUsers().values();
+        modelAndView.addObject("users", allUsers);
+        return modelAndView;
     }
 }

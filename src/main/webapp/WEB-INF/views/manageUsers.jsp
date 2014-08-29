@@ -33,7 +33,7 @@
                 <tr><td>Account non-locked</td><td>${user.accountNonLocked}</td></tr>
                 <tr><td>Boat adverts</td><td>TODO (max 3) <click to see></td></tr>
             </table>
-            EDIT | SUSPEND | <a href='/yottr/admin/user/${user.id}/delete.htm'>DELETE</a><br>
+            EDIT | <a href='/yottr/admin/user/${user.id}/enabled/flip.htm'>FLIP ENABLED</a> | <a href='/yottr/admin/user/${user.id}/delete.htm'>DELETE</a><br>
             <hr>
         </c:forEach>
         <hr>
