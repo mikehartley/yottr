@@ -1,9 +1,6 @@
 package uk.co.yottr.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -17,6 +14,7 @@ import javax.persistence.Table;
 @Table(name = "test")
 public class TestEntity {
     @Id
+    @GeneratedValue
     @Column(name = "id")
     private long id;
 

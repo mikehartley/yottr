@@ -27,4 +27,16 @@ public class TestService {
     public TestEntity findByTextLike(String text) {
         return testRepository.findByTextLike(text);
     }
+
+    public long count() {
+        return testRepository.count();
+    }
+
+    public Iterable<TestEntity> findAll() {
+        return testRepository.findAll();
+    }
+
+    public void deleteAll() {
+        testRepository.deleteAll();
+    }
 }
