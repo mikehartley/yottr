@@ -1,12 +1,13 @@
 package uk.co.yottr.service;
 
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static junit.framework.Assert.assertEquals;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -30,7 +31,10 @@ public class TestServiceTest {
         final String someTestText = "this is some test text";
         testService.save(someTestText);
 
-        final long count = testService.count();
-        Assert.assertEquals("count", 1, count);
+        assertEquals("count", 1, testService.count());
+
+        assertEquals("find using like", someTestText, testService.findByTextLike("%some%").getText());
+
+        assertEquals("find using findAll", someTestText, testService.findAll().iterator().next().getText());
     }
 }
