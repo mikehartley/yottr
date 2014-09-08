@@ -1,8 +1,8 @@
 package uk.co.yottr.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import uk.co.yottr.tempDatastore.Sequence;
 
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -13,39 +13,44 @@ import javax.validation.constraints.Size;
  * All rights reserved.
  */
 
+@Entity
+@Table(name = "Boats")
 public class Boat {
 
-    @Size(min=5, max=10, message = "must be between 5 and 10 characters long")
-    private String reference;
-
+    @Id
+    @GeneratedValue
+    @Column(name = "id", columnDefinition = "primary key")
     private long id;
 
+    @Column(name = "reference")
+    private String reference;
+
+    @Column(name = "manufacturer")
 	@Size(min=1, max=30)
     private String manufacturer;
 
+    @Column(name = "model")
     @Size(min=1, max=30)
     private String model;
 
+    @Column(name = "length")
     @NotNull @Min(3) @Max(999)
-    private Integer length; //TODO units
+    private Integer length;
+
+    @Column(name = "units_imperial")
+    private boolean isUnitsImperial;
 
     public enum HullType {
         MONO, MULTI
     }
 
+    @Column(name = "hull_type")
     @NotNull
     private HullType hullType;
 
+    @Column(name = "description")
     @NotEmpty
     private String desc;
-
-    public Boat() {
-        id = Sequence.next();
-    }
-
-    public long getId() {
-        return id;
-    }
 
     public String getReference() {
         return reference;
@@ -77,6 +82,14 @@ public class Boat {
 
     public void setLength(Integer length) {
         this.length = length;
+    }
+
+    public boolean isUnitsImperial() {
+        return isUnitsImperial;
+    }
+
+    public void setUnitsImperial(boolean isUnitsImperial) {
+        this.isUnitsImperial = isUnitsImperial;
     }
 
     public HullType getHullType() {

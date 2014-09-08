@@ -60,7 +60,7 @@ public class Database {
 
     private static void addUser(final String usernamePassword) {
         User newUser = createUser(usernamePassword);
-        users.put(newUser.getId(), newUser);
+//        users.put(newUser.getId(), newUser);
         LOG.info("added user: " + newUser);
     }
 

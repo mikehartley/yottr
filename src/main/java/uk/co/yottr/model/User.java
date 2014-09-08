@@ -2,8 +2,8 @@ package uk.co.yottr.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import uk.co.yottr.tempDatastore.Sequence;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,43 +13,54 @@ import java.util.Collection;
  * All rights reserved.
  */
 
+@Entity
+@Table(name = "Users")
 public class User implements UserDetails {
 
+    /* As required by UserDetails interface */
 
-
-    // As required by UserDetails interface
+    @Column(name = "authorities")
     private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+    @Column(name = "username")
     private String username;
+    @Column(name = "password")
     private String password;
+    @Column(name = "account_non_expired")
     private boolean accountNonExpired;
+    @Column(name = "account_non_locked")
     private boolean accountNonLocked;
+    @Column(name = "credentials_non_expired")
     private boolean credentialsNonExpired;
+    @Column(name = "enabled")
     private boolean enabled;
 
-    // further fields
+    /* further fields */
+
+    @Id
+    @GeneratedValue
     private long id;
+    @Column(name = "title")
     private String title;
+    @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
     private String lastName;
+    @Column(name = "email")
     private String email;
+    @Column(name = "mobile")
     private String mobile;
 
     public enum Country {
         UK, OTHER
     }
 
+    @Column(name = "country")
     @NotNull
     private Country country;
+    @Column(name = "postcode")
     private String postcode;
+    @Column(name = "about_me")
     private String aboutMe;
-
-    public User() {
-        id = Sequence.next();
-    }
-
-    public long getId() {
-        return id;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
