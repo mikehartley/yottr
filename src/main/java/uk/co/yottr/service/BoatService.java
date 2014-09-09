@@ -35,4 +35,8 @@ public class BoatService {
 
         return allBoats;
     }
+
+    public void delete(Boat boat) {
+        boatRepository.delete(boat);
+    }
 }
