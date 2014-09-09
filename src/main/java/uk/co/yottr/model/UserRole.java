@@ -12,7 +12,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "User_Roles",
+@Table(name = "user_roles",
        uniqueConstraints = @UniqueConstraint(columnNames = {"role", "username"}))
 public class UserRole {
 
@@ -21,7 +21,7 @@ public class UserRole {
     @Column(name = "user_role_id", unique = true, nullable = false)
     private Integer userRoleId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "username", nullable = false)
     private User user;
 

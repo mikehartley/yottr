@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @Transient
     private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserRole> userRole = new HashSet<>(0);
 
     @Column(name = "username", unique = true, nullable = false, length = 50)

@@ -1,6 +1,5 @@
 package uk.co.yottr.service;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,9 @@ import uk.co.yottr.model.Boat;
 
 import java.util.List;
 import java.util.Random;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.junit.Assert.*;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -35,13 +37,41 @@ public class BoatServiceTest {
         final List<Boat> allBoats = boatService.findAll();
 
         final int indexOfSavedBoat = allBoats.lastIndexOf(savedBoat);
-        Assert.assertTrue("boat did not appear in find all", indexOfSavedBoat > -1);
+        assertTrue("boat did not appear in find all", indexOfSavedBoat > -1);
 
         final Boat boatFromFindAll = allBoats.get(indexOfSavedBoat);
-        Assert.assertEquals("boat.description from found boat", uniqueDescription, boatFromFindAll.getDesc());
+        assertEquals("boat.description from found boat", uniqueDescription, boatFromFindAll.getDescription());
 
         boatService.delete(savedBoat);
-        Assert.assertFalse("find all should not contain the deleted boat", boatService.findAll().contains(savedBoat));
+        assertFalse("find all should not contain the deleted boat", boatService.findAll().contains(savedBoat));
+    }
+
+    @Test
+    public void allFieldsPersist() throws Exception {
+
+        final String description = randomAlphanumeric(50);
+        final Boat.HullType hullType = Boat.HullType.MONO;
+        final Integer length = new Random().nextInt(99);
+        final boolean unitsImperial = true;
+        final String manufacturer = randomAlphanumeric(15);
+        final String model = randomAlphanumeric(10);
+
+        Boat boat = new Boat();
+        boat.setDesc(description);
+        boat.setHullType(hullType);
+        boat.setLength(length);
+        boat.setUnitsImperial(unitsImperial);
+        boat.setManufacturer(manufacturer);
+        boat.setModel(model);
+
+        final Boat savedBoat = boatService.save(boat);
+
+        assertEquals("description", description, savedBoat.getDescription());
+        assertEquals("hullType", hullType, savedBoat.getHullType());
+        assertEquals("length", length, savedBoat.getLength());
+        assertEquals("unitsImperial", unitsImperial, savedBoat.isUnitsImperial());
+        assertEquals("manufacturer", manufacturer, savedBoat.getManufacturer());
+        assertEquals("model", model, savedBoat.getModel());
     }
 
     private Boat createBoat(String description) {

@@ -100,7 +100,7 @@ public class Boat {
         this.hullType = hullType;
     }
 
-    public String getDesc() {
+    public String getDescription() {
         return desc;
     }
 
