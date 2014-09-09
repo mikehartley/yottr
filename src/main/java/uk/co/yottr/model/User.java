@@ -1,12 +1,16 @@
 package uk.co.yottr.model;
 
+import org.hibernate.validator.constraints.Email;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -14,24 +18,36 @@ import java.util.Collection;
  */
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 public class User implements UserDetails {
 
     /* As required by UserDetails interface */
 
-    @Column(name = "authorities")
+//    @Column(name = "authorities")
+    @Transient
     private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
-    @Column(name = "username")
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<UserRole> userRole = new HashSet<>(0);
+
+    @Column(name = "username", unique = true, nullable = false, length = 50)
+    @Size(min = 2, max = 50)
     private String username;
-    @Column(name = "password")
+
+    @Column(name = "password", nullable = false, length = 60)
+    @Size(min = 8, max = 60)
     private String password;
+
     @Column(name = "account_non_expired")
     private boolean accountNonExpired;
+
     @Column(name = "account_non_locked")
     private boolean accountNonLocked;
+
     @Column(name = "credentials_non_expired")
     private boolean credentialsNonExpired;
-    @Column(name = "enabled")
+
+    @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
     /* further fields */
@@ -39,15 +55,25 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private long id;
-    @Column(name = "title")
+
+    @Column(name = "title", length = 10)
+    @Size(max = 10)
     private String title;
-    @Column(name = "first_name")
+
+    @Column(name = "first_name", nullable = false, length = 50)
+    @Size(min = 1, max = 50)
     private String firstName;
-    @Column(name = "last_name")
+
+    @Column(name = "last_name", nullable = false, length = 50)
+    @Size(min = 1, max = 50)
     private String lastName;
-    @Column(name = "email")
+
+    @Column(name = "email", nullable = false)
+    @Email @NotNull
     private String email;
-    @Column(name = "mobile")
+
+    @Column(name = "mobile", length = 25)
+    @Size(min = 11, max = 25)
     private String mobile;
 
     public enum Country {
@@ -57,9 +83,13 @@ public class User implements UserDetails {
     @Column(name = "country")
     @NotNull
     private Country country;
+
     @Column(name = "postcode")
+    @NotNull
     private String postcode;
-    @Column(name = "about_me")
+
+    @Column(name = "about_me", length = 400)
+    @Size(max = 400)
     private String aboutMe;
 
     @Override
@@ -69,6 +99,14 @@ public class User implements UserDetails {
 
     public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
         this.authorities = authorities;
+    }
+
+    public Set<UserRole> getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(Set<UserRole> userRole) {
+        this.userRole = userRole;
     }
 
     @Override

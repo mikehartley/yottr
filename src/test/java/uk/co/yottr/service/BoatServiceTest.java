@@ -1,6 +1,6 @@
 package uk.co.yottr.service;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.Boat;
+
+import java.util.List;
+import java.util.Random;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -28,18 +31,24 @@ public class BoatServiceTest {
     @Test
     public void canCreateUpdateAndDelete() throws Exception {
 
+        final String uniqueDescription = "some description with unique number : "  + new Random().nextLong();
+
         Boat boat = new Boat();
-        boat.setDesc("some description");
+        boat.setDesc(uniqueDescription);
         boat.setHullType(Boat.HullType.MONO);
         boat.setLength(36);
         boat.setUnitsImperial(true);
         boat.setManufacturer("Halberg Rassy");
         boat.setModel("HR36");
 
-        boatService.save(boat);
+        final Boat savedBoat = boatService.save(boat);
 
-        boatService.findAll();
+        final List<Boat> allBoats = boatService.findAll();
+        Assert.assertFalse("find all boats should return a non-empty result", allBoats.isEmpty());
 
-        Assert.fail("test not yet complete - get coding!");
+        final Boat boatFromFindAll = allBoats.get(allBoats.lastIndexOf(savedBoat));
+        Assert.assertEquals("last boat in results - unexpected description", uniqueDescription, boatFromFindAll.getDesc());
+
+        //TODO test delete boat
     }
 }

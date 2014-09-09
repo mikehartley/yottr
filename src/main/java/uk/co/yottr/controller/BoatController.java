@@ -84,7 +84,7 @@ public class BoatController {
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
-        database.getUsers().put(user.getId(), user);
+//        database.getUsers().put(user.getId(), user);TODO
 
         LOG.info("Signed up new user: " + user);
 

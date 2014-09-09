@@ -14,12 +14,12 @@ import javax.validation.constraints.Size;
  */
 
 @Entity
-@Table(name = "Boats")
+@Table(name = "boats")
 public class Boat {
 
     @Id
     @GeneratedValue
-    @Column(name = "id", columnDefinition = "primary key")
+    @Column(name = "id")
     private long id;
 
     @Column(name = "reference")
@@ -106,5 +106,22 @@ public class Boat {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Boat)) return false;
+
+        Boat boat = (Boat) o;
+
+        if (id != boat.id) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 }

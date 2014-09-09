@@ -21,8 +21,8 @@ public class BoatService {
     private BoatRepository boatRepository;
 
     @Transactional
-    public void save(Boat boat) {
-        boatRepository.save(boat);
+    public Boat save(Boat boat) {
+        return boatRepository.save(boat);
     }
 
     public List<Boat> findAll() {
