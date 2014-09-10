@@ -11,10 +11,12 @@ import uk.co.yottr.model.UserRole;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -43,10 +45,10 @@ public class UserServiceTest {
         Assert.assertTrue("user did not appear in find all", indexOfSavedUser > -1);
 
         final User userFromFindAll = allUsers.get(indexOfSavedUser);
-        Assert.assertEquals("username", username, userFromFindAll.getUsername());
+        assertEquals("username", username, userFromFindAll.getUsername());
 
         userService.delete(savedUser);
-        Assert.assertFalse("find all should not contain the deleted user", userService.findAll().contains(savedUser));
+        assertFalse("find all should not contain the deleted user", userService.findAll().contains(savedUser));
     }
 
     @Test
@@ -54,19 +56,63 @@ public class UserServiceTest {
 
         User user = createUser(randomAlphanumeric(10));
         Set<UserRole> userRoles = new HashSet<>();
-        userRoles.add(new UserRole(user, "rolex"));
-        user.setUserRole(userRoles);
+        final UserRole userRole = new UserRole(user, "rolex");
+        userRoles.add(userRole);
+        user.setUserRoles(userRoles);
 
         final User savedUser = userService.save(user);
         final List<User> allUsers = userService.findAll();
         final User userFromFindAll = allUsers.get(allUsers.lastIndexOf(savedUser));
 
-        Assert.assertFalse("roles should not be empty", userFromFindAll.getUserRole().isEmpty());
+        assertFalse("roles should not be empty", userFromFindAll.getUserRoles().isEmpty());
+        final UserRole savedRole = userFromFindAll.getUserRoles().iterator().next();
+        assertEquals("user from saved role", userRole.getUser(), savedRole.getUser());
+        assertEquals("role from saved role", userRole.getRole(), savedRole.getRole());
     }
 
     @Test
     public void allFieldsPersist() throws Exception {
-        Assert.fail("not yet implemented");
+        final String username = randomAlphanumeric(20);
+        final String password = "password" + randomAlphanumeric(22);
+        final String title = randomAlphabetic(10);
+        final String firstName = randomAlphabetic(20);
+        final String lastName = randomAlphabetic(20);
+        final String email = randomAlphabetic(10) + "@" + randomAlphabetic(10) + "." + randomAlphabetic(10);
+        final String mobile = randomNumeric(5) + " " + randomNumeric(6);
+        final User.Country country = new Random().nextBoolean() ? User.Country.UK : User.Country.OTHER;
+        final String postcode = randomAlphabetic(1) + randomNumeric(1) + " " + randomNumeric(1) + randomAlphabetic(2);
+        final String aboutMe = "This is a bunch of text followed by some random characters " + randomAlphanumeric(50);
+        final boolean enabled = true;
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setTitle(title);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setMobile(mobile);
+        user.setCountry(country);
+        user.setPostcode(postcode);
+        user.setAboutMe(aboutMe);
+        user.setEnabled(enabled);
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+
+        final User savedUser = userService.save(user);
+
+        assertEquals("username", username, savedUser.getUsername());
+        assertEquals("password", password, savedUser.getPassword());
+        assertEquals("title", title, savedUser.getTitle());
+        assertEquals("firstName", firstName, savedUser.getFirstName());
+        assertEquals("lastName", lastName, savedUser.getLastName());
+        assertEquals("email", email, savedUser.getEmail());
+        assertEquals("mobile", mobile, savedUser.getMobile());
+        assertEquals("country", country, savedUser.getCountry());
+        assertEquals("postcode", postcode, savedUser.getPostcode());
+        assertEquals("aboutMe", aboutMe, savedUser.getAboutMe());
+        assertEquals("enabled", enabled, savedUser.isEnabled());
     }
 
     private User createUser(String username) {
@@ -82,7 +128,7 @@ public class UserServiceTest {
         user.setCountry(User.Country.UK);
         user.setPostcode("W8 4QT");
         user.setAboutMe("This is a bunch of text followed by some random characters " + randomAlphanumeric(50));
-        user.setUserRole(new HashSet<UserRole>());
+        user.setUserRoles(new HashSet<UserRole>());
         user.setEnabled(true);
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);

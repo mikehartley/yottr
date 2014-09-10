@@ -101,11 +101,11 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
-    public Set<UserRole> getUserRole() {
+    public Set<UserRole> getUserRoles() {
         return userRole;
     }
 
-    public void setUserRole(Set<UserRole> userRole) {
+    public void setUserRoles(Set<UserRole> userRole) {
         this.userRole = userRole;
     }
 
@@ -251,7 +251,7 @@ public class User implements UserDetails {
                 ", title='" + title + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", roles=" + getUserRole() +
+                ", roles=" + getUserRoles() +
                 '}';
     }
 }
