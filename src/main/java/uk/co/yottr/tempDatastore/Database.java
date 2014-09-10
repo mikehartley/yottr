@@ -49,7 +49,6 @@ public class Database {
     private static Boat createBoat(String reference, String manufacturer, String model, int length,
                             Boat.HullType hullType, String description) {
         Boat boat = new Boat();
-        boat.setReference(reference);
         boat.setManufacturer(manufacturer);
         boat.setModel(model);
         boat.setLength(length);

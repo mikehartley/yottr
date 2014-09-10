@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Random;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -52,12 +53,12 @@ public class Boat {
     @NotEmpty
     private String desc;
 
-    public String getReference() {
-        return reference;
+    public Boat() {
+        this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
     }
 
-    public void setReference(String reference) {
-        this.reference = reference;
+    public String getReference() {
+        return reference;
     }
 
     public String getManufacturer() {

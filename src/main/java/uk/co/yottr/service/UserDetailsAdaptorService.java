@@ -13,9 +13,7 @@ import uk.co.yottr.model.UserRole;
 import uk.co.yottr.repository.UserRepository;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -25,8 +23,12 @@ import java.util.Set;
 @Service("userDetailsService")
 public class UserDetailsAdaptorService implements UserDetailsService {
 
-    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    public UserDetailsAdaptorService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional(readOnly = true)
     @Override
@@ -37,18 +39,18 @@ public class UserDetailsAdaptorService implements UserDetailsService {
 
     // Converts uk.co.yottr.model.User to org.springframework.security.core.userdetails.User
     private User adaptUserForAuthentication(uk.co.yottr.model.User user) {
-        List<GrantedAuthority> authorities = buildUserAuthority(user.getUserRoles());
+        Collection<GrantedAuthority> authorities = buildUserAuthority(user.getUserRoles());
         return new User(user.getUsername(), user.getPassword(), user.isEnabled(), true, true, true, authorities);
     }
 
-    private List<GrantedAuthority> buildUserAuthority(Set<UserRole> userRoles) {
+    private Collection<GrantedAuthority> buildUserAuthority(Collection<UserRole> userRoles) {
 
-        Set<GrantedAuthority> setAuths = new HashSet<>();
+        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         for (UserRole userRole : userRoles) {
-            setAuths.add(new SimpleGrantedAuthority(userRole.getRole()));
+            grantedAuthorities.add(new SimpleGrantedAuthority(userRole.getRole()));
         }
 
-        return new ArrayList<>(setAuths);
+        return grantedAuthorities;
     }
 }
