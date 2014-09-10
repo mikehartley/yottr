@@ -17,8 +17,12 @@ import java.util.List;
 @Service
 public class BoatService {
 
-    @Autowired
     private BoatRepository boatRepository;
+
+    @Autowired
+    public BoatService(BoatRepository boatRepository) {
+        this.boatRepository = boatRepository;
+    }
 
     @Transactional
     public Boat save(Boat boat) {

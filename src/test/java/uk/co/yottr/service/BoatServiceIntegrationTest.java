@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring-context-test.xml")
-public class BoatServiceTest {
+public class BoatServiceIntegrationTest {
 
     @Autowired
     private BoatService boatService;
