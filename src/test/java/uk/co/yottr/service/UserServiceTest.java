@@ -31,7 +31,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    public void canCreateUpdateAndDelete() throws Exception {
+    public void canCreateFindUpdateAndDelete() throws Exception {
 
         final String username = "user"  + randomAlphanumeric(12);
 
@@ -39,16 +39,18 @@ public class UserServiceTest {
 
         final User savedUser = userService.save(user);
 
-        final List<User> allUsers = userService.findAll();
+        final User foundUser = userService.findByUsername(username);
 
-        final int indexOfSavedUser = allUsers.lastIndexOf(savedUser);
-        Assert.assertTrue("user did not appear in find all", indexOfSavedUser > -1);
-
-        final User userFromFindAll = allUsers.get(indexOfSavedUser);
-        assertEquals("username", username, userFromFindAll.getUsername());
+        assertEquals("findByUsername", savedUser, foundUser);
 
         userService.delete(savedUser);
         assertFalse("find all should not contain the deleted user", userService.findAll().contains(savedUser));
+    }
+
+    @Test
+    public void whenUsernameNotFound() throws Exception {
+        final User result = userService.findByUsername("garbage");
+        Assert.assertNull("result of not found should be null", result);
     }
 
     @Test
@@ -96,9 +98,6 @@ public class UserServiceTest {
         user.setPostcode(postcode);
         user.setAboutMe(aboutMe);
         user.setEnabled(enabled);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
 
         final User savedUser = userService.save(user);
 
@@ -130,9 +129,6 @@ public class UserServiceTest {
         user.setAboutMe("This is a bunch of text followed by some random characters " + randomAlphanumeric(50));
         user.setUserRoles(new HashSet<UserRole>());
         user.setEnabled(true);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
 
         return user;
     }

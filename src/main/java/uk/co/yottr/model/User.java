@@ -23,7 +23,6 @@ public class User implements UserDetails {
 
     /* As required by UserDetails interface */
 
-//    @Column(name = "authorities")
     @Transient
     private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
 
@@ -39,13 +38,13 @@ public class User implements UserDetails {
     private String password;
 
     @Column(name = "account_non_expired")
-    private boolean accountNonExpired;
+    private boolean accountNonExpired = true;
 
     @Column(name = "account_non_locked")
-    private boolean accountNonLocked;
+    private boolean accountNonLocked = true;
 
     @Column(name = "credentials_non_expired")
-    private boolean credentialsNonExpired;
+    private boolean credentialsNonExpired = true;
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
@@ -54,7 +53,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     @Column(name = "title", length = 10)
     @Size(max = 10)
@@ -132,26 +131,14 @@ public class User implements UserDetails {
         return accountNonExpired;
     }
 
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-    }
-
     @Override
     public boolean isAccountNonLocked() {
         return accountNonLocked;
     }
 
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return credentialsNonExpired;
-    }
-
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
     }
 
     @Override
@@ -234,14 +221,17 @@ public class User implements UserDetails {
 
         User user = (User) o;
 
-        if (id != user.id) return false;
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (!username.equals(user.username)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        int result = username.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        return result;
     }
 
     @Override

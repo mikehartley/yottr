@@ -80,9 +80,6 @@ public class BoatController {
         LOG.info("Returning signupSuccess.jsp page");
         model.addAttribute("user", user);
         user.setAuthorities(Arrays.asList(new SimpleGrantedAuthority(Roles.FREE.name())));
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
         user.setEnabled(true);
 //        database.getUsers().put(user.getId(), user);TODO
 

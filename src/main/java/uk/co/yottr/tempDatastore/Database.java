@@ -73,9 +73,6 @@ public class Database {
                 new SimpleGrantedAuthority(Roles.CREW.name()),
                 new SimpleGrantedAuthority(Roles.ADMIN.name())));
         user.setEnabled(true);
-        user.setCredentialsNonExpired(true);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
 
         user.setTitle("Mr");
         user.setFirstName("Stephen");

@@ -20,7 +20,7 @@ public class Boat {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "reference")
     private String reference;
@@ -115,13 +115,16 @@ public class Boat {
 
         Boat boat = (Boat) o;
 
-        if (id != boat.id) return false;
+        if (id != null ? !id.equals(boat.id) : boat.id != null) return false;
+        if (!reference.equals(boat.reference)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + reference.hashCode();
+        return result;
     }
 }

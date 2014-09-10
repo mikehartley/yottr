@@ -18,8 +18,7 @@ public class UserRole {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "user_role_id", unique = true, nullable = false)
-    private Integer userRoleId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "username", nullable = false)
@@ -29,6 +28,7 @@ public class UserRole {
     private String role;
 
     public UserRole() {
+        // required by hibernate
     }
 
     public UserRole(User user, String role) {
@@ -36,28 +36,16 @@ public class UserRole {
         this.role = role;
     }
 
-    public void setUserRoleId(Integer userRoleId) {
-        this.userRoleId = userRoleId;
-    }
-
-    public Integer getUserRoleId() {
-        return this.userRoleId;
+    public Long getId() {
+        return this.id;
     }
 
     public User getUser() {
         return this.user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public String getRole() {
         return this.role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }
 
