@@ -11,10 +11,10 @@
     <display-name>Yottr</display-name>
 
     <!-- Spring Security Configuration File -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/spring/spring-security.xml</param-value>
-    </context-param>
+    <!--<context-param>-->
+        <!--<param-name>contextConfigLocation</param-name>-->
+        <!--<param-value>/WEB-INF/spring/spring-context.xml</param-value>-->
+    <!--</context-param>-->
 
     <!-- Creates the Spring Container shared by all Servlet and Filters -->
     <listener>
@@ -43,10 +43,10 @@
 	<servlet>
 		<servlet-name>appServlet</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/spring/spring-context.xml</param-value>
-		</init-param>
+		<!--<init-param>-->
+			<!--<param-name>contextConfigLocation</param-name>-->
+			<!--<param-value>/WEB-INF/spring/spring-context.xml</param-value>-->
+		<!--</init-param>-->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 		

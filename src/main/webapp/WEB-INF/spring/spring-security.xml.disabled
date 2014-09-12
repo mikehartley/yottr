@@ -41,7 +41,7 @@
 		<authentication-provider user-service-ref="userDetailsService"/>
 	</authentication-manager>
 
-	<beans:bean id="userDetailsService" class="uk.co.yottr.security.dao.AppUserDetailsServiceDAO" />
+	<!--<beans:bean id="userDetailsService" class="uk.co.yottr.security.dao.AppUserDetailsServiceDAO" />-->
 
 	<!--<authentication-manager id="jdbc-auth">-->
 		<!--<authentication-provider>-->

@@ -5,27 +5,27 @@
   -->
 
 <Context>
-    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <!--<WatchedResource>WEB-INF/web.xml</WatchedResource>-->
 
-    <Resource
-            factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-            name="jdbc/yottrDS"
-            auth="Container"
-            type="javax.sql.DataSource"
-            initialSize="1"
-            maxActive="20"
-            maxIdle="3"
-            minIdle="1"
-            maxWait="5000"
-            username="postgres"
-            password="postgres"
-            driverClassName="org.postgresql.Driver"
-            validationQuery="SELECT 'OK'"
-            testWhileIdle="true"
-            testOnBorrow="true"
-            numTestsPerEvictionRun="5"
-            timeBetweenEvictionRunsMillis="30000"
-            minEvictableIdleTimeMillis="60000"
-            url="jdbc:postgresql://localhost:5432/postgres" />
+    <!--<Resource-->
+            <!--factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
+            <!--name="jdbc/yottrDS"-->
+            <!--auth="Container"-->
+            <!--type="javax.sql.DataSource"-->
+            <!--initialSize="1"-->
+            <!--maxActive="20"-->
+            <!--maxIdle="3"-->
+            <!--minIdle="1"-->
+            <!--maxWait="5000"-->
+            <!--username="postgres"-->
+            <!--password="postgres"-->
+            <!--driverClassName="org.postgresql.Driver"-->
+            <!--validationQuery="SELECT 'OK'"-->
+            <!--testWhileIdle="true"-->
+            <!--testOnBorrow="true"-->
+            <!--numTestsPerEvictionRun="5"-->
+            <!--timeBetweenEvictionRunsMillis="30000"-->
+            <!--minEvictableIdleTimeMillis="60000"-->
+            <!--url="jdbc:postgresql://localhost:5432/postgres" />-->
 
 </Context>

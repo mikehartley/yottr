@@ -1,0 +1,58 @@
+package uk.co.yottr.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+/*
+ * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * All rights reserved.
+ */
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    @Qualifier("userDetailsService")
+    UserDetailsService userDetailsService;
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http.authorizeRequests()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/s/**").hasRole("FREE")
+            .and()
+                .formLogin().loginPage("/login.htm").failureUrl("/denied.htm")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/index.htm")
+            .and()
+                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout.htm").logoutUrl("/j_spring_security_logout")
+//            .and()
+//                .csrf()
+            .and()
+                .sessionManagement().maximumSessions(1).expiredUrl("/login.htm").and().invalidSessionUrl("/login.htm")
+            .and()
+                .exceptionHandling().accessDeniedPage("/denied.htm");
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+}

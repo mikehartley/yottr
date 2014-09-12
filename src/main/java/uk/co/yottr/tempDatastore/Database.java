@@ -2,9 +2,9 @@ package uk.co.yottr.tempDatastore;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.model.UserRole;
 import uk.co.yottr.security.Roles;
 
 import java.util.*;
@@ -59,7 +59,6 @@ public class Database {
 
     private static void addUser(final String usernamePassword) {
         User newUser = createUser(usernamePassword);
-//        users.put(newUser.getId(), newUser);
         LOG.info("added user: " + newUser);
     }
 
@@ -67,10 +66,10 @@ public class Database {
         User user = new User();
         user.setUsername(usernamePassword);
         user.setPassword(usernamePassword);
-        user.setAuthorities(Arrays.asList(
-                new SimpleGrantedAuthority(Roles.FREE.name()),
-                new SimpleGrantedAuthority(Roles.CREW.name()),
-                new SimpleGrantedAuthority(Roles.ADMIN.name())));
+        user.setUserRoles(Arrays.asList(
+                new UserRole(user, Roles.FREE.name()),
+                new UserRole(user, Roles.CREW.name()),
+                new UserRole(user, Roles.ADMIN.name())));
         user.setEnabled(true);
 
         user.setTitle("Mr");

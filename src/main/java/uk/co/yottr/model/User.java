@@ -1,16 +1,12 @@
 package uk.co.yottr.model;
 
 import org.hibernate.validator.constraints.Email;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -19,15 +15,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
-
-    /* As required by UserDetails interface */
-
-    @Transient
-    private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+public class User {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<UserRole> userRole = new HashSet<>(0);
+    private Collection<UserRole> userRoles = new HashSet<>(0);
 
     @Column(name = "username", unique = true, nullable = false, length = 50)
     @Size(min = 2, max = 50)
@@ -37,19 +28,8 @@ public class User implements UserDetails {
     @Size(min = 8, max = 60)
     private String password;
 
-    @Column(name = "account_non_expired")
-    private boolean accountNonExpired = true;
-
-    @Column(name = "account_non_locked")
-    private boolean accountNonLocked = true;
-
-    @Column(name = "credentials_non_expired")
-    private boolean credentialsNonExpired = true;
-
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
-
-    /* further fields */
 
     @Id
     @GeneratedValue
@@ -91,24 +71,14 @@ public class User implements UserDetails {
     @Size(max = 400)
     private String aboutMe;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+    public Collection<UserRole> getUserRoles() {
+        return userRoles;
     }
 
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        this.authorities = authorities;
+    public void setUserRoles(Collection<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
-    public Set<UserRole> getUserRoles() {
-        return userRole;
-    }
-
-    public void setUserRoles(Set<UserRole> userRole) {
-        this.userRole = userRole;
-    }
-
-    @Override
     public String getUsername() {
         return username;
     }
@@ -117,7 +87,6 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
@@ -126,22 +95,6 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    @Override
     public boolean isEnabled() {
         return enabled;
     }

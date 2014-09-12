@@ -2,7 +2,6 @@ package uk.co.yottr.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.model.UserRole;
 import uk.co.yottr.security.Roles;
 import uk.co.yottr.tempDatastore.Database;
 
@@ -79,9 +79,8 @@ public class BoatController {
         }
         LOG.info("Returning signupSuccess.jsp page");
         model.addAttribute("user", user);
-        user.setAuthorities(Arrays.asList(new SimpleGrantedAuthority(Roles.FREE.name())));
+        user.setUserRoles(Arrays.asList(new UserRole(user, Roles.FREE.name())));
         user.setEnabled(true);
-//        database.getUsers().put(user.getId(), user);TODO
 
         LOG.info("Signed up new user: " + user);
 
