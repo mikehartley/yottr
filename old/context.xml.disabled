@@ -5,7 +5,7 @@
   -->
 
 <Context>
-    <!--<WatchedResource>WEB-INF/web.xml</WatchedResource>-->
+    <!--<WatchedResource>WEB-INF/web.xml.disabled</WatchedResource>-->
 
     <!--<Resource-->
             <!--factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->

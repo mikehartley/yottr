@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,12 +18,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * All rights reserved.
  */
 
+//@Profile("dev")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    @Qualifier("userDetailsService")
+    @Qualifier("jpaUserDetailsService")
     UserDetailsService userDetailsService;
 
     @Autowired
@@ -37,18 +39,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/s/**").hasRole("FREE")
             .and()
-                .formLogin().loginPage("/login.htm").failureUrl("/denied.htm")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/index.htm")
-            .and()
-                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout.htm").logoutUrl("/j_spring_security_logout")
+                .formLogin();
+//                .formLogin().loginPage("/login.htm").failureUrl("/denied.htm")
+//                .usernameParameter("username")
+//                .passwordParameter("password")
+//                .defaultSuccessUrl("/index.htm")
 //            .and()
-//                .csrf()
-            .and()
-                .sessionManagement().maximumSessions(1).expiredUrl("/login.htm").and().invalidSessionUrl("/login.htm")
-            .and()
-                .exceptionHandling().accessDeniedPage("/denied.htm");
+//                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout.htm").logoutUrl("/j_spring_security_logout")
+////            .and()
+////                .csrf()
+//            .and()
+//                .sessionManagement().maximumSessions(1).expiredUrl("/login.htm").and().invalidSessionUrl("/login.htm")
+//            .and()
+//                .exceptionHandling().accessDeniedPage("/denied.htm");
     }
 
     @Bean

@@ -1,34 +1,27 @@
-package uk.co.yottr.testconfig;
+package uk.co.yottr.config;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.springframework.context.annotation.*;
-import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import uk.co.yottr.config.SecurityConfig;
 
 import javax.persistence.EntityManagerFactory;
 import java.util.Properties;
 
-/*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
+//@Profile("dev")
 @Configuration
-@Profile("test")
-@ComponentScan({ "uk.co.yottr.*" })
 @EnableJpaRepositories("uk.co.yottr.repository")
 @EnableTransactionManagement
-public class TestConfig {
+public class PersistenceConfig {
 
     @Bean
     public SessionFactory sessionFactory() {
@@ -88,4 +81,4 @@ public class TestConfig {
 
         return em;
     }
- }
+}

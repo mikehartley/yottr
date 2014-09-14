@@ -1,7 +1,7 @@
 package uk.co.yottr.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,10 +15,10 @@ import uk.co.yottr.repository.UserRepository;
  * All rights reserved.
  */
 
-@Service("userDetailsService")
+@Service("jpaUserDetailsService")
 public class UserDetailsAdaptorService implements UserDetailsService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserDetailsAdaptorService.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(UserDetailsAdaptorService.class);
 
     private UserRepository userRepository;
 
@@ -31,7 +31,7 @@ public class UserDetailsAdaptorService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 
-        LOG.info("UserDetailsAdaptorService.loadUserByUsername : " + username);
+//        LOG.info("UserDetailsAdaptorService.loadUserByUsername : " + username);
 
         return UserDetailsAdaptor.toUserDetails(userRepository.findByUsername(username));
     }

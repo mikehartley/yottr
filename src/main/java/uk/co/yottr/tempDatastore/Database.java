@@ -1,7 +1,7 @@
 package uk.co.yottr.tempDatastore;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class Database {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Database.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(Database.class);
 
     private static Map<Long, User> users = new HashMap<>();
     private static Collection<Boat> boats = new ArrayList<>();
@@ -59,7 +59,7 @@ public class Database {
 
     private static void addUser(final String usernamePassword) {
         User newUser = createUser(usernamePassword);
-        LOG.info("added user: " + newUser);
+//        LOG.info("added user: " + newUser);
     }
 
     private static User createUser(final String usernamePassword) {
