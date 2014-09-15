@@ -133,6 +133,4 @@ public class UserServiceIntegrationTest {
 
         return user;
     }
-
-
 }

@@ -1,7 +1,7 @@
 package uk.co.yottr.controller;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +21,14 @@ import java.util.Collection;
 @Controller
 public class AdminController {
 
-//	private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
     private final Database database = new Database();
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
 	public ModelAndView getUsers() {
 
-//        LOG.info("landed in [get] users method");
+        LOG.info("landed in [get] users method");
 
         return modelAndViewForAllUsers();
 	}
@@ -36,7 +36,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/user/{id}/delete", method = RequestMethod.GET)
     public ModelAndView deleteUser(@PathVariable long id) throws ResourceNotFoundException {
 
-//        LOG.info("deleting user with ID " + id);
+        LOG.info("deleting user with ID " + id);
 
         checkUserExists(id);
 
@@ -48,7 +48,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/user/{id}/enabled/flip", method = RequestMethod.GET)
     public ModelAndView updateUserEnabledStatus(@PathVariable long id) throws ResourceNotFoundException {
 
-//        LOG.info("updating enabled status for user with ID " + id);
+        LOG.info("updating enabled status for user with ID " + id);
 
         checkUserExists(id);
 
@@ -60,7 +60,7 @@ public class AdminController {
 
     private void checkUserExists(long id) throws ResourceNotFoundException {
         if (!database.getUsers().containsKey(id)) {
-//            LOG.warn("User does not exist with ID " + id);
+            LOG.warn("User does not exist with ID " + id);
             throw new ResourceNotFoundException("User does not exist with ID " + id);
         }
     }

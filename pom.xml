@@ -20,7 +20,6 @@
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
         <hibernate.version>4.3.6.Final</hibernate.version>
         <hibernate.validator.version>5.1.2.Final</hibernate.validator.version>
-		<!--<org.aspectj.version>1.8.2</org.aspectj.version>-->
 		<org.slf4j.version>1.7.7</org.slf4j.version>
         <jstl.version>1.2</jstl.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
@@ -33,11 +32,11 @@
         <junit.version>4.11</junit.version>
         <mockito.version>1.9.5</mockito.version>
         <maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
-        <log4j.version>1.2.15</log4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <slf4j.version>1.7.7</slf4j.version>
 	</properties>
-	<dependencies>
-	<!-- Form Validation using Annotations -->  
 
+	<dependencies>
         <dependency>
             <groupId>jstl</groupId>
             <artifactId>jstl</artifactId>
@@ -49,6 +48,13 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${org.springframework.version}</version>
+            <exclusions>
+                <!-- Exclude Commons Logging in favor of SLF4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -133,6 +139,24 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet.api.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!--Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>runtime</scope>
         </dependency>
 
 		<!-- Test -->
