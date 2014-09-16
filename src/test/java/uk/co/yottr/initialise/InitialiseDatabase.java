@@ -30,7 +30,7 @@ import uk.co.yottr.security.Roles;
 @WebAppConfiguration
 public class InitialiseDatabase {
 
-    private boolean ENABLED = false;
+    private boolean ENABLED = false; // this should be left as false unless you're initialising the database
 
     @Autowired
     private UserRepository userRepository;
@@ -40,9 +40,6 @@ public class InitialiseDatabase {
 
     @Before
     public void ensureRepositoryHasBeenInjected() {
-
-        Assert.assertFalse("This shouldn't normally be enabled.", ENABLED);
-
         Assert.assertNotNull("check spring configuration : userRepository was not injected", userRepository);
         Assert.assertNotNull("check spring configuration : boatRepository was not injected", boatRepository);
     }
