@@ -9,7 +9,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.co.yottr.config.AppConfig;
+import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.security.Roles;
 
@@ -33,12 +35,16 @@ public class InitialiseDatabase {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BoatRepository boatRepository;
+
     @Before
     public void ensureRepositoryHasBeenInjected() {
 
         Assert.assertFalse("This shouldn't normally be enabled.", ENABLED);
 
         Assert.assertNotNull("check spring configuration : userRepository was not injected", userRepository);
+        Assert.assertNotNull("check spring configuration : boatRepository was not injected", boatRepository);
     }
 
     @Test
@@ -63,5 +69,20 @@ public class InitialiseDatabase {
         user.setPostcode("DY8 1AA");
 
         userRepository.save(user);
+    }
+
+    @Test
+    public void addBoat() {
+        if (!ENABLED) return;
+
+        Boat boat = new Boat();
+
+        boat.setManufacturer("Halberg Rassay");
+        boat.setModel("HR50");
+        boat.setLength(50);
+        boat.setHullType(Boat.HullType.MONO);
+        boat.setDescription("You want to sail around the world? You need to look elsewhere, my tub is purely a gin palace.");
+
+        boatRepository.save(boat);
     }
 }

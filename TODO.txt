@@ -2,12 +2,13 @@ TODO list
 =========
 
 Tech:
-    Initial data mechanism.
+    Use password encoder.
     Refactor user roles using the enum.
     Controller tests using Spring test.
     Use default /logout etc.
     Drop .htm suffix.
     Embed build date/time into somewhere viewable.
+    Paging support on queries.
 
     Validation.
     Support for pictures.
@@ -21,6 +22,7 @@ Tech:
 
 UI:
     Styling - bootstrap.
+    Pagination.
 
 User:
     Can only sign-up if not signed in.
