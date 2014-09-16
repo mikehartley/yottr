@@ -2,6 +2,7 @@ TODO list
 =========
 
 Tech:
+    Refactor user roles using the enum.
     Separate dev and test databases.
     Initial data script.
     Gid rid of temporary in-memory Database object and uses, moving everything over to use proper persistence.

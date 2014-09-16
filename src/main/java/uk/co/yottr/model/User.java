@@ -171,6 +171,10 @@ public class User {
         this.aboutMe = aboutMe;
     }
 
+    public void addRole(String role) {
+        userRoles.add(new UserRole(this, role));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
