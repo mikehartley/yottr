@@ -40,7 +40,7 @@ public class TestConfig {
         prop.put("hibernate.format_sql", "true");
         prop.put("hibernate.show_sql", "true");
         prop.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
-        prop.put("hibernate.hbm2ddl.auto", "update");
+        prop.put("hibernate.hbm2ddl.auto", "create-drop"); // validate | update | create | create-drop
         return prop;
     }
 
@@ -49,9 +49,9 @@ public class TestConfig {
 
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost:5432/postgres");
-        ds.setUsername("postgres");
-        ds.setPassword("postgres");
+        ds.setUrl("jdbc:postgresql://localhost:5432/yottrtest");
+        ds.setUsername("yottr");
+        ds.setPassword("aph3xtwIn");
         ds.setInitialSize(1);
         ds.setMaxActive(20);
         ds.setMaxIdle(3);

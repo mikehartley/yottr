@@ -5,7 +5,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -16,6 +15,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import java.util.Properties;
+
+/*
+ * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * All rights reserved.
+ */
 
 //@Profile("dev")
 @Configuration
@@ -35,6 +39,12 @@ public class PersistenceConfig {
         prop.put("hibernate.format_sql", "true");
         prop.put("hibernate.show_sql", "true");
         prop.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
+        /* hibernate.hbm2ddl.auto options are:
+            validate: validate the schema, makes no changes to the database.
+            update: update the schema.
+            create: creates the schema, destroying previous data.
+            create-drop: drop the schema at the end of the session.
+        */
         prop.put("hibernate.hbm2ddl.auto", "update");
         return prop;
     }
@@ -44,9 +54,9 @@ public class PersistenceConfig {
 
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost:5432/postgres");
-        ds.setUsername("postgres");
-        ds.setPassword("postgres");
+        ds.setUrl("jdbc:postgresql://localhost:5432/yottr");
+        ds.setUsername("yottr");
+        ds.setPassword("aph3xtwIn");
         ds.setInitialSize(1);
         ds.setMaxActive(20);
         ds.setMaxIdle(3);
