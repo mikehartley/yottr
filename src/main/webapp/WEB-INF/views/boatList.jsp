@@ -17,7 +17,7 @@
             <strong>Model: </strong>${boat.model}<br>
             <strong>Length: </strong>${boat.length}<br>
             <strong>Hull type: </strong>${boat.hullType}<br>
-            <strong>Description: </strong>${boat.desc}<br>
+            <strong>Description: </strong>${boat.description}<br>
             <hr>
         </c:forEach>
 

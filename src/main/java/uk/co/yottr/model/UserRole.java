@@ -47,5 +47,10 @@ public class UserRole {
     public String getRole() {
         return this.role;
     }
+
+    @Override
+    public String toString() {
+        return role;
+    }
 }
 

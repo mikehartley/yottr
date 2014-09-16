@@ -1,6 +1,7 @@
 package uk.co.yottr.initialise;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,20 +28,30 @@ import uk.co.yottr.security.Roles;
 @WebAppConfiguration
 public class InitialiseDatabase {
 
+    private boolean ENABLED = false;
+
     @Autowired
     private UserRepository userRepository;
 
+    @Before
+    public void ensureRepositoryHasBeenInjected() {
+
+        Assert.assertFalse("This shouldn't normally be enabled.", ENABLED);
+
+        Assert.assertNotNull("check spring configuration : userRepository was not injected", userRepository);
+    }
+
     @Test
     public void setupAdminUser() {
-        Assert.fail("finish this!");
+        if (!ENABLED) return;
 
         User user = new User();
 
         user.setUsername("mike");
         user.setPassword("lucidlucid123");
-        user.addRole(Roles.ADMIN.toString());
-        user.addRole(Roles.CREW.toString());
-        user.addRole(Roles.FREE.toString());
+        user.addRole(Roles.ADMIN.name());
+        user.addRole(Roles.CREW.name());
+        user.addRole(Roles.FREE.name());
         user.setEnabled(true);
         user.setTitle("Mr");
         user.setFirstName("Mike");

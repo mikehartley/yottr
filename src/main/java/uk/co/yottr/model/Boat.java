@@ -51,7 +51,7 @@ public class Boat {
 
     @Column(name = "description")
     @NotEmpty
-    private String desc;
+    private String description;
 
     public Boat() {
         this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
@@ -102,11 +102,11 @@ public class Boat {
     }
 
     public String getDescription() {
-        return desc;
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

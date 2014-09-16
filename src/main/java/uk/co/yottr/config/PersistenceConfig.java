@@ -21,7 +21,6 @@ import java.util.Properties;
  * All rights reserved.
  */
 
-//@Profile("dev")
 @Configuration
 @EnableJpaRepositories("uk.co.yottr.repository")
 @EnableTransactionManagement

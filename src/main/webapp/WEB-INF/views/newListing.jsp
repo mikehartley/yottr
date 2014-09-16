@@ -18,12 +18,10 @@
         <h2>Enter boat details:</h2>
 
         <springForm:form method="POST" commandName="boat" action="new.htm">
+            <input type="hidden"
+                name="${_csrf.parameterName}"
+                value="${_csrf.token}"/>
             <table>
-                <tr>
-                    <td>Reference:</td>
-                    <td><springForm:input path="reference" /></td>
-                    <td><springForm:errors path="reference" cssClass="error" /></td>
-                </tr>
                 <tr>
                     <td>Manufacturer:</td>
                     <td><springForm:input path="manufacturer" /></td>
@@ -50,8 +48,8 @@
                 </tr>
                 <tr>
                     <td>Describe what you are looking for:</td>
-                    <td><springForm:input path="desc"/></td>
-                    <td><springForm:errors path="desc" cssClass="error" /></td>
+                    <td><springForm:input path="description"/></td>
+                    <td><springForm:errors path="description" cssClass="error" /></td>
                 </tr>
                 <tr>
                     <td colspan="3"><input type="submit" value="Save boat details"></td>

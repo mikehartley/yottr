@@ -58,7 +58,7 @@ public class BoatServiceIntegrationTest {
         final String model = randomAlphanumeric(10);
 
         Boat boat = new Boat();
-        boat.setDesc(description);
+        boat.setDescription(description);
         boat.setHullType(hullType);
         boat.setLength(length);
         boat.setUnitsImperial(unitsImperial);
@@ -77,7 +77,7 @@ public class BoatServiceIntegrationTest {
 
     private Boat createBoat(String description) {
         Boat boat = new Boat();
-        boat.setDesc(description);
+        boat.setDescription(description);
         boat.setHullType(Boat.HullType.MONO);
         boat.setLength(36);
         boat.setUnitsImperial(true);

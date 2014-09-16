@@ -5,6 +5,9 @@ Tech:
     Initial data mechanism.
     Refactor user roles using the enum.
     Controller tests using Spring test.
+    Use default /logout etc.
+    Drop .htm suffix.
+    Embed build date/time into somewhere viewable.
 
     Validation.
     Support for pictures.

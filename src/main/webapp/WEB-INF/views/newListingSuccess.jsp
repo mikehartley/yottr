@@ -18,7 +18,7 @@
         <strong>Hull type: </strong>${boat.hullType}<br>
         <hr>
         <strong>Description</strong><br>
-        ${boat.desc}<br>
+        ${boat.description}<br>
         <hr>
         <br>
 

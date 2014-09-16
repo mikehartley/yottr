@@ -83,6 +83,7 @@ public class BoatController {
         LOG.info("Returning signupSuccess.jsp page");
         model.addAttribute("user", user);
         user.setUserRoles(Arrays.asList(new UserRole(user, Roles.FREE.name())));
+        user.addRole(Roles.FREE.name());
         user.setEnabled(true);
 
         LOG.info("Signed up new user: " + user);

@@ -28,9 +28,8 @@
                 <tr><td>First Name</td><td>${user.firstName}</td></tr>
                 <tr><td>Last Name</td><td>${user.lastName}</td></tr>
                 <tr><td>About</td><td>${user.aboutMe}</td></tr>
-                <tr><td>Authorities</td><td>${user.authorities}</td></tr>
+                <tr><td>Roles</td><td>${user.userRoles}</td></tr>
                 <tr><td>Account enabled</td><td>${user.enabled}</td></tr>
-                <tr><td>Account non-locked</td><td>${user.accountNonLocked}</td></tr>
                 <tr><td>Boat adverts</td><td>TODO (max 3) <click to see></td></tr>
             </table>
             EDIT | <a href='/yottr/admin/user/${user.id}/enabled/flip.htm'>FLIP ENABLED</a> | <a href='/yottr/admin/user/${user.id}/delete.htm'>DELETE</a><br>
