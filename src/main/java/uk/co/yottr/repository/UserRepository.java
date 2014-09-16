@@ -8,6 +8,6 @@ import uk.co.yottr.model.User;
  * All rights reserved.
  */
 
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface UserRepository extends CrudRepository<User, Long> {
     User findByUsername(String username);
 }

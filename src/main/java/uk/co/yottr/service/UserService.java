@@ -47,4 +47,16 @@ public class UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    public User findById(Long id) {
+        return userRepository.findOne(id);
+    }
+
+    public void delete(Long id) {
+        userRepository.delete(id);
+    }
+
+    public boolean userExists(Long id) {
+        return userRepository.exists(id);
+    }
 }

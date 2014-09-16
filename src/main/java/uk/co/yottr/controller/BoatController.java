@@ -2,6 +2,7 @@ package uk.co.yottr.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,7 +13,7 @@ import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
 import uk.co.yottr.security.Roles;
-import uk.co.yottr.tempDatastore.Database;
+import uk.co.yottr.service.BoatService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -28,7 +29,8 @@ public class BoatController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BoatController.class);
 
-    private final Database database = new Database();
+    @Autowired
+    private BoatService boatService;
 
 	@RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
 	public String newListingPage(Model model) {
@@ -46,7 +48,7 @@ public class BoatController {
 		}
 		LOG.info("Returning newListingSuccess.jsp page");
 		model.addAttribute("boat", boat);
-		database.getBoats().add(boat);
+        boatService.save(boat);
 		return "newListingSuccess";
 	}
 
@@ -55,7 +57,8 @@ public class BoatController {
         LOG.info("All listings page");
 
         ModelAndView modelAndView = new ModelAndView("boatList");
-        modelAndView.addObject("boats", database.getBoats());
+
+        modelAndView.addObject("boats", boatService.findAll());
 
         return modelAndView;
     }

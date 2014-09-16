@@ -71,6 +71,10 @@ public class User {
     @Size(max = 400)
     private String aboutMe;
 
+    public Long getId() {
+        return id;
+    }
+
     public Collection<UserRole> getUserRoles() {
         return userRoles;
     }

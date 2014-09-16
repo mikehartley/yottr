@@ -16,8 +16,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -32,7 +31,7 @@ public class UserServiceIntegrationTest {
     private UserService userService;
 
     @Test
-    public void canCreateFindUpdateAndDelete() throws Exception {
+    public void canCreateFindByUsernameUpdateAndDelete() throws Exception {
 
         final String username = "user"  + randomAlphanumeric(12);
 
@@ -71,6 +70,32 @@ public class UserServiceIntegrationTest {
         final UserRole savedRole = userFromFindAll.getUserRoles().iterator().next();
         assertEquals("user from saved role", userRole.getUser(), savedRole.getUser());
         assertEquals("role from saved role", userRole.getRole(), savedRole.getRole());
+    }
+
+    @Test
+    public void findById() throws Exception {
+
+        final String username = randomAlphanumeric(10);
+        User user = createUser(username);
+        final User savedUser = userService.save(user);
+
+        final User foundUser = userService.findById(savedUser.getId());
+
+        assertEquals("username", username, foundUser.getUsername());
+    }
+
+    @Test
+    public void deleteByIdAndUserExists() throws Exception {
+
+        final User savedUser = userService.save(createUser(randomAlphanumeric(10)));
+
+        final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
+        assertTrue("user should exist before delete", userExistsBeforeDelete);
+
+        userService.delete(savedUser.getId());
+
+        final boolean userExistsAfterDelete = userService.userExists(savedUser.getId());
+        assertFalse("user should not exist after delete", userExistsAfterDelete);
     }
 
     @Test

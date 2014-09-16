@@ -8,5 +8,5 @@ import uk.co.yottr.model.Boat;
  * All rights reserved.
  */
 
-public interface BoatRepository extends CrudRepository<Boat, Integer> {
+public interface BoatRepository extends CrudRepository<Boat, Long> {
 }

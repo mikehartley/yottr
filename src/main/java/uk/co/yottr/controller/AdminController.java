@@ -2,6 +2,7 @@ package uk.co.yottr.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.model.User;
-import uk.co.yottr.tempDatastore.Database;
+import uk.co.yottr.service.UserService;
 
 import java.util.Collection;
 
@@ -23,7 +24,8 @@ public class AdminController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
-    private final Database database = new Database();
+    @Autowired
+    private UserService userService;
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
 	public ModelAndView getUsers() {
@@ -40,7 +42,7 @@ public class AdminController {
 
         checkUserExists(id);
 
-        database.getUsers().remove(id);
+        userService.delete(id);
 
         return modelAndViewForAllUsers();
     }
@@ -52,14 +54,15 @@ public class AdminController {
 
         checkUserExists(id);
 
-        User user = database.getUsers().get(id);
+        User user = userService.findById(id);
         user.setEnabled(!user.isEnabled());
+        userService.save(user);
 
         return modelAndViewForAllUsers();
     }
 
     private void checkUserExists(long id) throws ResourceNotFoundException {
-        if (!database.getUsers().containsKey(id)) {
+        if (!userService.userExists(id)) {
             LOG.warn("User does not exist with ID " + id);
             throw new ResourceNotFoundException("User does not exist with ID " + id);
         }
@@ -67,7 +70,7 @@ public class AdminController {
 
     private ModelAndView modelAndViewForAllUsers() {
         ModelAndView modelAndView = new ModelAndView("manageUsers");
-        Collection<User> allUsers = database.getUsers().values();
+        Collection<User> allUsers = userService.findAll();
         modelAndView.addObject("users", allUsers);
         return modelAndView;
     }
