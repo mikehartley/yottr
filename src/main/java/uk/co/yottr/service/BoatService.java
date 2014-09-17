@@ -43,4 +43,8 @@ public class BoatService {
     public void delete(Boat boat) {
         boatRepository.delete(boat);
     }
+
+    public Boat findByReference(String reference) {
+        return boatRepository.findByReference(reference);
+    }
 }

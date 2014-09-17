@@ -34,7 +34,7 @@ public class UserServiceIntegrationTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    public void canCreateFindByUsernameUpdateAndDelete() throws Exception {
+    public void canCreateFindByUsernameAndDelete() throws Exception {
 
         final String username = "user"  + randomAlphanumeric(12);
 

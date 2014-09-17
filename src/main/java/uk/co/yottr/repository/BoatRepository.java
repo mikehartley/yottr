@@ -9,4 +9,5 @@ import uk.co.yottr.model.Boat;
  */
 
 public interface BoatRepository extends CrudRepository<Boat, Long> {
+    Boat findByReference(String reference);
 }

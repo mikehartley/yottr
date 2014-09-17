@@ -8,7 +8,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.testconfig.TestConfig;
 
-import java.util.List;
 import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
@@ -27,7 +26,7 @@ public class BoatServiceIntegrationTest {
     private BoatService boatService;
 
     @Test
-    public void canCreateUpdateAndDelete() throws Exception {
+    public void canCreateFindByReferenceAndDelete() throws Exception {
 
         final String uniqueDescription = "some description with unique number : "  + new Random().nextLong();
 
@@ -35,16 +34,13 @@ public class BoatServiceIntegrationTest {
 
         final Boat savedBoat = boatService.save(boat);
 
-        final List<Boat> allBoats = boatService.findAll();
-
-        final int indexOfSavedBoat = allBoats.lastIndexOf(savedBoat);
-        assertTrue("boat did not appear in find all", indexOfSavedBoat > -1);
-
-        final Boat boatFromFindAll = allBoats.get(indexOfSavedBoat);
-        assertEquals("boat.description from found boat", uniqueDescription, boatFromFindAll.getDescription());
+        final Boat foundByReference = boatService.findByReference(boat.getReference());
+        assertNotNull("could not find boat by reference", foundByReference);
+        assertEquals("description", uniqueDescription, foundByReference.getDescription());
 
         boatService.delete(savedBoat);
-        assertFalse("find all should not contain the deleted boat", boatService.findAll().contains(savedBoat));
+
+        assertNull("boat was not deleted", boatService.findByReference(boat.getReference()));
     }
 
     @Test
