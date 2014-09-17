@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
 import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.security.Role;
 
 import java.util.*;
 
@@ -32,8 +33,8 @@ public class UserDetailsAdaptorServiceTest {
         final String username = "testUser";
         final String password = "testPassword";
         final boolean enabled = true;
-        final String firstRole = "role1";
-        final String secondRole = "role2";
+        final Role firstRole = Role.CREW;
+        final Role secondRole = Role.FREE;
         final Set<UserRole> userRoles = new HashSet<>();
         userRoles.add(new UserRole(null, firstRole));
         userRoles.add(new UserRole(null, secondRole));
@@ -64,7 +65,7 @@ public class UserDetailsAdaptorServiceTest {
             }
         });
         assertEquals("authorities size", 2, grantedAuthoritiesAsList.size());
-        assertEquals("first authority", firstRole, grantedAuthoritiesAsList.get(0).getAuthority());
-        assertEquals("second authority", secondRole, grantedAuthoritiesAsList.get(1).getAuthority());
+        assertEquals("first authority", firstRole.name(), grantedAuthoritiesAsList.get(0).getAuthority());
+        assertEquals("second authority", secondRole.name(), grantedAuthoritiesAsList.get(1).getAuthority());
     }
 }

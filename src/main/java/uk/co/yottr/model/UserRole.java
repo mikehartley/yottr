@@ -1,10 +1,10 @@
 package uk.co.yottr.model;
 
+import uk.co.yottr.security.Role;
+
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
-
-//TODO http://www.mkyong.com/spring-security/spring-security-hibernate-annotation-example/
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -24,14 +24,15 @@ public class UserRole {
     @JoinColumn(name = "username", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 45)
-    private String role;
+    private Role role;
 
     public UserRole() {
         // required by hibernate
     }
 
-    public UserRole(User user, String role) {
+    public UserRole(User user, Role role) {
         this.user = user;
         this.role = role;
     }
@@ -44,13 +45,13 @@ public class UserRole {
         return this.user;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return this.role;
     }
 
     @Override
     public String toString() {
-        return role;
+        return role.name();
     }
 }
 

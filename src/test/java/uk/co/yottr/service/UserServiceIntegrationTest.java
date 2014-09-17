@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
+import uk.co.yottr.security.Role;
 import uk.co.yottr.testconfig.TestConfig;
 
 import java.util.HashSet;
@@ -62,8 +63,8 @@ public class UserServiceIntegrationTest {
 
         User user = createUser(randomAlphanumeric(10));
         Set<UserRole> userRoles = new HashSet<>();
-        final UserRole userRole = new UserRole(user, "rolex");
-        userRoles.add(userRole);
+        final UserRole expectedRole = new UserRole(user, Role.CREW);
+        userRoles.add(expectedRole);
         user.setUserRoles(userRoles);
 
         final User savedUser = userService.save(user);
@@ -71,8 +72,8 @@ public class UserServiceIntegrationTest {
         assertFalse("roles should not be empty", savedUser.getUserRoles().isEmpty());
 
         final UserRole savedRole = savedUser.getUserRoles().iterator().next();
-        assertEquals("user from saved role", userRole.getUser(), savedRole.getUser());
-        assertEquals("role from saved role", userRole.getRole(), savedRole.getRole());
+        assertEquals("user from saved role", expectedRole.getUser(), savedRole.getUser());
+        assertEquals("role from saved role", expectedRole.getRole(), savedRole.getRole());
     }
 
     @Test

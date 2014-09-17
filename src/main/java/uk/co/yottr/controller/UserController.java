@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.model.User;
-import uk.co.yottr.security.Roles;
+import uk.co.yottr.security.Role;
 import uk.co.yottr.service.UserService;
 
 import javax.validation.Valid;
@@ -47,7 +47,7 @@ public class UserController {
         }
         LOG.info("Returning signupSuccess.jsp page");
         model.addAttribute("user", user);
-        user.addRole(Roles.FREE.name());
+        user.addRole(Role.FREE);
         user.setEnabled(true);
 
         userService.save(user);

@@ -1,6 +1,7 @@
 package uk.co.yottr.model;
 
 import org.hibernate.validator.constraints.Email;
+import uk.co.yottr.security.Role;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -172,7 +173,7 @@ public class User {
         this.aboutMe = aboutMe;
     }
 
-    public void addRole(String role) {
+    public void addRole(Role role) {
         Collection<UserRole> newRoles = new ArrayList<>(userRoles);
         newRoles.add(new UserRole(this, role));
         setUserRoles(newRoles);

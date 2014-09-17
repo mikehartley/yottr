@@ -13,7 +13,7 @@ import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.UserRepository;
-import uk.co.yottr.security.Roles;
+import uk.co.yottr.security.Role;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -51,10 +51,10 @@ public class InitialiseDatabase {
         User user = new User();
 
         user.setUsername("mike");
-        user.setPassword("lucidlucid123");
-        user.addRole(Roles.ADMIN.name());
-        user.addRole(Roles.CREW.name());
-        user.addRole(Roles.FREE.name());
+        user.setPassword("aph3xtwIn");
+        user.addRole(Role.ADMIN);
+        user.addRole(Role.CREW);
+        user.addRole(Role.FREE);
         user.setEnabled(true);
         user.setTitle("Mr");
         user.setFirstName("Mike");

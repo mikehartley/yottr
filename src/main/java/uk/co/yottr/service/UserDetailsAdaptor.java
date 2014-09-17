@@ -30,7 +30,7 @@ public class UserDetailsAdaptor {
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         for (UserRole userRole : userRoles) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(userRole.getRole()));
+            grantedAuthorities.add(new SimpleGrantedAuthority(userRole.getRole().name()));
         }
 
         return grantedAuthorities;

@@ -2,10 +2,9 @@ TODO list
 =========
 
 Tech:
-    Refactor user roles using the enum.
-    Controller tests using Spring test.
     Use default /logout etc.
     Drop .htm suffix.
+    Controller tests using Spring test.
     Embed build date/time into somewhere viewable.
     Paging support on queries.
 
