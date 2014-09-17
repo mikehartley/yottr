@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Email;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -172,27 +173,9 @@ public class User {
     }
 
     public void addRole(String role) {
-        userRoles.add(new UserRole(this, role));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        if (id != null ? !id.equals(user.id) : user.id != null) return false;
-        if (!username.equals(user.username)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = username.hashCode();
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        return result;
+        Collection<UserRole> newRoles = new ArrayList<>(userRoles);
+        newRoles.add(new UserRole(this, role));
+        setUserRoles(newRoles);
     }
 
     @Override

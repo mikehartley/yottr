@@ -1,6 +1,7 @@
 package uk.co.yottr.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.yottr.model.User;
@@ -19,13 +20,18 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User save(User user) {
+        final String plaintextPassword = user.getPassword();
+        final String encodedPassword = passwordEncoder.encode(plaintextPassword);
+        user.setPassword(encodedPassword);
         return userRepository.save(user);
     }
 

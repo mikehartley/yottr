@@ -19,6 +19,9 @@
         <h2>Please enter your details:</h2>
 
         <springForm:form method="POST" commandName="user" action="signup.htm">
+            <input type="hidden"
+                name="${_csrf.parameterName}"
+                value="${_csrf.token}"/>
 
             <table>
                 <tr>

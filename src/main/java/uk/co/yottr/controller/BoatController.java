@@ -10,14 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.model.Boat;
-import uk.co.yottr.model.User;
-import uk.co.yottr.model.UserRole;
-import uk.co.yottr.security.Roles;
 import uk.co.yottr.service.BoatService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Arrays;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -61,34 +57,6 @@ public class BoatController {
         modelAndView.addObject("boats", boatService.findAll());
 
         return modelAndView;
-    }
-
-    @RequestMapping(value = "/signup", method = RequestMethod.GET)
-    public ModelAndView signup() {
-        LOG.info("Signup page (GET)");
-
-        ModelAndView modelAndView = new ModelAndView("signup");
-        modelAndView.addObject("user", new User());
-
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signupAction(@Valid User user, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            LOG.info(bindingResult.toString());
-            LOG.info("Returning signup.jsp page from signupAction");
-            return "signup";
-        }
-        LOG.info("Returning signupSuccess.jsp page");
-        model.addAttribute("user", user);
-        user.setUserRoles(Arrays.asList(new UserRole(user, Roles.FREE.name())));
-        user.addRole(Roles.FREE.name());
-        user.setEnabled(true);
-
-        LOG.info("Signed up new user: " + user);
-
-        return "signupSuccess";
     }
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)

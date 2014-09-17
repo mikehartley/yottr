@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.User;
@@ -11,7 +12,6 @@ import uk.co.yottr.model.UserRole;
 import uk.co.yottr.testconfig.TestConfig;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -30,6 +30,9 @@ public class UserServiceIntegrationTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Test
     public void canCreateFindByUsernameUpdateAndDelete() throws Exception {
 
@@ -41,10 +44,11 @@ public class UserServiceIntegrationTest {
 
         final User foundUser = userService.findByUsername(username);
 
-        assertEquals("findByUsername", savedUser, foundUser);
+        assertEquals("findByUsername user.getId()", savedUser.getId(), foundUser.getId());
 
         userService.delete(savedUser);
-        assertFalse("find all should not contain the deleted user", userService.findAll().contains(savedUser));
+
+        assertNull("find by username should not contain the deleted user", userService.findByUsername(username));
     }
 
     @Test
@@ -63,11 +67,10 @@ public class UserServiceIntegrationTest {
         user.setUserRoles(userRoles);
 
         final User savedUser = userService.save(user);
-        final List<User> allUsers = userService.findAll();
-        final User userFromFindAll = allUsers.get(allUsers.lastIndexOf(savedUser));
 
-        assertFalse("roles should not be empty", userFromFindAll.getUserRoles().isEmpty());
-        final UserRole savedRole = userFromFindAll.getUserRoles().iterator().next();
+        assertFalse("roles should not be empty", savedUser.getUserRoles().isEmpty());
+
+        final UserRole savedRole = savedUser.getUserRoles().iterator().next();
         assertEquals("user from saved role", userRole.getUser(), savedRole.getUser());
         assertEquals("role from saved role", userRole.getRole(), savedRole.getRole());
     }
@@ -128,7 +131,7 @@ public class UserServiceIntegrationTest {
         final User savedUser = userService.save(user);
 
         assertEquals("username", username, savedUser.getUsername());
-        assertEquals("password", password, savedUser.getPassword());
+        assertTrue("password matches", passwordEncoder.matches(password, savedUser.getPassword()));
         assertEquals("title", title, savedUser.getTitle());
         assertEquals("firstName", firstName, savedUser.getFirstName());
         assertEquals("lastName", lastName, savedUser.getLastName());

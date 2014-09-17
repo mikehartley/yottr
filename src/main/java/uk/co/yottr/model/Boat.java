@@ -108,24 +108,4 @@ public class Boat {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Boat)) return false;
-
-        Boat boat = (Boat) o;
-
-        if (id != null ? !id.equals(boat.id) : boat.id != null) return false;
-        if (!reference.equals(boat.reference)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + reference.hashCode();
-        return result;
-    }
 }

@@ -2,7 +2,7 @@ TODO list
 =========
 
 Tech:
-    Use password encoder.
+    Implement find boat by reference and use to fix failing test.
     Refactor user roles using the enum.
     Controller tests using Spring test.
     Use default /logout etc.
