@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .passwordParameter("password")
 //                .defaultSuccessUrl("/index.htm")
 //            .and()
-//                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout.htm").logoutUrl("/j_spring_security_logout")
+//                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout.htm").logoutUrl("/logout")
 ////            .and()
 ////                .csrf()
 //            .and()

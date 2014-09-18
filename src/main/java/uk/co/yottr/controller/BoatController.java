@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.service.BoatService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /*
@@ -63,23 +62,5 @@ public class BoatController {
     public String index() {
         LOG.info("index page");
         return "index";
-    }
-
-    @RequestMapping(value="/login")
-    public String login(HttpServletRequest request, Model model) {
-        LOG.info("Login page");
-        return "login";
-    }
-
-    @RequestMapping(value="/logout")
-    public String logout() {
-        LOG.info("Logging out...");
-        return "logout";
-    }
-
-    @RequestMapping(value="/denied")
-    public String denied() {
-        LOG.info("Access denied!");
-        return "denied";
     }
 }

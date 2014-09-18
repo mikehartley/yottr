@@ -26,7 +26,7 @@
         <h3><a href='admin/users.htm'>Manage Users (ADMIN only)</a></h3>
         <hr>
 
-        <a href='/yottr/j_spring_security_logout'>Logout</a><br><br>
+        <a href='/yottr/logout'>Logout</a><br><br>
 
         <a href='/yottr/'>Home</a><br>
         &copy;YOTTR 2014
