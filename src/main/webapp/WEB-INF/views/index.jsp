@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="springForm"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -29,6 +30,8 @@
         <a href='/yottr/logout'>Logout</a><br><br>
 
         <a href='/yottr/'>Home</a><br>
-        &copy;YOTTR 2014
+        &copy;YOTTR 2014<br>
+        <br>
+        Built: <spring:message code="build.date"/>
     </body>
 </html>

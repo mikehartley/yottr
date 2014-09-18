@@ -3,7 +3,6 @@ TODO list
 
 Tech:
     Controller tests using Spring test.
-    Embed build date/time into somewhere viewable.
     Paging support on queries.
 
     Validation.
