@@ -3,6 +3,11 @@ package uk.co.yottr.config.core;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import uk.co.yottr.config.AppConfig;
 
+/*
+ * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * All rights reserved.
+ */
+
 public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
@@ -17,7 +22,7 @@ public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServ
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] { "*.htm" };
+		return new String[] { "/" };
 	}
 
 }

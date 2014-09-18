@@ -43,17 +43,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
             .and()
                 .csrf().disable();
-//                .formLogin().loginPage("/login.htm").failureUrl("/denied.htm")
+//                .formLogin().loginPage("/login").failureUrl("/denied")
 //                .usernameParameter("username")
 //                .passwordParameter("password")
-//                .defaultSuccessUrl("/index.htm")
+//                .defaultSuccessUrl("/index")
 //            .and()
-//                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout.htm").logoutUrl("/logout")
+//                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout").logoutUrl("/logout")
 ////            .and()
 ////                .csrf()
 //            .and()
-//                .sessionManagement().maximumSessions(1).expiredUrl("/login.htm").and().invalidSessionUrl("/login.htm")
+//                .sessionManagement().maximumSessions(1).expiredUrl("/login").and().invalidSessionUrl("/login")
 //            .and()
-//                .exceptionHandling().accessDeniedPage("/denied.htm");
+//                .exceptionHandling().accessDeniedPage("/denied");
     }
 }

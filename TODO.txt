@@ -2,7 +2,6 @@ TODO list
 =========
 
 Tech:
-    Drop .htm suffix.
     Controller tests using Spring test.
     Embed build date/time into somewhere viewable.
     Paging support on queries.

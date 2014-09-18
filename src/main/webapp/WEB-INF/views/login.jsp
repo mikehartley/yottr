@@ -23,7 +23,7 @@
                         value="Login" /></td>
                 </tr>
                 <tr>
-                    <td colspan='2'><h3><a href='signup.htm'>Join for free</a></h3></td>
+                    <td colspan='2'><h3><a href='signup'>Join for free</a></h3></td>
                 </tr>
             </table>
 

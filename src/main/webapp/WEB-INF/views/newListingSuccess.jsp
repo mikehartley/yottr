@@ -22,7 +22,7 @@
         <hr>
         <br>
 
-        <a href='all.htm'>All boats</a>
+        <a href='all'>All boats</a>
 
         <br>
         <a href='/yottr/'>Home</a><br>

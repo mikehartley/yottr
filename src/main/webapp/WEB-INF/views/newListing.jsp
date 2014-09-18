@@ -17,7 +17,7 @@
 
         <h2>Enter boat details:</h2>
 
-        <springForm:form method="POST" commandName="boat" action="new.htm">
+        <springForm:form method="POST" commandName="boat" action="new">
             <input type="hidden"
                 name="${_csrf.parameterName}"
                 value="${_csrf.token}"/>

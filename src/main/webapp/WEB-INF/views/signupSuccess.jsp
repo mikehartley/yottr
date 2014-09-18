@@ -18,7 +18,7 @@
         <hr>
         <br>
 
-        <a href='login.htm'>Log in</a>
+        <a href='login'>Log in</a>
 
         <br>
         &copy;YOTTR 2014

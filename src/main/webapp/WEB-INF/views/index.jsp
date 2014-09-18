@@ -18,12 +18,12 @@
         <h2>YOTTR</h2>
         <hr>
         <div>Where do you want to go?</div>
-        <h3><a href='s/listings/new.htm'>Add a listing</a></h3>
-        <h3><a href='s/listings/all.htm'>View all listings</a></h3>
+        <h3><a href='s/listings/new'>Add a listing</a></h3>
+        <h3><a href='s/listings/all'>View all listings</a></h3>
         <div>&nbsp;</div>
-        <h3><a href='signup.htm'>Join for free</a></h3>
+        <h3><a href='signup'>Join for free</a></h3>
         <div>&nbsp;</div>
-        <h3><a href='admin/users.htm'>Manage Users (ADMIN only)</a></h3>
+        <h3><a href='admin/users'>Manage Users (ADMIN only)</a></h3>
         <hr>
 
         <a href='/yottr/logout'>Logout</a><br><br>

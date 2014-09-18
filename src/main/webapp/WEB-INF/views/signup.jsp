@@ -18,7 +18,7 @@
         <h1>Sign-up</h1>
         <h2>Please enter your details:</h2>
 
-        <springForm:form method="POST" commandName="user" action="signup.htm">
+        <springForm:form method="POST" commandName="user" action="signup">
             <input type="hidden"
                 name="${_csrf.parameterName}"
                 value="${_csrf.token}"/>
