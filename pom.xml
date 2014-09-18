@@ -36,7 +36,7 @@
         <slf4j.version>1.7.7</slf4j.version>
 
         <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <maven.build.timestamp.format>dd-MM-yyyy HH:mm:ss</maven.build.timestamp.format>
 	</properties>
 
 	<dependencies>
