@@ -24,10 +24,14 @@ public class BoatController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BoatController.class);
 
-    @Autowired
     private BoatService boatService;
 
-	@RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
+    @Autowired
+    public BoatController(BoatService boatService) {
+        this.boatService = boatService;
+    }
+
+    @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
 	public String newListingPage(Model model) {
 		LOG.info("Returning newListing.jsp page from newListingPage");
 		model.addAttribute("boat", new Boat());

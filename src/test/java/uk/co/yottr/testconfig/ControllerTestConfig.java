@@ -1,13 +1,15 @@
-package uk.co.yottr.config;
+package uk.co.yottr.testconfig;
 
+import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.UserService;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -16,9 +18,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(value = { "uk.co.yottr.model", "uk.co.yottr.controller", "uk.co.yottr.service" })
-@Import({ SecurityConfig.class, PersistenceConfig.class })
-public class AppConfig {
+@ComponentScan(value = { "uk.co.yottr.controller" })
+//@Import({ SecurityConfig.class, PersistenceConfig.class })
+public class ControllerTestConfig {
 
     @Bean
     public InternalResourceViewResolver viewResolver() {
@@ -35,5 +37,15 @@ public class AppConfig {
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setUseCodeAsDefaultMessage(true);
         return messageSource;
+    }
+
+    @Bean
+    public BoatService mockBoatService() {
+        return Mockito.mock(BoatService.class);
+    }
+
+    @Bean
+    public UserService mockUserService() {
+        return Mockito.mock(UserService.class);
     }
  }
