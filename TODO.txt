@@ -3,10 +3,11 @@ TODO list
 
 Tech:
     Controller tests using Spring test.
+    Review testing strategy.
     Paging support on queries.
-
     Validation.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
+    
     Support for pictures.
     List of all UK marinas.
     Missing details:
@@ -21,27 +22,37 @@ UI:
     Pagination.
 
 User:
-    Can only sign-up if not signed in.
+    Can only sign-up if not signed in. (role based logic)
     Edit/Delete profile.
     Edit/Delete/Suspend ad.
     Searches.
     Saved searches.
     Favourites / watch list.
-    Send message to admin.
+    Send message to admin (might be covered by having an email account).
     Password rules.
-    Can post a maximum of 3 adverts by default.
+    Can post a maximum of 2 adverts by default.
     Signup has some kind of captcha type thing.
 
 Admin:
     Edit user profile.
+    Edit/Delete/Suspend ad.
     IP address blocking.
-    Edit/Delete/Suspend ad
+    
+Other:
+    Agree with Badger on how to go about using his server.
+    Terms and Conditions
+    Email for yottr
 
 Long term:
+    Ability to register as part of a boat's crew (favourites?). Then you could see things relevent for that boat
+        such as upcoming trips, previous trips.
+    A booking system for voyages?
+    Sailing log. Could have a log for a boat, then you could select a trip it's been on instead of 
+        having to write an entry from scratch.
     Android and iOS app.
     Internal messaging.
     Email when search hit found.
     Twitter feeds.
     Commercial adverts.
     Resale channel.
-    Google Maps
+    Google Maps for results.
