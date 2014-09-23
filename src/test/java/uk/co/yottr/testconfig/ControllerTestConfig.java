@@ -19,7 +19,6 @@ import uk.co.yottr.service.UserService;
 @EnableWebMvc
 @Configuration
 @ComponentScan(value = { "uk.co.yottr.controller" })
-//@Import({ SecurityConfig.class, PersistenceConfig.class })
 public class ControllerTestConfig {
 
     @Bean

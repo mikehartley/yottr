@@ -7,7 +7,9 @@ Tech:
     Paging support on queries.
     Validation.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
-    
+
+    Look at Ansible for automated deployment and configuration management.
+
     Support for pictures.
     List of all UK marinas.
     Missing details:
