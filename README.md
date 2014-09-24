@@ -8,7 +8,7 @@ Must have a running Postgres server with two databases:
   (must have createdb role attribute)
 
 To build:
-  mvn clean install
+  mvn clean install [-DskipITs]
 
 To deploy (assuming Tomcat):
   cp target/yottr.war $TOMCAT_HOME/webapps/

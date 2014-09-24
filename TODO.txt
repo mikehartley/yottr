@@ -2,9 +2,6 @@ TODO list
 =========
 
 Tech:
-    Controller tests using Spring test.
-    Integration tests via a separate pom or profile.
-
     Missing details:
         boat length units
         date posted
