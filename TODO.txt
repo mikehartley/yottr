@@ -3,21 +3,27 @@ TODO list
 
 Tech:
     Controller tests using Spring test.
-    Review testing strategy.
-    Paging support on queries.
-    Validation.
-    Check that text doesn't lead to injection attacks, if so use some kind of encoder.
+    Integration tests via a separate pom or profile.
 
-    Look at Ansible for automated deployment and configuration management.
-
-    Support for pictures.
-    List of all UK marinas.
     Missing details:
         boat length units
         date posted
         date relevant
         qualifications
         sailing style
+
+    Paging support on queries.
+    UI acceptance testing using Selenium.
+    Check that text doesn't lead to injection attacks, if so use some kind of encoder.
+
+    Look at Ansible for automated deployment and configuration management.
+
+    Support for pictures.
+    List of all UK marinas.
+
+    Email based link for authentication for:
+        sign-up,
+        password reset.
 
 UI:
     Styling - bootstrap.
@@ -46,7 +52,7 @@ Other:
     Email for yottr
 
 Long term:
-    Ability to register as part of a boat's crew (favourites?). Then you could see things relevent for that boat
+    Ability to register as part of a boat's crew (favourites?). Then you could see things relevant for that boat
         such as upcoming trips, previous trips.
     A booking system for voyages?
     Sailing log. Could have a log for a boat, then you could select a trip it's been on instead of 

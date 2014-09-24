@@ -32,6 +32,7 @@
         <junit.version>4.11</junit.version>
         <mockito.version>1.9.5</mockito.version>
         <maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
+        <maven.failsafe.version>2.17</maven.failsafe.version>
         <maven.war.plugin>2.4</maven.war.plugin>
         <log4j.version>1.2.17</log4j.version>
         <slf4j.version>1.7.7</slf4j.version>
@@ -239,6 +240,20 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 		</plugins>
         <resources>

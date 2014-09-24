@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  * All rights reserved.
  */
 
-public class BoatTest {
+public class BoatValidationTest {
     private static Validator validator;
 
     private static final String SIZE_ERROR_MSG = "size must be between %d and %d";
