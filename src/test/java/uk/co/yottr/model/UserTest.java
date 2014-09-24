@@ -113,22 +113,24 @@ public class UserTest {
 
     @Test
     public void email() {
+        final String emailErrorMessage = "invalid email";
+
         user.setEmail(null);
-        assertSingleViolation("required");
+        assertSingleViolation(NOT_NULL_ERROR_MSG);
 
         user.setEmail("");
-        assertSingleViolation("invalid email");
+        assertSingleViolation(emailErrorMessage);
 
         user.setEmail(randomAscii(4));
-        assertSingleViolation("invalid email");
+        assertSingleViolation(emailErrorMessage);
     }
 
     @Test
     public void mobile() {
-        user.setMobile(null);
-        assertSingleViolation("required");
-
         final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 11, 25);
+
+        user.setMobile(null);
+        assertSingleViolation(NOT_NULL_ERROR_MSG);
 
         user.setMobile("");
         assertSingleViolation(sizeErrorMessage);

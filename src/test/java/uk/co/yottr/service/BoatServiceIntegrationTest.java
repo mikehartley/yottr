@@ -48,7 +48,7 @@ public class BoatServiceIntegrationTest {
 
         final String description = randomAlphanumeric(50);
         final Boat.HullType hullType = Boat.HullType.MONO;
-        final Integer length = new Random().nextInt(99);
+        final Integer length = new Random().nextInt(99) + 3;
         final boolean unitsImperial = true;
         final String manufacturer = randomAlphanumeric(15);
         final String model = randomAlphanumeric(10);

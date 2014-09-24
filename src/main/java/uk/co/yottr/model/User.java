@@ -19,18 +19,18 @@ import java.util.HashSet;
 @Table(name = "users")
 public class User {
 
-    private static final String NOT_NULL_ERROR_MSG = "required";
+    private static final String REQUIRED_ERROR_MSG = "required";
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     private Collection<UserRole> userRoles = new HashSet<>(0);
 
     @Column(name = "username", unique = true, nullable = false, length = 50)
-    @NotNull(message = NOT_NULL_ERROR_MSG)
+    @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 2, max = 50)
     private String username;
 
     @Column(name = "password", nullable = false, length = 60)
-    @NotNull(message = NOT_NULL_ERROR_MSG)
+    @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 8, max = 60)
     private String password;
 
@@ -46,22 +46,22 @@ public class User {
     private String title;
 
     @Column(name = "first_name", nullable = false, length = 50)
-    @NotNull(message = NOT_NULL_ERROR_MSG)
+    @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 1, max = 50)
     private String firstName;
 
     @Column(name = "last_name", nullable = false, length = 50)
-    @NotNull(message = NOT_NULL_ERROR_MSG)
+    @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 1, max = 50)
     private String lastName;
 
     @Column(name = "email", nullable = false)
-    @NotNull(message = NOT_NULL_ERROR_MSG)
+    @NotNull(message = REQUIRED_ERROR_MSG)
     @Pattern(regexp = ".*@.*", message = "invalid email")
     private String email;
 
     @Column(name = "mobile", length = 25)
-    @NotNull(message = NOT_NULL_ERROR_MSG)
+    @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 11, max = 25)
     private String mobile;
 

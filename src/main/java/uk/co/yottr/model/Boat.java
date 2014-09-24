@@ -18,6 +18,8 @@ import java.util.Random;
 @Table(name = "boats")
 public class Boat {
 
+    private static final String REQUIRED_ERROR_MSG = "required";
+
     @Id
     @GeneratedValue
     @Column(name = "id")
@@ -27,15 +29,19 @@ public class Boat {
     private String reference;
 
     @Column(name = "manufacturer")
+    @NotNull(message = REQUIRED_ERROR_MSG)
 	@Size(min=1, max=30)
     private String manufacturer;
 
     @Column(name = "model")
+    @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min=1, max=30)
     private String model;
 
     @Column(name = "length")
-    @NotNull @Min(3) @Max(999)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    @Min(3)
+    @Max(999)
     private Integer length;
 
     @Column(name = "units_imperial")
@@ -46,11 +52,11 @@ public class Boat {
     }
 
     @Column(name = "hull_type")
-    @NotNull
+    @NotNull(message = REQUIRED_ERROR_MSG)
     private HullType hullType;
 
     @Column(name = "description")
-    @NotEmpty
+    @NotEmpty(message = REQUIRED_ERROR_MSG)
     private String description;
 
     public Boat() {

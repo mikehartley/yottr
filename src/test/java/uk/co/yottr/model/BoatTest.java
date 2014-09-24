@@ -10,7 +10,6 @@ import javax.validation.Validator;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -21,7 +20,7 @@ public class BoatTest {
     private static Validator validator;
 
     private static final String SIZE_ERROR_MSG = "size must be between %d and %d";
-    private static final String NOT_NULL_ERROR_MSG = "required";
+    private static final String REQUIRED_ERROR_MSG = "required";
 
     private Boat boat;
 
@@ -43,92 +42,60 @@ public class BoatTest {
 
     @Test
     public void manufacturer() {
-        fail("need to sort out missing dependency and implement complete test");
+        final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 1, 30);
 
-        // size 1-30
         boat.setManufacturer(null);
-        Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(REQUIRED_ERROR_MSG);
 
         boat.setManufacturer("");
-        violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(sizeErrorMessage);
 
         boat.setManufacturer("1234567890123456789012345678901");
-        violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(sizeErrorMessage);
     }
 
     @Test
     public void model() {
-        fail("need to sort out missing dependency and implement complete test");
+        final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 1, 30);
 
-        // size 1-30
         boat.setModel(null);
-        Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(REQUIRED_ERROR_MSG);
 
         boat.setModel("");
-        violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(sizeErrorMessage);
 
         boat.setModel("1234567890123456789012345678901");
-        violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(sizeErrorMessage);
     }
 
     @Test
     public void length() {
-        fail("need to sort out missing dependency and implement complete test");
+        final String minErrorMessage = String.format("must be greater than or equal to %d", 3);
+        final String maxErrorMessage = String.format("must be less than or equal to %d", 999);
 
-        // 3-999
         boat.setLength(null);
-        Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(REQUIRED_ERROR_MSG);
 
         boat.setLength(2);
-        violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(minErrorMessage);
 
         boat.setLength(1000);
-        violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(maxErrorMessage);
     }
 
     @Test
     public void hullType() {
-        fail("need to sort out missing dependency and implement complete test");
-
-        // not null
         boat.setHullType(null);
-        Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(REQUIRED_ERROR_MSG);
     }
 
     @Test
     public void description() {
-        fail("need to sort out missing dependency and implement complete test");
-
-        // not empty
         boat.setDescription(null);
-        Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(REQUIRED_ERROR_MSG);
 
         boat.setDescription("");
-        violations = validator.validate(boat);
-        assertEquals("violation count", 1, violations.size());
-        //TODO check violation in more detail
+        assertSingleViolation(REQUIRED_ERROR_MSG);
     }
 
     private void assertSingleViolation(String expectedErrorMessage) {
