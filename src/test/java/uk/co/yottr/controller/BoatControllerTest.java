@@ -1,24 +1,13 @@
 package uk.co.yottr.controller;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.service.BoatService;
-import uk.co.yottr.testconfig.ControllerTestConfig;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,27 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ControllerTestConfig.class})
-@WebAppConfiguration
-public class BoatControllerTest {
-
-    public static final String PATH_TO_VIEWS = "/WEB-INF/views/";
-    public static final String JSP_SUFFIX = ".jsp";
-    private MockMvc mockMvc;
+public class BoatControllerTest extends AbstractControllerTest {
 
     @Autowired
-    WebApplicationContext webApplicationContext;
-
-    @Autowired
-    BoatService mockBoatService;
-
-    @Before
-    public void beforeEachTest() {
-        assertNotNull("mock boat service", mockBoatService);
-
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
+    private BoatService mockBoatService;
 
     @After
     public void afterEachTest() {
@@ -107,6 +79,25 @@ public class BoatControllerTest {
     }
 
     @Test
+    public void testSignupActionWhenInError() throws Exception {
+        final String viewNameWhenInError = "newListing";
+        final String boatAttribute = "boat";
+
+        final String manufacturerProperty = "manufacturer";
+
+        mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML))
+                .andExpect(status().isOk())
+                .andExpect(model().hasErrors())
+                .andExpect(view().name(viewNameWhenInError))
+                .andExpect(forwardedUrl(urlForView(viewNameWhenInError)))
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists(boatAttribute))
+                .andExpect(model().attribute(boatAttribute, hasProperty(manufacturerProperty, nullValue())));
+
+        verify(mockBoatService, never()).save(any(Boat.class));
+    }
+
+    @Test
     public void testListBoats() throws Exception {
         final String viewName = "boatList";
         mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
@@ -137,9 +128,5 @@ public class BoatControllerTest {
                 .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(0));
-    }
-
-    private String urlForView(String viewName) {
-        return PATH_TO_VIEWS + viewName + JSP_SUFFIX;
     }
 }

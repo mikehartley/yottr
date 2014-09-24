@@ -1,0 +1,106 @@
+package uk.co.yottr.controller;
+
+import org.junit.After;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import uk.co.yottr.model.User;
+import uk.co.yottr.service.UserService;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+/*
+ * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * All rights reserved.
+ */
+
+public class AdminControllerTest extends AbstractControllerTest {
+
+    @Autowired
+    private UserService mockUserService;
+
+    @After
+    public void afterEachTest() {
+        verifyNoMoreInteractions(mockUserService);
+        reset(mockUserService);
+    }
+
+    @Test
+    public void testGetUsers() throws Exception {
+        final String viewName = "manageUsers";
+        mockMvc.perform(get("/admin/users").contentType(MediaType.TEXT_HTML))
+                .andExpect(status().isOk())
+                .andExpect(view().name(viewName))
+                .andExpect(forwardedUrl(urlForView(viewName)))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("users"));
+
+        verify(mockUserService, times(1)).findAll();
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        final String viewName = "manageUsers";
+        Long userId = 4L;
+
+        when(mockUserService.userExists(userId)).thenReturn(true);
+
+        mockMvc.perform(get("/admin/user/" + userId + "/delete").contentType(MediaType.TEXT_HTML))
+                .andExpect(status().isOk())
+                .andExpect(view().name(viewName))
+                .andExpect(forwardedUrl(urlForView(viewName)))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("users"));
+
+        verify(mockUserService, times(1)).userExists(userId);
+        verify(mockUserService, times(1)).delete(userId);
+        verify(mockUserService, times(1)).findAll();
+    }
+
+    @Test
+    public void testDeleteUserWhenUserNotFound() throws Exception {
+        final Long userId = 4L;
+
+        mockMvc.perform(get("/admin/user/" + userId + "/delete").contentType(MediaType.TEXT_HTML))
+                .andExpect(status().isNotFound());
+
+        verify(mockUserService, times(1)).userExists(userId);
+    }
+
+    @Test
+    public void testFlipEnabled() throws Exception {
+        final String viewName = "manageUsers";
+        Long userId = 4L;
+
+        when(mockUserService.userExists(userId)).thenReturn(true);
+        when(mockUserService.findById(userId)).thenReturn(new User());
+
+        mockMvc.perform(get("/admin/user/4/enabled/flip").contentType(MediaType.TEXT_HTML))
+                .andExpect(status().isOk())
+                .andExpect(view().name(viewName))
+                .andExpect(forwardedUrl(urlForView(viewName)))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("users"));
+
+        verify(mockUserService, times(1)).userExists(4L);
+        verify(mockUserService, times(1)).findById(4L);
+        verify(mockUserService, times(1)).save(any(User.class));
+        verify(mockUserService, times(1)).findAll();
+    }
+
+    @Test
+    public void testFlipEnabledWhenUserNotFound() throws Exception {
+        final Long userId = 4L;
+
+        mockMvc.perform(get("/admin/user/" + userId + "/enabled/flip").contentType(MediaType.TEXT_HTML))
+                .andExpect(status().isNotFound());
+
+        verify(mockUserService, times(1)).userExists(userId);
+    }
+}

@@ -32,7 +32,7 @@ public class AdminController {
 
         LOG.info("landed in [get] users method");
 
-        return modelAndViewForAllUsers();
+        return modelAndViewForManageUsers();
 	}
 
     @RequestMapping(value = "/admin/user/{id}/delete", method = RequestMethod.GET)
@@ -44,7 +44,7 @@ public class AdminController {
 
         userService.delete(id);
 
-        return modelAndViewForAllUsers();
+        return modelAndViewForManageUsers();
     }
 
     @RequestMapping(value = "/admin/user/{id}/enabled/flip", method = RequestMethod.GET)
@@ -58,7 +58,7 @@ public class AdminController {
         user.setEnabled(!user.isEnabled());
         userService.save(user);
 
-        return modelAndViewForAllUsers();
+        return modelAndViewForManageUsers();
     }
 
     private void checkUserExists(long id) throws ResourceNotFoundException {
@@ -68,7 +68,7 @@ public class AdminController {
         }
     }
 
-    private ModelAndView modelAndViewForAllUsers() {
+    private ModelAndView modelAndViewForManageUsers() {
         ModelAndView modelAndView = new ModelAndView("manageUsers");
         Collection<User> allUsers = userService.findAll();
         modelAndView.addObject("users", allUsers);
