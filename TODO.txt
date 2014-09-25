@@ -9,6 +9,8 @@ Tech:
         qualifications
         sailing style
 
+    Sort out relations between user and roles, and qualifications.
+
     Paging support on queries.
     UI acceptance testing using Selenium.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.

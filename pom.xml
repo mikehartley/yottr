@@ -40,6 +40,7 @@
         <jackson.version>2.2.1</jackson.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <glassfish.el-impl.version>2.2</glassfish.el-impl.version>
+        <joda.time.version>2.4</joda.time.version>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd-MM-yyyy HH:mm:ss</maven.build.timestamp.format>
@@ -121,6 +122,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda.time.version}</version>
         </dependency>
 
         <dependency>

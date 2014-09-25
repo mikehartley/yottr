@@ -69,6 +69,7 @@ public class User {
         UK, OTHER
     }
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "country")
     @NotNull
     private Country country;
