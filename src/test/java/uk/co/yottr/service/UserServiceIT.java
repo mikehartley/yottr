@@ -10,11 +10,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
 import uk.co.yottr.security.Role;
-import uk.co.yottr.testconfig.TestConfig;
+import uk.co.yottr.testconfig.IntegrationTestConfig;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
 import static org.junit.Assert.*;
@@ -25,7 +23,7 @@ import static org.junit.Assert.*;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=TestConfig.class)
+@ContextConfiguration(classes=IntegrationTestConfig.class)
 public class UserServiceIT {
 
     @Autowired
@@ -61,19 +59,16 @@ public class UserServiceIT {
     @Test
     public void userWithRoles() throws Exception {
 
+        final Role expectedRole = Role.CREW;
         User user = createUser(randomAlphanumeric(10));
-        Set<UserRole> userRoles = new HashSet<>();
-        final UserRole expectedRole = new UserRole(user, Role.CREW);
-        userRoles.add(expectedRole);
-        user.setUserRoles(userRoles);
+        user.addRole(expectedRole);
 
         final User savedUser = userService.save(user);
 
         assertFalse("roles should not be empty", savedUser.getUserRoles().isEmpty());
 
         final UserRole savedRole = savedUser.getUserRoles().iterator().next();
-        assertEquals("user from saved role", expectedRole.getUser(), savedRole.getUser());
-        assertEquals("role from saved role", expectedRole.getRole(), savedRole.getRole());
+        assertEquals("role from saved role", expectedRole, savedRole.getRole());
     }
 
     @Test
@@ -157,7 +152,6 @@ public class UserServiceIT {
         user.setCountry(User.Country.UK);
         user.setPostcode("W8 4QT");
         user.setAboutMe("This is a bunch of text followed by some random characters " + randomAlphanumeric(50));
-        user.setUserRoles(new HashSet<UserRole>());
         user.setEnabled(true);
 
         return user;

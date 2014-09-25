@@ -7,11 +7,10 @@ Tech:
         date posted
         date relevant
         qualifications
-        sailing style
-
-    Sort out relations between user and roles, and qualifications.
+        sailing style [ cruising | racing | all ]
 
     Paging support on queries.
+    SQL initialisation script.
     UI acceptance testing using Selenium.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
 

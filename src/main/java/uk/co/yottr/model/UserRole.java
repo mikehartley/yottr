@@ -12,17 +12,12 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table(name = "user_roles",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"role", "username"}))
+@Table(name = "user_roles")
 public class UserRole {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "username", nullable = false)
-    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 45)
@@ -32,17 +27,12 @@ public class UserRole {
         // required by hibernate
     }
 
-    public UserRole(User user, Role role) {
-        this.user = user;
+    public UserRole(Role role) {
         this.role = role;
     }
 
     public Long getId() {
         return this.id;
-    }
-
-    public User getUser() {
-        return this.user;
     }
 
     public Role getRole() {

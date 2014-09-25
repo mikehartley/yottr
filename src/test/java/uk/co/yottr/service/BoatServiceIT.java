@@ -9,7 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
-import uk.co.yottr.testconfig.TestConfig;
+import uk.co.yottr.testconfig.IntegrationTestConfig;
 
 import java.util.Random;
 
@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=TestConfig.class)
+@ContextConfiguration(classes=IntegrationTestConfig.class)
 public class BoatServiceIT {
 
     @Autowired
@@ -57,7 +57,7 @@ public class BoatServiceIT {
         final String model = randomAlphanumeric(10);
         final LocalDate now = new LocalDate(DateTimeZone.UTC);
         final LocalDate dateRelevantTo = new LocalDate(DateTimeZone.UTC);
-        final RyaSailCruisingLevel minLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
+        final RyaSailCruisingLevel minLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.COASTAL_SKIPPER);
 
         Boat boat = new Boat();
         boat.setDescription(description);

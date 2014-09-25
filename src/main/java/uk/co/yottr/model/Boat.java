@@ -69,7 +69,8 @@ public class Boat {
     private LocalDate dateRelevantTo;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "minimum_required_level", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "min_required_level")
     private RyaSailCruisingLevel minimumRequiredLevel;
 
     /**
@@ -78,7 +79,7 @@ public class Boat {
     public Boat() {
         this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
         this.datePosted = new LocalDate(DateTimeZone.UTC);
-        this.minimumRequiredLevel = RyaSailCruisingLevel.NONE;
+        this.minimumRequiredLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.NONE);
     }
 
     public String getReference() {

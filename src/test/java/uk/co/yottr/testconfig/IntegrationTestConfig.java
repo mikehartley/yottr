@@ -29,7 +29,7 @@ import java.util.Properties;
 @EnableJpaRepositories("uk.co.yottr.repository")
 @Import(SecurityConfig.class)
 @EnableTransactionManagement
-public class TestConfig {
+public class IntegrationTestConfig {
 
     @Bean
     public SessionFactory sessionFactory() {

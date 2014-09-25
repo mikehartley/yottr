@@ -21,7 +21,7 @@ public class User {
 
     private static final String REQUIRED_ERROR_MSG = "required";
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<UserRole> userRoles = new HashSet<>(0);
 
     @Column(name = "username", unique = true, nullable = false, length = 50)
@@ -88,10 +88,6 @@ public class User {
 
     public Collection<UserRole> getUserRoles() {
         return userRoles;
-    }
-
-    public void setUserRoles(Collection<UserRole> userRoles) {
-        this.userRoles = userRoles;
     }
 
     public String getUsername() {
@@ -184,8 +180,8 @@ public class User {
 
     public void addRole(Role role) {
         Collection<UserRole> newRoles = new ArrayList<>(userRoles);
-        newRoles.add(new UserRole(this, role));
-        setUserRoles(newRoles);
+        newRoles.add(new UserRole(role));
+        userRoles = newRoles;
     }
 
     @Override

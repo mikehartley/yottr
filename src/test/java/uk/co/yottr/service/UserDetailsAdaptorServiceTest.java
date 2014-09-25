@@ -7,11 +7,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import uk.co.yottr.model.User;
-import uk.co.yottr.model.UserRole;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.security.Role;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,15 +37,13 @@ public class UserDetailsAdaptorServiceTest {
         final boolean enabled = true;
         final Role firstRole = Role.CREW;
         final Role secondRole = Role.FREE;
-        final Set<UserRole> userRoles = new HashSet<>();
-        userRoles.add(new UserRole(null, firstRole));
-        userRoles.add(new UserRole(null, secondRole));
 
         final User yottrUser = new User();
         yottrUser.setUsername(username);
         yottrUser.setPassword(password);
         yottrUser.setEnabled(enabled);
-        yottrUser.setUserRoles(userRoles);
+        yottrUser.addRole(firstRole);
+        yottrUser.addRole(secondRole);
 
         when(userRepository.findByUsername(username)).thenReturn(yottrUser);
 
