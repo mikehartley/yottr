@@ -56,13 +56,21 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String hullTypeValue = "MONO";
         final String descriptionProperty = "description";
         final String descriptionValue = "descriptionValue";
+        final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
+        final String minimumQualificationProperty = "minimumRequiredLevel";
+        final String minimumQualificationValue = "400";
+        final int minimumQualificationValueAsInt = Integer.parseInt("400");
+        final String sailingStyleProperty = "sailingStyle";
+        final String sailingStyleValue = "ALL";
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML)
                     .param(manufacturerProperty, manufacturerValue)
                     .param(modelProperty, modelValue)
                     .param(lengthProperty, lengthValue)
                     .param(hullTypeProperty, hullTypeValue)
-                    .param(descriptionProperty, descriptionValue))
+                    .param(descriptionProperty, descriptionValue)
+                    .param(sailingStyleProperty, sailingStyleValue)
+                    .param(minimumQualificationByRankProperty, minimumQualificationValue))
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name(viewName))
@@ -73,7 +81,9 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(boatAttribute, hasProperty(modelProperty, equalTo(modelValue))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(lengthProperty, equalTo(Integer.parseInt(lengthValue)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(hullTypeProperty, equalTo(Boat.HullType.valueOf(hullTypeValue)))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(descriptionProperty, equalTo(descriptionValue))));
+                .andExpect(model().attribute(boatAttribute, hasProperty(descriptionProperty, equalTo(descriptionValue))))
+                .andExpect(model().attribute(boatAttribute, hasProperty(sailingStyleProperty, equalTo(Boat.SailingStyle.valueOf(sailingStyleValue)))))
+                .andExpect(model().attribute(boatAttribute, hasProperty(minimumQualificationProperty, hasProperty("rank", equalTo(minimumQualificationValueAsInt)))));
 
         verify(mockBoatService, times(1)).save(any(Boat.class));
     }

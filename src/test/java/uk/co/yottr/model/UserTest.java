@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
  * All rights reserved.
  */
 
-public class UserValidationTest {
+public class UserTest {
     private static Validator validator;
 
     private User user;

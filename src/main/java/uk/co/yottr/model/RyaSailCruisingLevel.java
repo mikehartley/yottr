@@ -24,14 +24,23 @@ public class RyaSailCruisingLevel {
         YACHTMASTER_OFFSHORE(600, "Yachtmaster Offshore"),
         YACHTMASTER_OCEAN(700, "Yachtmaster Ocean");
 
-        private int rank;
-        private String displayName;
+        public final int rank;
+        public final String displayName;
 
         Level(int rank, String displayName) {
             this.rank = rank;
             this.displayName = displayName;
         }
     }
+
+    public static final RyaSailCruisingLevel NONE = new RyaSailCruisingLevel(Level.NONE);
+    public static final RyaSailCruisingLevel START_YACHTING = new RyaSailCruisingLevel(Level.START_YACHTING);
+    public static final RyaSailCruisingLevel COMPETENT_CREW = new RyaSailCruisingLevel(Level.COMPETENT_CREW);
+    public static final RyaSailCruisingLevel DAY_SKIPPER = new RyaSailCruisingLevel(Level.DAY_SKIPPER);
+    public static final RyaSailCruisingLevel COASTAL_SKIPPER = new RyaSailCruisingLevel(Level.COASTAL_SKIPPER);
+    public static final RyaSailCruisingLevel YACHTMASTER_COASTAL = new RyaSailCruisingLevel(Level.YACHTMASTER_COASTAL);
+    public static final RyaSailCruisingLevel YACHTMASTER_OFFSHORE = new RyaSailCruisingLevel(Level.YACHTMASTER_OFFSHORE);
+    public static final RyaSailCruisingLevel YACHTMASTER_OCEAN = new RyaSailCruisingLevel(Level.YACHTMASTER_OCEAN);
 
     @Id
     @Column(name = "rank")

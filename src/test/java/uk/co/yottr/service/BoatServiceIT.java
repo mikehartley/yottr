@@ -33,7 +33,7 @@ public class BoatServiceIT {
 
         final String uniqueDescription = "some description with unique number : "  + new Random().nextLong();
 
-        Boat boat = createBoat(uniqueDescription);
+        Boat boat = createValidBoat(uniqueDescription);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -58,6 +58,7 @@ public class BoatServiceIT {
         final LocalDate now = new LocalDate(DateTimeZone.UTC);
         final LocalDate dateRelevantTo = new LocalDate(DateTimeZone.UTC);
         final RyaSailCruisingLevel minLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.COASTAL_SKIPPER);
+        final Boat.SailingStyle sailingStyle = Boat.SailingStyle.RACING;
 
         Boat boat = new Boat();
         boat.setDescription(description);
@@ -68,6 +69,7 @@ public class BoatServiceIT {
         boat.setModel(model);
         boat.setDateRelevantTo(dateRelevantTo);
         boat.setMinimumRequiredLevel(minLevel);
+        boat.setSailingStyle(sailingStyle);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -81,9 +83,10 @@ public class BoatServiceIT {
         assertEquals("date posted", now.toDateTimeAtStartOfDay(), savedBoat.getDatePosted().toDateTimeAtStartOfDay());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
         assertEquals("minimum level", minLevel, savedBoat.getMinimumRequiredLevel());
+        assertEquals("sailing style", sailingStyle, savedBoat.getSailingStyle());
     }
 
-    private Boat createBoat(String description) {
+    private Boat createValidBoat(String description) {
         Boat boat = new Boat();
         boat.setDescription(description);
         boat.setHullType(Boat.HullType.MONO);
@@ -91,6 +94,7 @@ public class BoatServiceIT {
         boat.setUnitsImperial(true);
         boat.setManufacturer("Halberg Rassy");
         boat.setModel("HR36");
+        boat.setSailingStyle(Boat.SailingStyle.ALL);
         return boat;
     }
 }

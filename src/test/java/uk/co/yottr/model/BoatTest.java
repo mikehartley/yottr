@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  * All rights reserved.
  */
 
-public class BoatValidationTest {
+public class BoatTest {
     private static Validator validator;
 
     private static final String SIZE_ERROR_MSG = "size must be between %d and %d";
@@ -31,7 +31,7 @@ public class BoatValidationTest {
 
     @Before
     public void beforeEachTest() {
-        boat = createBoat();
+        boat = createValidBoat();
     }
 
     @Test
@@ -98,6 +98,31 @@ public class BoatValidationTest {
         assertSingleViolation(REQUIRED_ERROR_MSG);
     }
 
+    @Test
+    public void sailingStyle() {
+        boat.setSailingStyle(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
+    }
+
+    @Test
+    public void canSetMinQualificationByRank() {
+        boat.setMinimumRequiredLevel(RyaSailCruisingLevel.NONE);
+
+        boat.setMinimumRequiredLevelByRank(RyaSailCruisingLevel.DAY_SKIPPER.getRank());
+
+        assertEquals(RyaSailCruisingLevel.DAY_SKIPPER.getRank(), boat.getMinimumRequiredLevel().getRank());
+        assertEquals(RyaSailCruisingLevel.DAY_SKIPPER.getDisplayName(), boat.getMinimumRequiredLevel().getDisplayName());
+    }
+
+    @Test
+    public void doesNotSetMinQualificationByRankWhenRankInvalid() {
+        boat.setMinimumRequiredLevel(RyaSailCruisingLevel.COMPETENT_CREW);
+
+        boat.setMinimumRequiredLevelByRank(654513516);
+
+        assertEquals(RyaSailCruisingLevel.COMPETENT_CREW.getRank(), boat.getMinimumRequiredLevel().getRank());
+    }
+
     private void assertSingleViolation(String expectedErrorMessage) {
         Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
         assertEquals(violations.toString(), 1, violations.size());
@@ -105,13 +130,14 @@ public class BoatValidationTest {
         assertEquals(violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
     }
 
-    private Boat createBoat() {
+    private Boat createValidBoat() {
         Boat boat = new Boat();
         boat.setManufacturer("blah");
         boat.setModel("blah");
         boat.setLength(10);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("blah");
+        boat.setSailingStyle(Boat.SailingStyle.ALL);
         return boat;
     }
 }

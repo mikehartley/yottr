@@ -2,6 +2,8 @@ TODO list
 =========
 
 Tech:
+    Java 8
+
     Missing details:
         boat length units
         date posted

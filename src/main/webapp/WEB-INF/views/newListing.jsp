@@ -52,6 +52,16 @@
                     <td><springForm:errors path="description" cssClass="error" /></td>
                 </tr>
                 <tr>
+                    <td>Sailing style:</td>
+                    <td><springForm:select path="sailingStyle">
+                            <springForm:option value="" label="Select sailing style:" />
+                            <springForm:option value="CRUISING" label="Cruising" />
+                            <springForm:option value="RACING" label="Racing" />
+                            <springForm:option value="ALL" label="Both cruising and racing" />
+                        </springForm:select></td>
+                    <td><springForm:errors path="sailingStyle" cssClass="error" /></td>
+                </tr>
+                <tr>
                     <td colspan="3"><input type="submit" value="Save boat details"></td>
                 </tr>
             </table>

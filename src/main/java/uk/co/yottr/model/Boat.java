@@ -9,6 +9,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -72,6 +73,15 @@ public class Boat {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "min_required_level")
     private RyaSailCruisingLevel minimumRequiredLevel;
+
+    public enum SailingStyle {
+        CRUISING, RACING, ALL
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sailing_style", nullable = false)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private SailingStyle sailingStyle;
 
     /**
      * Constructs a new Boat.
@@ -152,5 +162,23 @@ public class Boat {
 
     public void setMinimumRequiredLevel(RyaSailCruisingLevel minimumRequiredLevel) {
         this.minimumRequiredLevel = minimumRequiredLevel;
+    }
+
+    public void setMinimumRequiredLevelByRank(int rank) {
+        for (RyaSailCruisingLevel.Level level : Arrays.asList(RyaSailCruisingLevel.Level.values())) {
+            if (rank == level.rank) {
+                this.minimumRequiredLevel = new RyaSailCruisingLevel(level);
+            }
+        }
+        // if there's no match then nothing gets set, but this would only happen if someone
+        // has been messing about with the request parameters
+    }
+
+    public SailingStyle getSailingStyle() {
+        return sailingStyle;
+    }
+
+    public void setSailingStyle(SailingStyle sailingStyle) {
+        this.sailingStyle = sailingStyle;
     }
 }
