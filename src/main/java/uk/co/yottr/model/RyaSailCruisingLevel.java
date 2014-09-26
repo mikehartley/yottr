@@ -3,6 +3,7 @@ package uk.co.yottr.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -13,6 +14,7 @@ import javax.persistence.Id;
  * Created by mike on 25/09/14.
  */
 @Entity
+@Table(name = "rya_sail_cruising_level")
 public class RyaSailCruisingLevel {
     public enum Level {
         NONE(0, "None"),

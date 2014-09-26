@@ -2,14 +2,7 @@ TODO list
 =========
 
 Tech:
-    Java 8
-
-    Missing details:
-        boat length units
-        date posted
-        date relevant
-        qualifications
-        sailing style [ cruising | racing | all ]
+    Pre-populate rya levels. No cascade on boat property.
 
     Paging support on queries.
     SQL initialisation script.

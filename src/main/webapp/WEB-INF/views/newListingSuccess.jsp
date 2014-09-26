@@ -11,12 +11,22 @@
             Boat Saved Successfully.
         </h3>
 
+        <strong>Date posted: </strong>${boat.datePosted}<br>
+        <strong>Date relevant to: </strong>${boat.dateRelevantTo}<br>
         <strong>Reference: </strong>${boat.reference}<br>
         <strong>Manufacturer: </strong>${boat.manufacturer}<br>
         <strong>Model: </strong>${boat.model}<br>
-        <strong>Length: </strong>${boat.length}<br>
+        <strong>Length: </strong>${boat.length}
+        <c:choose>
+            <c:when test="${boat.unitsImperial}">Feet</c:when>
+            <c:otherwise>Metres</c:otherwise>
+        </c:choose><br>
         <strong>Hull type: </strong>${boat.hullType}<br>
+        <strong>Minimum required RYA sail cruising qualification: </strong>${boat.minimumRequiredLevel.displayName}<br>
+        <strong>Sailing style: </strong>${boat.sailingStyle.displayName}<br>
+
         <hr>
+
         <strong>Description</strong><br>
         ${boat.description}<br>
         <hr>

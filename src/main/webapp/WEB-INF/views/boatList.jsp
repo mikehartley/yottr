@@ -12,11 +12,19 @@
         </h3>
 
         <c:forEach var="boat" items="${boats}">
+            <strong>Date posted: </strong>${boat.datePosted}<br>
+            <strong>Date relevant to: </strong>${boat.dateRelevantTo}<br>
             <strong>Reference: </strong>${boat.reference}<br>
             <strong>Manufacturer: </strong>${boat.manufacturer}<br>
             <strong>Model: </strong>${boat.model}<br>
-            <strong>Length: </strong>${boat.length}<br>
+            <strong>Length: </strong>${boat.length}
+            <c:choose>
+                <c:when test="${boat.unitsImperial}">Feet</c:when>
+                <c:otherwise>Metres</c:otherwise>
+            </c:choose><br>
             <strong>Hull type: </strong>${boat.hullType}<br>
+            <strong>Minimum required RYA sail cruising qualification: </strong>${boat.minimumRequiredLevel.displayName}<br>
+            <strong>Sailing style: </strong>${boat.sailingStyle.displayName}<br>
             <strong>Description: </strong>${boat.description}<br>
             <hr>
         </c:forEach>

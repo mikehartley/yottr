@@ -10,6 +10,7 @@ import javax.validation.Validator;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -105,13 +106,15 @@ public class BoatTest {
     }
 
     @Test
-    public void canSetMinQualificationByRank() {
+    public void canSetAndGetMinQualificationByRank() {
         boat.setMinimumRequiredLevel(RyaSailCruisingLevel.NONE);
 
         boat.setMinimumRequiredLevelByRank(RyaSailCruisingLevel.DAY_SKIPPER.getRank());
 
         assertEquals(RyaSailCruisingLevel.DAY_SKIPPER.getRank(), boat.getMinimumRequiredLevel().getRank());
         assertEquals(RyaSailCruisingLevel.DAY_SKIPPER.getDisplayName(), boat.getMinimumRequiredLevel().getDisplayName());
+
+        assertEquals(RyaSailCruisingLevel.DAY_SKIPPER.getRank(), boat.getMinimumRequiredLevelByRank());
     }
 
     @Test
@@ -121,6 +124,16 @@ public class BoatTest {
         boat.setMinimumRequiredLevelByRank(654513516);
 
         assertEquals(RyaSailCruisingLevel.COMPETENT_CREW.getRank(), boat.getMinimumRequiredLevel().getRank());
+    }
+
+    @Test
+    public void unitsDefaultToImperial() {
+        assertTrue(new Boat().isUnitsImperial());
+    }
+
+    @Test
+    public void hullTypeDefaultsToMonohull() {
+        assertEquals(Boat.HullType.MONO, new Boat().getHullType());
     }
 
     private void assertSingleViolation(String expectedErrorMessage) {
@@ -137,7 +150,7 @@ public class BoatTest {
         boat.setLength(10);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("blah");
-        boat.setSailingStyle(Boat.SailingStyle.ALL);
+        boat.setSailingStyle(SailingStyle.ALL);
         return boat;
     }
 }

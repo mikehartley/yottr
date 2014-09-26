@@ -43,7 +43,7 @@ public class IntegrationTestConfig {
         prop.put("hibernate.format_sql", "true");
         prop.put("hibernate.show_sql", "true");
         prop.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
-        prop.put("hibernate.hbm2ddl.auto", "create-drop"); // validate | update | create | create-drop
+        prop.put("hibernate.hbm2ddl.auto", "update"); // validate | update | create | create-drop
         return prop;
     }
 

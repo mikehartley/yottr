@@ -5,15 +5,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.co.yottr.config.AppConfig;
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.RyaSailCruisingLevel;
+import uk.co.yottr.model.SailingStyle;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.security.Role;
+
+import java.time.LocalDate;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -51,7 +56,7 @@ public class InitialiseDatabase {
         User user = new User();
 
         user.setUsername("mike");
-        user.setPassword("aph3xtwIn");
+        user.setPassword(new BCryptPasswordEncoder().encode("aph3xtwIn"));
         user.addRole(Role.ADMIN);
         user.addRole(Role.CREW);
         user.addRole(Role.FREE);
@@ -77,8 +82,12 @@ public class InitialiseDatabase {
         boat.setManufacturer("Halberg Rassay");
         boat.setModel("HR50");
         boat.setLength(50);
+        boat.setUnitsImperial(false);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("You want to sail around the world? You need to look elsewhere, my tub is purely a gin palace.");
+        boat.setSailingStyle(SailingStyle.CRUISING);
+        boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
+        boat.setMinimumRequiredLevel(RyaSailCruisingLevel.YACHTMASTER_COASTAL);
 
         boatRepository.save(boat);
     }

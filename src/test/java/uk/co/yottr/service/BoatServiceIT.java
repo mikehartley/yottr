@@ -1,7 +1,5 @@
 package uk.co.yottr.service;
 
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +7,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
+import uk.co.yottr.model.SailingStyle;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
 
+import java.time.LocalDate;
 import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
@@ -55,10 +55,10 @@ public class BoatServiceIT {
         final boolean unitsImperial = true;
         final String manufacturer = randomAlphanumeric(15);
         final String model = randomAlphanumeric(10);
-        final LocalDate now = new LocalDate(DateTimeZone.UTC);
-        final LocalDate dateRelevantTo = new LocalDate(DateTimeZone.UTC);
         final RyaSailCruisingLevel minLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.COASTAL_SKIPPER);
-        final Boat.SailingStyle sailingStyle = Boat.SailingStyle.RACING;
+        final SailingStyle sailingStyle = SailingStyle.RACING;
+        final LocalDate now = LocalDate.now();
+        final LocalDate dateRelevantTo = LocalDate.now();
 
         Boat boat = new Boat();
         boat.setDescription(description);
@@ -67,9 +67,9 @@ public class BoatServiceIT {
         boat.setUnitsImperial(unitsImperial);
         boat.setManufacturer(manufacturer);
         boat.setModel(model);
-        boat.setDateRelevantTo(dateRelevantTo);
         boat.setMinimumRequiredLevel(minLevel);
         boat.setSailingStyle(sailingStyle);
+        boat.setDateRelevantTo(dateRelevantTo);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -80,10 +80,10 @@ public class BoatServiceIT {
         assertEquals("manufacturer", manufacturer, savedBoat.getManufacturer());
         assertEquals("model", model, savedBoat.getModel());
         assertNotNull("reference", savedBoat.getReference());
-        assertEquals("date posted", now.toDateTimeAtStartOfDay(), savedBoat.getDatePosted().toDateTimeAtStartOfDay());
-        assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
+        assertEquals("date posted", now.atStartOfDay(), savedBoat.getDatePosted().atStartOfDay());
         assertEquals("minimum level", minLevel, savedBoat.getMinimumRequiredLevel());
         assertEquals("sailing style", sailingStyle, savedBoat.getSailingStyle());
+        assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
     }
 
     private Boat createValidBoat(String description) {
@@ -94,7 +94,7 @@ public class BoatServiceIT {
         boat.setUnitsImperial(true);
         boat.setManufacturer("Halberg Rassy");
         boat.setModel("HR36");
-        boat.setSailingStyle(Boat.SailingStyle.ALL);
+        boat.setSailingStyle(SailingStyle.ALL);
         return boat;
     }
 }

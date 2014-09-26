@@ -1,14 +1,14 @@
 package uk.co.yottr.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -48,7 +48,7 @@ public class Boat {
     private Integer length;
 
     @Column(name = "units_imperial", nullable = false)
-    private boolean isUnitsImperial;
+    private boolean isUnitsImperial = true;
 
     public enum HullType {
         MONO, MULTI
@@ -57,7 +57,7 @@ public class Boat {
     @Enumerated(EnumType.STRING)
     @Column(name = "hull_type", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
-    private HullType hullType;
+    private HullType hullType = HullType.MONO;
 
     @Column(name = "description", nullable = false)
     @NotEmpty(message = REQUIRED_ERROR_MSG)
@@ -66,17 +66,14 @@ public class Boat {
     @Column(name = "date_posted", nullable = false)
     private LocalDate datePosted;
 
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Column(name = "date_relevant_to")
     private LocalDate dateRelevantTo;
 
-    @Enumerated(EnumType.STRING)
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)//, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "min_required_level")
+    @NotNull(message = REQUIRED_ERROR_MSG)
     private RyaSailCruisingLevel minimumRequiredLevel;
-
-    public enum SailingStyle {
-        CRUISING, RACING, ALL
-    }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sailing_style", nullable = false)
@@ -88,7 +85,7 @@ public class Boat {
      */
     public Boat() {
         this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
-        this.datePosted = new LocalDate(DateTimeZone.UTC);
+        this.datePosted = LocalDate.now();
         this.minimumRequiredLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.NONE);
     }
 
@@ -162,6 +159,10 @@ public class Boat {
 
     public void setMinimumRequiredLevel(RyaSailCruisingLevel minimumRequiredLevel) {
         this.minimumRequiredLevel = minimumRequiredLevel;
+    }
+
+    public int getMinimumRequiredLevelByRank() {
+        return minimumRequiredLevel.getRank();
     }
 
     public void setMinimumRequiredLevelByRank(int rank) {

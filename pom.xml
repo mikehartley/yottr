@@ -14,7 +14,8 @@
 	<packaging>war</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 	<properties>
-		<java.version>1.7</java.version>
+		<java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.springframework.version>4.1.0.RELEASE</org.springframework.version>
         <spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
@@ -40,7 +41,6 @@
         <jackson.version>2.2.1</jackson.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <glassfish.el-impl.version>2.2</glassfish.el-impl.version>
-        <joda.time.version>2.4</joda.time.version>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd-MM-yyyy HH:mm:ss</maven.build.timestamp.format>
@@ -122,12 +122,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${joda.time.version}</version>
         </dependency>
 
         <dependency>
