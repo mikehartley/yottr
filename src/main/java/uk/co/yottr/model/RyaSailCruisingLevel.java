@@ -7,9 +7,6 @@ import javax.persistence.*;
  * All rights reserved.
  */
 
-/**
- * Created by mike on 25/09/14.
- */
 @Entity
 @Table(name = "rya_sail_cruising_level")
 public class RyaSailCruisingLevel {

@@ -56,7 +56,7 @@ public class AdminController {
 
         User user = userService.findById(id);
         user.setEnabled(!user.isEnabled());
-        userService.save(user);
+        userService.save(user, false);
 
         return modelAndViewForManageUsers();
     }

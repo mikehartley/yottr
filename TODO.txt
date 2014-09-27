@@ -2,8 +2,6 @@ TODO list
 =========
 
 Tech:
-    Pre-populate rya levels. No cascade on boat property.
-
     Paging support on queries.
     SQL initialisation script.
     UI acceptance testing using Selenium.

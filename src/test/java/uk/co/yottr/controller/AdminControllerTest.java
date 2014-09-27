@@ -90,7 +90,7 @@ public class AdminControllerTest extends AbstractControllerTest {
 
         verify(mockUserService, times(1)).userExists(4L);
         verify(mockUserService, times(1)).findById(4L);
-        verify(mockUserService, times(1)).save(any(User.class));
+        verify(mockUserService, times(1)).save(any(User.class), eq(false));
         verify(mockUserService, times(1)).findAll();
     }
 

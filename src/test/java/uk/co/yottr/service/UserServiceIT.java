@@ -39,7 +39,7 @@ public class UserServiceIT {
 
         User user = createUser(username);
 
-        final User savedUser = userService.save(user);
+        final User savedUser = userService.save(user, true);
 
         final User foundUser = userService.findByUsername(username);
 
@@ -63,7 +63,7 @@ public class UserServiceIT {
         User user = createUser(randomAlphanumeric(10));
         user.addRole(expectedRole);
 
-        final User savedUser = userService.save(user);
+        final User savedUser = userService.save(user, true);
 
         assertFalse("roles should not be empty", savedUser.getUserRoles().isEmpty());
 
@@ -76,7 +76,7 @@ public class UserServiceIT {
 
         final String username = randomAlphanumeric(10);
         User user = createUser(username);
-        final User savedUser = userService.save(user);
+        final User savedUser = userService.save(user, true);
 
         final User foundUser = userService.findById(savedUser.getId());
 
@@ -86,7 +86,7 @@ public class UserServiceIT {
     @Test
     public void deleteByIdAndUserExists() throws Exception {
 
-        final User savedUser = userService.save(createUser(randomAlphanumeric(10)));
+        final User savedUser = userService.save(createUser(randomAlphanumeric(10)), true);
 
         final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
         assertTrue("user should exist before delete", userExistsBeforeDelete);
@@ -124,7 +124,7 @@ public class UserServiceIT {
         user.setAboutMe(aboutMe);
         user.setEnabled(enabled);
 
-        final User savedUser = userService.save(user);
+        final User savedUser = userService.save(user, true);
 
         assertEquals("username", username, savedUser.getUsername());
         assertTrue("password matches", passwordEncoder.matches(password, savedUser.getPassword()));

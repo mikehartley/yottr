@@ -104,7 +104,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(userAttribute, hasProperty(postcodeProperty, equalTo(postcodeValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(aboutMeProperty, equalTo(aboutMeValue))));
 
-        verify(mockUserService, times(1)).save(any(User.class));
+        verify(mockUserService, times(1)).save(any(User.class), eq(true));
     }
 
     @Test
@@ -123,6 +123,6 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists(userAttribute))
                 .andExpect(model().attribute(userAttribute, hasProperty(usernameProperty, nullValue())));
 
-        verify(mockUserService, never()).save(any(User.class));
+        verify(mockUserService, never()).save(any(User.class), eq(true));
     }
 }

@@ -28,10 +28,14 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User save(User user) {
-        final String plaintextPassword = user.getPassword();
-        final String encodedPassword = passwordEncoder.encode(plaintextPassword);
-        user.setPassword(encodedPassword);
+    public User save(User user, boolean encodePassword) {
+
+        if (encodePassword) {
+            final String plaintextPassword = user.getPassword();
+            final String encodedPassword = passwordEncoder.encode(plaintextPassword);
+            user.setPassword(encodedPassword);
+        }
+
         return userRepository.save(user);
     }
 

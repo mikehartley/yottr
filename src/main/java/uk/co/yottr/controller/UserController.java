@@ -50,7 +50,7 @@ public class UserController {
         user.addRole(Role.FREE);
         user.setEnabled(true);
 
-        userService.save(user);
+        userService.save(user, true);
 
         LOG.info("Signed up new user: " + user);
 
