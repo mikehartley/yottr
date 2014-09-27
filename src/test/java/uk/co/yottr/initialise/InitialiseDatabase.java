@@ -15,10 +15,13 @@ import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingStyle;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.BoatRepository;
+import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.security.Role;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -35,7 +38,7 @@ import java.time.LocalDate;
 @WebAppConfiguration
 public class InitialiseDatabase {
 
-    private boolean ENABLED = false; // this should be left as false unless you're initialising the database
+    private static final boolean ENABLED = false; // this should be left as false unless you're initialising the database
 
     @Autowired
     private UserRepository userRepository;
@@ -43,16 +46,33 @@ public class InitialiseDatabase {
     @Autowired
     private BoatRepository boatRepository;
 
+    @Autowired
+    private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
+
     @Before
     public void ensureRepositoryHasBeenInjected() {
         Assert.assertNotNull("check spring configuration : userRepository was not injected", userRepository);
         Assert.assertNotNull("check spring configuration : boatRepository was not injected", boatRepository);
+        Assert.assertNotNull("check spring configuration : ryaSailCruisingLevelRepository was not injected", ryaSailCruisingLevelRepository);
     }
 
     @Test
-    public void setupAdminUser() {
+    public void init() {
         if (!ENABLED) return;
 
+        initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
+        setupAdminUser();
+        addBoat();
+    }
+
+    public static void initialiseRyaSailCruisingLevels(RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
+        final List<RyaSailCruisingLevel.Level> levels = Arrays.asList(RyaSailCruisingLevel.Level.values());
+        for (RyaSailCruisingLevel.Level level : levels) {
+            ryaSailCruisingLevelRepository.save(new RyaSailCruisingLevel(level));
+        }
+    }
+
+    private void setupAdminUser() {
         User user = new User();
 
         user.setUsername("mike");
@@ -73,10 +93,7 @@ public class InitialiseDatabase {
         userRepository.save(user);
     }
 
-    @Test
-    public void addBoat() {
-        if (!ENABLED) return;
-
+    private void addBoat() {
         Boat boat = new Boat();
 
         boat.setManufacturer("Halberg Rassay");
@@ -87,7 +104,9 @@ public class InitialiseDatabase {
         boat.setDescription("You want to sail around the world? You need to look elsewhere, my tub is purely a gin palace.");
         boat.setSailingStyle(SailingStyle.CRUISING);
         boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
-        boat.setMinimumRequiredLevel(RyaSailCruisingLevel.YACHTMASTER_COASTAL);
+
+        final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank());
+        boat.setMinimumRequiredLevel(level);
 
         boatRepository.save(boat);
     }

@@ -1,9 +1,6 @@
 package uk.co.yottr.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -45,6 +42,10 @@ public class RyaSailCruisingLevel {
     public static final RyaSailCruisingLevel YACHTMASTER_OCEAN = new RyaSailCruisingLevel(Level.YACHTMASTER_OCEAN);
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "rank")
     private int rank;
 

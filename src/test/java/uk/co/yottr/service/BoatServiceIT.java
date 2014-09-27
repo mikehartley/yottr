@@ -1,13 +1,16 @@
 package uk.co.yottr.service;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingStyle;
+import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
 
 import java.time.LocalDate;
@@ -27,6 +30,18 @@ public class BoatServiceIT {
 
     @Autowired
     private BoatService boatService;
+
+    @Autowired
+    RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
+
+    @Before
+    public void initialiseReferenceData() {
+
+        if (ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.NONE.getRank()) == null) {
+
+            InitialiseDatabase.initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
+        }
+    }
 
     @Test
     public void canCreateFindByReferenceAndDelete() throws Exception {
@@ -81,9 +96,16 @@ public class BoatServiceIT {
         assertEquals("model", model, savedBoat.getModel());
         assertNotNull("reference", savedBoat.getReference());
         assertEquals("date posted", now.atStartOfDay(), savedBoat.getDatePosted().atStartOfDay());
-        assertEquals("minimum level", minLevel, savedBoat.getMinimumRequiredLevel());
+        assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());
         assertEquals("sailing style", sailingStyle, savedBoat.getSailingStyle());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
+    }
+
+    @Test
+    public void canSaveTwoBoats() {
+        boatService.save(createValidBoat("1"));
+        boatService.save(createValidBoat("2"));
+        assertTrue(boatService.findAll().size() >= 2);
     }
 
     private Boat createValidBoat(String description) {

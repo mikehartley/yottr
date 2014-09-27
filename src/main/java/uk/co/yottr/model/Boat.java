@@ -70,7 +70,7 @@ public class Boat {
     @Column(name = "date_relevant_to")
     private LocalDate dateRelevantTo;
 
-    @OneToOne(fetch = FetchType.EAGER)//, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "min_required_level")
     @NotNull(message = REQUIRED_ERROR_MSG)
     private RyaSailCruisingLevel minimumRequiredLevel;
