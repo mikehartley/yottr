@@ -2,6 +2,7 @@ TODO list
 =========
 
 Tech:
+    Tiles for header, footer, etc
     Paging support on queries.
     SQL initialisation script.
     UI acceptance testing using Selenium.

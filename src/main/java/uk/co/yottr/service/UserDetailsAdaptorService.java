@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 
 /*
@@ -33,6 +34,12 @@ public class UserDetailsAdaptorService implements UserDetailsService {
 
         LOG.info("UserDetailsAdaptorService.loadUserByUsername : " + username);
 
-        return UserDetailsAdaptor.toUserDetails(userRepository.findByUsername(username));
+        final User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        return UserDetailsAdaptor.toUserDetails(user);
     }
 }

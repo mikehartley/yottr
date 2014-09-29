@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.security.Role;
@@ -67,5 +68,11 @@ public class UserDetailsAdaptorServiceTest {
         assertEquals("authorities size", 2, grantedAuthoritiesAsList.size());
         assertEquals("first authority", firstRole.name(), grantedAuthoritiesAsList.get(0).getAuthority());
         assertEquals("second authority", secondRole.name(), grantedAuthoritiesAsList.get(1).getAuthority());
+    }
+
+    @Test(expected = UsernameNotFoundException.class)
+    public void whenUserNotFound() throws Exception {
+        final UserDetailsAdaptorService userDetailsAdaptorService = new UserDetailsAdaptorService(userRepository);
+        userDetailsAdaptorService.loadUserByUsername("zippy");
     }
 }
