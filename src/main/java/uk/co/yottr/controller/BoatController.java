@@ -73,4 +73,10 @@ public class BoatController {
         LOG.info("test page");
         return "test";
     }
+
+    @RequestMapping(value = { "/login2" }, method = { RequestMethod.GET, RequestMethod.POST } )
+    public String login2() {
+        LOG.info("login2");
+        return "login2";
+    }
 }

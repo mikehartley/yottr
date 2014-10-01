@@ -40,8 +40,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").access("hasRole('ADMIN')")
                 .antMatchers("/s/**").access("hasRole('FREE')")
                 .antMatchers("/resources/**").permitAll()
+                .antMatchers("/", "/index").permitAll()
+                .anyRequest().authenticated()
             .and()
-                .formLogin()
+                .formLogin().permitAll().loginPage("/login2").defaultSuccessUrl("/index")
             .and()
                 .csrf().disable();
 //                .formLogin().loginPage("/login").failureUrl("/denied")

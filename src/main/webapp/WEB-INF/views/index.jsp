@@ -8,7 +8,6 @@
   --%>
 
 <!DOCTYPE html>
-<spring:url value="" var="yottr"/>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -45,18 +44,19 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="${yottr}"><h1>Yottr</h1></a>
+            <a class="navbar-brand" href="<c:url value='/'/>"><h1>Yottr</h1></a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="${yottr}/admin/users">Admin</a></li>
-                <li class="active"><a href="${yottr}">Home</a></li>
-                <li><a href="${yottr}/signup">Register</a></li>
-                <li><a href="${yottr}/s/listings/new">Add Boat</a></li>
-                <li><a href="${yottr}/s/listings/all">View All</a></li>
-                <li><a href="${yottr}/#">About</a></li>
-                <li><a href="${yottr}/#">Contact</a></li>
-                <li><a href="${yottr}/logout">Logout</a></li>
+                <li>Built: <spring:message code="build.date"/></li>
+                <li><a href="<c:url value='/admin/users'/>">Admin</a></li>
+                <li class="active"><a href="<c:url value='/'/>">Home</a></li>
+                <li><a href="<c:url value='/signup'/>">Register</a></li>
+                <li><a href="<c:url value='/s/listings/new'/>">Add Boat</a></li>
+                <li><a href="<c:url value='/s/listings/all'/>">View All</a></li>
+                <li><a href="<c:url value='/'/>">About</a></li>
+                <li><a href="<c:url value='/#'/>">Contact</a></li>
+                <li><a href="<c:url value='/logout'/>">Logout</a></li>
             </ul>
         </div>
     </div>
@@ -100,17 +100,25 @@
         <div class="col-sm-6">
             <h2>Sign In</h2>
 
-            <div class="status alert alert-success" style="display: none"></div>
-            <c:url var="loginUrl" value="/login"></c:url>
-            <form action="${loginUrl}" id="main-sign-in-form" class="contact-form" name="f" method="post"
-                  role="form">
+            <c:if test="${param.error}">
+                <div class="status alert alert-error">
+                    Invalid username and password.
+                </div>
+            </c:if>
+            <c:if test="${param.logout}">
+                <div class="status alert alert-success">
+                    You have been logged out.
+                </div>
+            </c:if>
+            <c:url var="loginUrl" value="/login2"></c:url>
+            <form action="${loginUrl}" id="main-sign-in-form" class="contact-form" name="f" method="POST">
                 <div class="row">
                     <div class="col-sm-5">
                         <div class="form-group">
-                            <input type="text" name="username" class="form-control" required="required" placeholder="Username">
+                            <input type="text" name="username" id="username" class="form-control" required="required" placeholder="Username">
                         </div>
                         <div class="form-group">
-                            <input type="password" name="password" class="form-control" required="required" placeholder="Password">
+                            <input type="password" name="password" id="password" class="form-control" required="required" placeholder="Password">
                         </div>
                         <div class="form-group">
                             <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Login"/>
@@ -124,9 +132,9 @@
     <!--/.row-->
 
     <div class="gap"></div>
-    <h1 class="center">Sails up, motor off, have fun!</h1>
+    <%--<h1 class="center">Sails up, motor off, have fun!</h1>--%>
 
-    <div class="gap"></div>
+    <%--<div class="gap"></div>--%>
 </section>
 <!--/#about-us-->
 
@@ -219,8 +227,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-6">
-                &copy; 2014 Yottr. All Rights Reserved.<br>
-                Built: <spring:message code="build.date"/>
+                &copy; 2014 Yottr. All Rights Reserved.
             </div>
             <div class="col-sm-6">
                 <ul class="pull-right">

@@ -43,4 +43,10 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         messageSource.setUseCodeAsDefaultMessage(true);
         return messageSource;
     }
+
+//    @Override
+//    public void addViewControllers(ViewControllerRegistry registry) {
+//        registry.addViewController("/login2").setViewName("login2");
+//        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+//    }
  }

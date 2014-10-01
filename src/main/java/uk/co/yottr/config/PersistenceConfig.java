@@ -29,7 +29,7 @@ public class PersistenceConfig {
     @Bean
     public SessionFactory sessionFactory() {
         LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource());
-        builder.scanPackages("uk.co.yottr").addProperties(getHibernateProperties());
+        builder.scanPackages("uk.co.yottr.model").addProperties(getHibernateProperties());
         return builder.buildSessionFactory();
     }
 
