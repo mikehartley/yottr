@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="springForm" uri="http://www.springframework.org/tags/form" version="2"%>
+<%@ taglib prefix="springForm" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%--
@@ -84,11 +84,44 @@
         </div>
         <!--/.col-sm-6-->
         <div class="col-sm-6">
-            <h2>A Spare Square</h2>
+            <sec:authorize access="isAnonymous()">
+                <h2>Sign In</h2>
 
-            <p>Maybe a picture or something could go here.</p>
+                <c:if test="${param.error != null}">
+                    <div class="status alert alert-danger">
+                        Invalid username and password.
+                    </div>
+                </c:if>
+                <c:if test="${param.logout != null}">
+                    <div class="status alert alert-success">
+                        You have been logged out.
+                    </div>
+                </c:if>
+                <c:url var="loginUrl" value="/index"></c:url>
+                <form action="${loginUrl}" id="main-sign-in-form" name="f" method="POST">
+                    <sec:csrfInput />
+                    <div class='row'>
+                        <div class='col-sm-5'>
+                            <div class='form-group'>
+                                <input type='text' name='username' id='username' class='form-control' required='required' placeholder='Username'>
+                            </div>
+                            <div class='form-group'>
+                                <input type='password' name='password' id='password' class='form-control' required='required' placeholder='Password'>
+                            </div>
+                            <div class='form-group'>
+                                <input type='submit' name='submit' class='btn btn-primary btn-sm' value='Go'/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </sec:authorize>
+            <sec:authorize access="isAuthenticated()">
+                <h2>A Spare Square</h2>
 
-            <p>Would you like to <a href="<c:url value='/signin'/>">sign-in</a>?</p>
+                <p>Maybe a picture or something could go here.</p>
+
+                <p>Would you like to <a href="<c:url value='/signin'/>">sign-in</a>?</p>
+            </sec:authorize>
         </div>
         <!--/.col-sm-6-->
     </div>

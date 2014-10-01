@@ -62,15 +62,9 @@ public class BoatController {
         return modelAndView;
     }
 
-    @RequestMapping(value = { "/", "/index**" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/" }, method = RequestMethod.GET)
     public String index() {
         LOG.info("index page");
         return "index";
-    }
-
-    @RequestMapping(value = { "/test" }, method = RequestMethod.GET)
-    public String test() {
-        LOG.info("test page");
-        return "test";
     }
 }
