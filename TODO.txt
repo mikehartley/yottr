@@ -18,11 +18,9 @@ Tech:
         password reset.
 
 UI:
-    Styling - bootstrap.
     Pagination.
 
 User:
-    Can only sign-up if not signed in. (role based logic)
     Edit/Delete profile.
     Edit/Delete/Suspend ad.
     Searches.
@@ -40,7 +38,12 @@ Admin:
     
 Other:
     Agree with Badger on how to go about using his server.
-    Terms and Conditions
+    Terms and Conditions page
+    About page
+    FAQ page
+    Privacy Policy page
+    Contact page
+    Useful links
     Email for yottr
 
 Long term:

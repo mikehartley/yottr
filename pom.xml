@@ -24,6 +24,7 @@
 		<org.slf4j.version>1.7.7</org.slf4j.version>
         <jstl.version>1.2</jstl.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
+        <xml.apis.version>1.4.01</xml.apis.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <commons.lang3.version>3.3.2</commons.lang3.version>
         <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
@@ -41,6 +42,7 @@
         <jackson.version>2.2.1</jackson.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <glassfish.el-impl.version>2.2</glassfish.el-impl.version>
+        <selenium.java.version>2.43.1</selenium.java.version>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd-MM-yyyy HH:mm:ss</maven.build.timestamp.format>
@@ -127,6 +129,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>${xml.apis.version}</version>
         </dependency>
 
         <dependency>
@@ -220,6 +228,12 @@
             <groupId>org.glassfish.web</groupId>
             <artifactId>el-impl</artifactId>
             <version>${glassfish.el-impl.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.java.version}</version>
             <scope>test</scope>
         </dependency>
 

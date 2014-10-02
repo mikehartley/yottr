@@ -47,19 +47,36 @@
             </button>
             <a class="navbar-brand" href="<c:url value='/'/>"><h1>Yottr</h1></a>
         </div>
+        <sec:authorize access="hasRole('ADMIN')">
+            <div>
+                <ul>
+                    <li>[ADMIN info] Built: <spring:message code="build.date"/> : Logged in as <sec:authentication property="principal.username" /></li>
+                </ul>
+            </div>
+        </sec:authorize>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 <sec:authorize access="hasRole('ADMIN')">
-                    <li>Built: <spring:message code="build.date"/></li>
                     <li><a href="<c:url value='/admin/users'/>">Admin</a></li>
                 </sec:authorize>
+
                 <li class="active"><a href="<c:url value='/'/>">Home</a></li>
-                <li><a href="<c:url value='/signup'/>">Register</a></li>
-                <li><a href="<c:url value='/s/listings/new'/>">Add Boat</a></li>
-                <li><a href="<c:url value='/s/listings/all'/>">View All</a></li>
+
+                <sec:authorize access="isAnonymous()">
+                    <li><a href="<c:url value='/signup'/>">Register</a></li>
+                </sec:authorize>
+
+                <sec:authorize access="hasRole('FREE')">
+                    <li><a href="<c:url value='/s/listings/new'/>">Add Boat</a></li>
+                    <li><a href="<c:url value='/s/listings/all'/>">View All</a></li>
+                </sec:authorize>
+
                 <li><a href="<c:url value='/'/>">About</a></li>
                 <li><a href="<c:url value='/#'/>">Contact</a></li>
-                <li><a href="<c:url value='/logout'/>">Logout</a></li>
+
+                <sec:authorize access="isAuthenticated()">
+                    <li><a href="<c:url value='/logout'/>">Logout</a></li>
+                </sec:authorize>
             </ul>
         </div>
     </div>
@@ -88,39 +105,37 @@
                 <h2>Sign In</h2>
 
                 <c:if test="${param.error != null}">
-                    <div class="status alert alert-danger">
+                    <div class="status alert alert-danger" id="error-msg">
                         Invalid username and password.
                     </div>
                 </c:if>
                 <c:if test="${param.logout != null}">
-                    <div class="status alert alert-success">
+                    <div class="status alert alert-success" id="logged-out-msg">
                         You have been logged out.
                     </div>
                 </c:if>
                 <c:url var="loginUrl" value="/index"></c:url>
                 <form action="${loginUrl}" id="main-sign-in-form" name="f" method="POST">
                     <sec:csrfInput />
-                    <div class='row'>
-                        <div class='col-sm-5'>
-                            <div class='form-group'>
-                                <input type='text' name='username' id='username' class='form-control' required='required' placeholder='Username'>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <input type="text" name="username" id="username" class="form-control" required="required" placeholder="Username">
                             </div>
-                            <div class='form-group'>
-                                <input type='password' name='password' id='password' class='form-control' required='required' placeholder='Password'>
+                            <div class="form-group">
+                                <input type="password" name="password" id="password" class="form-control" required="required" placeholder="Password">
                             </div>
-                            <div class='form-group'>
-                                <input type='submit' name='submit' class='btn btn-primary btn-sm' value='Go'/>
+                            <div class="form-group">
+                                <input type="submit" name="submit" id="sign-in-button" class="btn btn-primary btn-sm" value="Go"/>
                             </div>
                         </div>
                     </div>
                 </form>
             </sec:authorize>
             <sec:authorize access="isAuthenticated()">
-                <h2>A Spare Square</h2>
+                <h2>Search</h2>
 
-                <p>Maybe a picture or something could go here.</p>
-
-                <p>Would you like to <a href="<c:url value='/signin'/>">sign-in</a>?</p>
+                <p>This is where you'll be able to seach from.</p>
             </sec:authorize>
         </div>
         <!--/.col-sm-6-->
@@ -138,65 +153,68 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3 col-sm-6">
-                <h4>About Us</h4>
+                <h4>About</h4>
 
-                <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-                    Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.</p>
+                <p>Yottr has been a long time in the making.</p>
 
-                <p>Pellentesque habitant morbi tristique senectus.</p>
+                <p>Many years ago I thought it would be a great idea if there was a website for people who want
+                    to go sailing but either don't have enough crew, or don't have a boat.</p>
+
+                <p>I couldn't find one I liked so I decided to build my own.</p>
+
+                <p>This is it...</p>
             </div>
             <!--/.col-md-3-->
 
             <div class="col-md-3 col-sm-6">
-                <h4>Really useful stuff</h4>
+                <h4>Useful Links</h4>
 
                 <div>
                     <ul class="arrow">
-                        <li><a href="#">The Company</a></li>
-                        <li><a href="#">Our Team</a></li>
-                        <li><a href="#">Our Partners</a></li>
-                        <li><a href="#">Our Services</a></li>
-                        <li><a href="#">Faq</a></li>
-                        <li><a href="#">Conatct Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Use</a></li>
-                        <li><a href="#">Copyright</a></li>
+                        <li><a href="#">Weather</a></li>
+                        <li><a href="#">Tides</a></li>
+                        <li><a href="#">The Good Marina Guide</a></li>
+                        <li><a href="#">Chandlers</a></li>
+                        <li><a href="#">Schools and Courses</a></li>
+                        <li><a href="#">Skippers for Hire</a></li>
+                        <li><a href="#">Charter</a></li>
+                        <li><a href="#">RYA</a></li>
+                        <li><a href="#">RNLI Lifeboats</a></li>
+                        <li><a href="#">ARC</a></li>
+                        <li><a href="#">Ocean Youth Trust</a></li>
                     </ul>
                 </div>
             </div>
             <!--/.col-md-3-->
 
             <div class="col-md-3 col-sm-6">
-                <h4>Latest Blog</h4>
+                <h4>Latest Listings</h4>
 
                 <div>
                     <div class="media">
                         <div class="pull-left">
-                            <img src="images/blog/thumb1.jpg" alt="">
+                            <img src="/resources/images/blog/thumb1.jpg" alt="">
                         </div>
                         <div class="media-body">
-                            <span class="media-heading"><a href="#">Pellentesque habitant morbi tristique
-                                senectus</a></span>
+                            <span class="media-heading"><a href="#">Weekend sailing around the Solent</a></span>
                             <small class="muted">Posted 17 Aug 2013</small>
                         </div>
                     </div>
                     <div class="media">
                         <div class="pull-left">
-                            <img src="images/blog/thumb2.jpg" alt="">
+                            <img src="/resources/images/blog/thumb2.jpg" alt="">
                         </div>
                         <div class="media-body">
-                            <span class="media-heading"><a href="#">Pellentesque habitant morbi tristique
-                                senectus</a></span>
+                            <span class="media-heading"><a href="#">Racing to Spain</a></span>
                             <small class="muted">Posted 13 Sep 2013</small>
                         </div>
                     </div>
                     <div class="media">
                         <div class="pull-left">
-                            <img src="images/blog/thumb3.jpg" alt="">
+                            <img src="/resources/images/blog/thumb3.jpg" alt="">
                         </div>
                         <div class="media-body">
-                            <span class="media-heading"><a href="#">Pellentesque habitant morbi tristique
-                                senectus</a></span>
+                            <span class="media-heading"><a href="#">Cross channel adventure</a></span>
                             <small class="muted">Posted 11 Jul 2013</small>
                         </div>
                     </div>
@@ -205,13 +223,10 @@
             <!--/.col-md-3-->
 
             <div class="col-md-3 col-sm-6">
-                <h4>Address</h4>
-                <address>
-                    <strong>Twitter, Inc.</strong><br>
-                    795 Folsom Ave, Suite 600<br>
-                    San Francisco, CA 94107<br>
-                    <abbr title="Phone">P:</abbr> (123) 456-7890
-                </address>
+                <h4>This space is could be yours</h4>
+                <p>All this space, just waiting to be used...</p>
+                <p>Perhaps you would like to advertise here?</p>
+                <p>If so then get in touch.</p>
             </div>
             <!--/.col-md-3-->
         </div>
