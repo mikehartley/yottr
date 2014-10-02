@@ -9,14 +9,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
-public class SignInAndOutIT {
+public class SignInSignOutIT {
 
     private WebDriver driver;
 
@@ -47,7 +46,28 @@ public class SignInAndOutIT {
 
         final WebElement errorMessage = driver.findElement(By.id("error-msg"));
 
-        assertNotNull("looks like the error message didn't happen", errorMessage);
         assertEquals("Invalid username and password.", errorMessage.getText());
+    }
+
+    @Test
+    public void signInSignOut() {
+        driver.navigate().to(urlBase + "/yottr");
+
+        final WebElement usernameField = driver.findElement(By.id("username"));
+        final WebElement passwordField = driver.findElement(By.id("password"));
+        final WebElement signInButton = driver.findElement(By.id("sign-in-button"));
+
+        usernameField.sendKeys("mike");
+        passwordField.sendKeys("aph3xtwIn");
+
+        signInButton.click();
+
+        final WebElement logoutLink = driver.findElement(By.id("logout-link"));
+        assertEquals("Logout", logoutLink.getText());
+
+        logoutLink.click();
+
+        final WebElement loggedOutMessage = driver.findElement(By.id("logged-out-msg"));
+        assertEquals("You have been logged out.", loggedOutMessage.getText());
     }
 }

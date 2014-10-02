@@ -23,6 +23,7 @@
         <hibernate.validator.version>5.1.2.Final</hibernate.validator.version>
 		<org.slf4j.version>1.7.7</org.slf4j.version>
         <jstl.version>1.2</jstl.version>
+        <tiles.version>3.0.4</tiles.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <xml.apis.version>1.4.01</xml.apis.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
@@ -54,8 +55,13 @@
             <artifactId>jstl</artifactId>
             <version>${jstl.version}</version>
         </dependency>
-		
-		<!-- Spring -->
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-extras</artifactId>
+            <version>${tiles.version}</version>
+        </dependency>
+
+        <!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>

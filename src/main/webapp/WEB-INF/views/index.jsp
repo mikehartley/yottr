@@ -75,7 +75,7 @@
                 <li><a href="<c:url value='/#'/>">Contact</a></li>
 
                 <sec:authorize access="isAuthenticated()">
-                    <li><a href="<c:url value='/logout'/>">Logout</a></li>
+                    <li><a href="<c:url value='/logout'/>" id="logout-link">Logout</a></li>
                 </sec:authorize>
             </ul>
         </div>
@@ -133,7 +133,7 @@
                 </form>
             </sec:authorize>
             <sec:authorize access="isAuthenticated()">
-                <h2>Search</h2>
+                <h2 id="search-title">Search</h2>
 
                 <p>This is where you'll be able to seach from.</p>
             </sec:authorize>
@@ -193,7 +193,7 @@
                 <div>
                     <div class="media">
                         <div class="pull-left">
-                            <img src="/resources/images/blog/thumb1.jpg" alt="">
+                            <img src="/yottr/resources/images/blog/thumb1.jpg" alt="">
                         </div>
                         <div class="media-body">
                             <span class="media-heading"><a href="#">Weekend sailing around the Solent</a></span>
@@ -202,7 +202,7 @@
                     </div>
                     <div class="media">
                         <div class="pull-left">
-                            <img src="/resources/images/blog/thumb2.jpg" alt="">
+                            <img src="/yottr/resources/images/blog/thumb2.jpg" alt="">
                         </div>
                         <div class="media-body">
                             <span class="media-heading"><a href="#">Racing to Spain</a></span>
@@ -211,7 +211,7 @@
                     </div>
                     <div class="media">
                         <div class="pull-left">
-                            <img src="/resources/images/blog/thumb3.jpg" alt="">
+                            <img src="/yottr/resources/images/blog/thumb3.jpg" alt="">
                         </div>
                         <div class="media-body">
                             <span class="media-heading"><a href="#">Cross channel adventure</a></span>
