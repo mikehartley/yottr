@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html layout:decorator="mainTemplate">
+<body>
+<section layout:fragment="content" id="index-content" class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>Welcome</h2>
+
+            <p>Welcome to Yottr, a new and exciting web application that can help you find crew for your boat,
+                or find you a boat to go sailing on. </p>
+
+            <p>If you are a boat owner looking for crew then you can register and post an advert for free. This will
+                enable potential crew who are looking for your kind of sailing to easily find you.</p>
+
+            <p>If you don't have a boat, would like to sail but would like to avoid paying the kind of money it costs
+                to go with a commercial outfit then this is your site. Right now it's completely free to register,
+                search,
+                and get in contact with people looking for crew!</p>
+        </div>
+        <!--/.col-sm-6-->
+        <div class="col-sm-6">
+            <div sec:authorize="isAnonymous()">
+                <h2>Sign In</h2>
+
+                <div class="status alert alert-danger" id="error-msg" th:if="${param.error != null}">
+                    Invalid username and password.
+                </div>
+                <div class="status alert alert-success" id="logged-out-msg" th:if="${param.logout != null}">
+                    You have been logged out.
+                </div>
+                <form action="#" th:action="@{/index}" id="main-sign-in-form" name="f" method="post">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <input type="text" name="username" id="username" class="form-control" required="required" placeholder="Username"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password" id="password" class="form-control" required="required" placeholder="Password"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" name="submit" id="sign-in-button" class="btn btn-primary btn-sm" value="Go"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <h2>Search</h2>
+
+                <p>This is where you'll be able to seach from.</p>
+            </div>
+        </div>
+        <!--/.col-sm-6-->
+    </div>
+    <!--/.row-->
+
+    <div class="gap"></div>
+</section>
+<!--/#index-content-->
+</body>
+</html>
+

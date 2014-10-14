@@ -67,4 +67,9 @@ public class BoatController {
         LOG.info("index page");
         return "index";
     }
+
+    @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
+    public String test() {
+        return "try/list";
+    }
 }

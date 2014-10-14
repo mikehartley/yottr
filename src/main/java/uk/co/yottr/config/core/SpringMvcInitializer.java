@@ -1,7 +1,10 @@
 package uk.co.yottr.config.core;
 
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import uk.co.yottr.config.AppConfig;
+
+import javax.servlet.Filter;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -25,4 +28,10 @@ public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServ
 		return new String[] { "/" };
 	}
 
+//    @Override
+//    protected Filter[] getServletFilters() {
+//        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+//        characterEncodingFilter.setEncoding("UTF-8");
+//        return new Filter[] { characterEncodingFilter};
+//    }
 }

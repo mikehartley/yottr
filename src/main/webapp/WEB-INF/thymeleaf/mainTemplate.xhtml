@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<!--
+  ~ Copyright (c) 2014. Mike Hartley Solutions Ltd
+  ~ All rights reserved.
+  -->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      lang="en">
+<head th:fragment="head">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="For boats looking for crew, and crew looking for boats."/>
+    <title>Yottr</title>
+
+    <link href="../../resources/css/bootstrap.min.css" th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="../../resources/css/font-awesome.min.css" th:href="@{/resources/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="../../resources/css/prettyPhoto.css" th:href="@{/resources/css/prettyPhoto.css}" rel="stylesheet" type="text/css"/>
+    <link href="../../resources/css/animate.css" th:href="@{/resources/css/animate.css}" rel="stylesheet" type="text/css"/>
+    <link href="../../resources/css/main.css" th:href="@{/resources/css/main.css}" rel="stylesheet" type="text/css"/>
+    <!--[if lt IE 9]>
+    <script src="../../resources/js/html5shiv.js" th:src="@{/resources/js/html5shiv.js}"/>
+    <script src="../../resources/js/respond.min.js" th:src="@{/resources/js/respond.min.js}"/>
+    <![endif]-->
+    <link rel="shortcut icon" href="../../resources/images/ico/favicon.ico" th:href="@{/resources/images/ico/favicon.ico}"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../resources/images/ico/apple-touch-icon-144-precomposed.png"  th:href="@{/resources/images/ico/apple-touch-icon-144-precomposed.png}"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../resources/images/ico/apple-touch-icon-114-precomposed.png" th:href="@{/resources/images/ico/apple-touch-icon-114-precomposed.png}"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../resources/images/ico/apple-touch-icon-72-precomposed.png" th:href="@{/resources/images/ico/apple-touch-icon-72-precomposed.png}"/>
+    <link rel="apple-touch-icon-precomposed" href="../../resources/images/ico/apple-touch-icon-57-precomposed.png" th:href="@{/resources/images/ico/apple-touch-icon-57-precomposed.png}"/>
+</head>
+<!--/head-->
+<body>
+<header th:fragment="header" class="navbar navbar-inverse navbar-fixed-top wet-asphalt" role="banner">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"/>
+                <span class="icon-bar"/>
+                <span class="icon-bar"/>
+            </button>
+            <a class="navbar-brand" href="index.html" th:href="@{/}"><h1>Yottr</h1></a>
+        </div>
+        <div>
+            Built: <span th:text="#{build.date}">10-Mar-2014</span>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li sec:authorize="hasRole('ADMIN')"><a href="manageUsers.html" th:href="@{/admin/users}">Admin</a></li>
+
+                <li class="active"><a href="index.html" th:href="@{/}">Home</a></li>
+
+                <li sec:authorize="isAnonymous()"><a href="signup.html" th:href="@{/signup}">Register</a></li>
+
+                <li sec:authorize="hasRole('FREE')"><a href="newListing.html" th:href="@{/s/listings/new}">Add Boat</a></li>
+                <li sec:authorize="hasRole('FREE')"><a href="boatList.html" th:href="@{/s/listings/all}">View All</a></li>
+
+                <li><a href="#" th:href="@{/}">About</a></li>
+                <li><a href="#" th:href="@{/}">Contact</a></li>
+
+                <li sec:authorize="isAuthenticated()"><a href="index.html?logout" th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+<!--/header-->
+
+<section layout:fragment="content" id="main-content" class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>Left hand content</h1>
+        </div>
+        <!--/.col-sm-6-->
+        <div class="col-sm-6">
+            <h1>Right hand content</h1>
+        </div>
+        <!--/.col-sm-6-->
+    </div>
+    <!--/.row-->
+
+</section>
+<!--/#main-content-->
+
+<div class="gap"></div>
+
+<section th:fragment="bottom" id="bottom" class="wet-asphalt">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <h4>About</h4>
+
+                <p>Yottr has been a long time in the making.</p>
+
+                <p>Many years ago I thought it would be a great idea if there was a website for people who want
+                    to go sailing but either don't have enough crew, or don't have a boat.</p>
+
+                <p>I couldn't find one I liked so I decided to build my own.</p>
+
+                <p>This is it...</p>
+            </div>
+            <!--/.col-md-3-->
+
+            <div class="col-md-3 col-sm-6">
+                <h4>Useful Links</h4>
+
+                <div>
+                    <ul class="arrow">
+                        <li><a href="#">Weather</a></li>
+                        <li><a href="#">Tides</a></li>
+                        <li><a href="#">The Good Marina Guide</a></li>
+                        <li><a href="#">Chandlers</a></li>
+                        <li><a href="#">Schools and Courses</a></li>
+                        <li><a href="#">Skippers for Hire</a></li>
+                        <li><a href="#">Charter</a></li>
+                        <li><a href="#">RYA</a></li>
+                        <li><a href="#">RNLI Lifeboats</a></li>
+                        <li><a href="#">ARC</a></li>
+                        <li><a href="#">Ocean Youth Trust</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!--/.col-md-3-->
+
+            <div class="col-md-3 col-sm-6">
+                <h4>Latest Listings</h4>
+
+                <div>
+                    <div class="media">
+                        <div class="pull-left">
+                            <img src="../../resources/images/blog/thumb1.jpg" th:src="@{/resources/images/blog/thumb1.jpg}" alt="" />
+                        </div>
+                        <div class="media-body">
+                            <span class="media-heading"><a href="#">Weekend sailing around the Solent</a></span>
+                            <small class="muted">Posted 17 Aug 2013</small>
+                        </div>
+                    </div>
+                    <div class="media">
+                        <div class="pull-left">
+                            <img src="../../resources/images/blog/thumb2.jpg" th:src="@{/resources/images/blog/thumb2.jpg}" alt="" />
+                        </div>
+                        <div class="media-body">
+                            <span class="media-heading"><a href="#">Racing to Spain</a></span>
+                            <small class="muted">Posted 13 Sep 2013</small>
+                        </div>
+                    </div>
+                    <div class="media">
+                        <div class="pull-left">
+                            <img src="../../resources/images/blog/thumb3.jpg" th:src="@{/resources/images/blog/thumb3.jpg}" alt="" />
+                        </div>
+                        <div class="media-body">
+                            <span class="media-heading"><a href="#">Cross channel adventure</a></span>
+                            <small class="muted">Posted 11 Jul 2013</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/.col-md-3-->
+
+            <div class="col-md-3 col-sm-6">
+                <h4>This space is could be yours</h4>
+                <p>All this space, just waiting to be used...</p>
+                <p>Perhaps you would like to advertise here?</p>
+                <p>If so then get in touch.</p>
+            </div>
+            <!--/.col-md-3-->
+        </div>
+    </div>
+</section>
+<!--/#bottom-->
+
+<footer th:fragment="footer" id="footer" class="midnight-blue">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                &copy; 2014 Yottr. All Rights Reserved.
+            </div>
+            <div class="col-sm-6">
+                <ul class="pull-right">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Faq</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a id="gototop" class="gototop" href="#"><i class="icon-chevron-up"/></a></li>
+                    <!--#gototop-->
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+<!--/#footer-->
+
+<section th:fragment="scripts">
+    <script src="../../resources/js/jquery.js" th:src="@{/resources/js/jquery.js}" ></script>
+    <script src="../../resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.min.js}"></script>
+    <script src="../../resources/js/jquery.prettyPhoto.js" th:src="@{/resources/js/jquery.prettyPhoto.js}"></script>
+    <script src="../../resources/js/main.js" th:src="@{/resources/js/main.js}"></script>
+</section>
+
+</body>
+</html>
