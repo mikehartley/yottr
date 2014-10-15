@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2014. Mike Hartley Solutions Ltd
+  ~ All rights reserved.
+  -->
+
+<html layout:decorator="mainTemplate"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="index-content" class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>
+                Boat Saved Successfully.
+            </h1>
+        </div>
+        <!--/.col-sm-6-->
+        <div class="col-sm-6">
+            <strong>Date posted:</strong> <span th:text="${boat.datePosted}">01-Jan-1901</span><br/>
+            <strong>Date relevant to:</strong> <span th:text="${boat.dateRelevantTo}">01-Jan-1901</span><br/>
+            <strong>Reference:</strong><span th:text="${boat.reference}">ref001</span><br/>
+            <strong>Manufacturer:</strong> <span th:text="${boat.manufacturer}">HR</span><br/>
+            <strong>Model:</strong> <span th:text="${boat.model}">HR42</span><br/>
+            <strong>Length:</strong> <span th:text="${boat.length}">42</span>
+            <span>
+                <span th:if="${boat.unitsImperial}">Feet</span>
+                <span th:unless="${boat.unitsImperial}">Metres</span>
+            </span><br/>
+            <strong>Hull type:</strong> <span th:text="${boat.hullType}">Mono</span><br/>
+            <strong>Minimum required RYA sail cruising qualification:</strong> <span th:text="${boat.minimumRequiredLevel.displayName}">Not too bad</span><br/>
+            <strong>Sailing style:</strong> <span th:text="${boat.sailingStyle.displayName}">Racing</span><br/>
+            <strong>Description:</strong> <span th:text="${boat.description}">Desc</span><br/>
+            <hr/>
+            <br/>
+
+            <a th:href="@{all}">View All Boats</a>
+        </div>
+        <!--/.col-sm-6-->
+    </div>
+    <!--/.row-->
+
+</section>
+<!--/#index-content-->
+</body>
+</html>
+

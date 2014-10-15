@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2014. Mike Hartley Solutions Ltd
+  ~ All rights reserved.
+  -->
+
+<html layout:decorator="mainTemplate"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="index-content" class="container">
+    <div class="row">
+        <form method="post" th:action="@{/s/listings/new}" th:object="${boat}" th:id="signup-form">
+
+            <div class="col-sm-6">
+                <h2>Enter boat details:</h2>
+
+                <fieldset>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+                    <div class="form-group" th:classappend="${#fields.hasErrors('manufacturer')}? 'has-error'">
+                        <label for="manufacturer" class="col-lg-2 control-label">Manufacturer</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="manufacturer" placeholder="Manufacturer" th:field="*{manufacturer}"/>
+                            <span class="help-block" th:if="${#fields.hasErrors('manufacturer')}" th:errors="*{manufacturer}">Bad manufacturer</span>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('model')}? 'has-error'">
+                        <label for="model" class="col-lg-2 control-label">Model</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="model" placeholder="Model" th:field="*{model}"/>
+                            <span class="help-block" th:if="${#fields.hasErrors('model')}" th:errors="*{model}">Bad model</span>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('length')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Length</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="length" placeholder="Length" th:field="*{length}"/>
+                            <input type="radio" th:field="*{unitsImperial}" value="true" />Feet
+                            <input type="radio" th:field="*{unitsImperial}" value="false" />Metres
+                            <span class="help-block" th:if="${#fields.hasErrors('length')}" th:errors="*{length}">Bad length</span>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('hullType')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Hull Type</label>
+
+                        <div class="col-lg-10">
+                            <select th:field="*{hullType}">
+                                <option th:value="MONO" th:text="${'Monohull'}">Monohull</option>
+                                <option th:value="MULTI" th:text="${'Multihull'}">Multihull</option>
+                            </select>
+                            <span class="help-block" th:if="${#fields.hasErrors('hullType')}" th:errors="*{hullType}">Bad Hull Type</span>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('description')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Description</label>
+
+                        <div class="col-lg-10">
+                            <textarea cols="40" rows="4" class="form-control" id="description" placeholder="Description" th:field="*{description}"/>
+                            <span class="help-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Bad description</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <!--/.col-sm-6-->
+            <div class="col-sm-6">
+                <div class="gap"></div>
+                <div class="gap"></div>
+                <div class="gap"></div>
+                <div class="gap"></div>
+
+                <fieldset>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('sailingStyle')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Sailing Style</label>
+
+                        <div class="col-lg-10">
+                            <select th:field="*{sailingStyle}">
+                                <option th:value="${''}" th:text="${'Select sailing style:'}">Select sailing style:</option>
+                                <option th:value="CRUISING" th:text="${'Cruising'}">Cruising</option>
+                                <option th:value="RACING" th:text="${'Racing'}">Racing</option>
+                                <option th:value="ALL" th:text="${'Both cruising and racing'}">Both cruising and racing</option>
+                            </select>
+                            <span class="help-block" th:if="${#fields.hasErrors('sailingStyle')}" th:errors="*{sailingStyle}">Bad Sailing Style</span>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('dateRelevantTo')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Date which this advert is relevant to (optional):</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="dateRelevantTo" placeholder="Date Relevant To" th:field="*{dateRelevantTo}"/>
+                            <span class="help-block" th:if="${#fields.hasErrors('dateRelevantTo')}" th:errors="*{dateRelevantTo}">Bad Date Relevant To</span>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('minimumRequiredLevelByRank')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Sailing Style</label>
+
+                        <div class="col-lg-10">
+                            <select th:field="*{minimumRequiredLevelByRank}">
+                                <option th:value="0"   th:text="${'None'}">None</option>
+                                <option th:value="100" th:text="${'Start Yachting'}">Start Yachting</option>
+                                <option th:value="200" th:text="${'Competent Crew'}">Competent Crew</option>
+                                <option th:value="300" th:text="${'Day Skipper'}">Day Skipper</option>
+                                <option th:value="400" th:text="${'Coastal Skipper'}">Coastal Skipper</option>
+                                <option th:value="500" th:text="${'Yachtmaster Coastal'}">Yachtmaster Coastal</option>
+                                <option th:value="600" th:text="${'Yachtmaster Offshore'}">Yachtmaster Offshore</option>
+                                <option th:value="700" th:text="${'Yachtmaster Ocean'}">Yachtmaster Ocean</option>
+                            </select>
+                            <span class="help-block" th:if="${#fields.hasErrors('minimumRequiredLevelByRank')}" th:errors="*{minimumRequiredLevelByRank}">Bad Minimum Required Level</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <button type="submit" class="btn btn-default">Sign up</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <!--/.col-sm-6-->
+        </form>
+    </div>
+    <!--/.row-->
+
+</section>
+<!--/#index-content-->
+</body>
+</html>
+

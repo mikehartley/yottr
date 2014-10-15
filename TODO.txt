@@ -2,8 +2,9 @@ The Drawing Board
 =================
 
 Tech:
-    Tiles for header, footer, etc
+    Catch when username taken on signup.
     Paging support on queries.
+    Error pages for 404, 500.
     SQL initialisation script.
     UI acceptance testing using Selenium.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2014. Mike Hartley Solutions Ltd
+  ~ All rights reserved.
+  -->
+
+<html layout:decorator="mainTemplate"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="index-content" class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>
+                Hello <span th:text="${user.firstName}">FirstName</span>, welcome to Yottr.
+            </h3>
+        </div>
+        <!--/.col-sm-6-->
+        <div class="col-sm-6">
+            <div>Your username is <span th:text="${user.username}">UserBob</span> which you will need to log in.</div>
+            <br/>
+            <div>Happy sailing!</div>
+            <hr/>
+            <br/>
+
+            <a th:href="@{index}">Log in</a>
+        </div>
+        <!--/.col-sm-6-->
+    </div>
+    <!--/.row-->
+
+</section>
+<!--/#index-content-->
+</body>
+</html>
+
