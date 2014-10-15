@@ -9,7 +9,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
       lang="en">
-<head th:fragment="head">
+<head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="For boats looking for crew, and crew looking for boats."/>
@@ -32,7 +32,7 @@
 </head>
 <!--/head-->
 <body>
-<header th:fragment="header" class="navbar navbar-inverse navbar-fixed-top wet-asphalt" role="banner">
+<header class="navbar navbar-inverse navbar-fixed-top wet-asphalt" role="banner">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -85,7 +85,7 @@
 
 <div class="gap"></div>
 
-<section th:fragment="bottom" id="bottom" class="wet-asphalt">
+<section id="bottom" class="wet-asphalt">
     <div class="container">
         <div class="row">
             <div class="col-md-3 col-sm-6">
@@ -170,7 +170,7 @@
 </section>
 <!--/#bottom-->
 
-<footer th:fragment="footer" id="footer" class="midnight-blue">
+<footer id="footer" class="midnight-blue">
     <div class="container">
         <div class="row">
             <div class="col-sm-6">
@@ -193,7 +193,7 @@
 </footer>
 <!--/#footer-->
 
-<section th:fragment="scripts">
+<section>
     <script src="../../resources/js/jquery.js" th:src="@{/resources/js/jquery.js}" ></script>
     <script src="../../resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.min.js}"></script>
     <script src="../../resources/js/jquery.prettyPhoto.js" th:src="@{/resources/js/jquery.prettyPhoto.js}"></script>
