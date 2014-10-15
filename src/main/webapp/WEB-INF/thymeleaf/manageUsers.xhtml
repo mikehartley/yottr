@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2014. Mike Hartley Solutions Ltd
+  ~ All rights reserved.
+  -->
+
+<html layout:decorator="mainTemplate"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="index-content" class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>Manage Users</h1>
+        </div>
+        <!--/.col-sm-6-->
+        <div class="col-sm-6">
+            <div th:each="user : ${users}">
+                <strong>Username:</strong> <span th:text="${user.username}">JimBob</span><br/>
+                <strong>Password:</strong> <span th:text="${user.password}">xyz123</span><br/>
+                <strong>Email:</strong><span th:text="${user.email}">a@b.c</span><br/>
+                <strong>First Name:</strong> <span th:text="${user.firstName}">Jim</span><br/>
+                <strong>Last Name:</strong> <span th:text="${user.lastName}">Bob</span><br/>
+                <strong>About:</strong> <span th:text="${user.aboutMe}">About me...</span>
+                <strong>Roles:</strong> <span th:text="${user.userRoles}">ADMIN</span><br/>
+                <strong>Account enabled:</strong> <span th:text="${user.enabled}">true</span><br/>
+                <strong>Boat adverts:</strong> <span>TODO (max 3)</span><br/>
+                EDIT | <a th:href="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">FLIP ENABLED</a> | <a th:href="@{/admin/user/{userid}/delete(userid=${user.id})}">DELETE</a><br/>
+                <hr/>
+            </div>
+        </div>
+        <!--/.col-sm-6-->
+    </div>
+    <!--/.row-->
+
+</section>
+<!--/#index-content-->
+</body>
+</html>
+
