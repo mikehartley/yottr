@@ -49,9 +49,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/index*").setViewName("index");
         registry.addViewController("/about").setViewName("about");
-        registry.addViewController("/home").setViewName("home");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
@@ -89,9 +87,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.setTemplateResolver(templateResolver());
 
-//        Set<IDialect> additionalDialects = new HashSet<>();
-//        additionalDialects.add(new SpringSecurityDialect());
-//        engine.setAdditionalDialects(additionalDialects);
         engine.addDialect(new SpringSecurityDialect());
         engine.addDialect(new LayoutDialect());
 

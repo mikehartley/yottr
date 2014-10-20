@@ -60,7 +60,7 @@
                 <li><a href="#" th:href="@{/}">About</a></li>
                 <li><a href="#" th:href="@{/}">Contact</a></li>
 
-                <li sec:authorize="isAuthenticated()"><a href="index.html?logout" th:href="@{/logout}">Logout</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="index.html?logout" th:href="@{/logout}" id="logout-link">Logout</a></li>
             </ul>
         </div>
     </div>

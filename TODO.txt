@@ -2,8 +2,8 @@ The Drawing Board
 =================
 
 Tech:
-    Catch when username taken on signup.
     Paging support on queries.
+    Catch when username taken on signup.
     Error pages for 404, 500.
     SQL initialisation script.
     UI acceptance testing using Selenium.
@@ -38,7 +38,7 @@ Admin:
     IP address blocking.
     
 Other:
-    Agree with Badger on how to go about using his server.
+    Agree with DJ on how to go about using his server.
     Terms and Conditions page
     About page
     FAQ page

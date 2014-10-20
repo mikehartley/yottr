@@ -62,7 +62,7 @@ public class BoatController {
         return modelAndView;
     }
 
-    @RequestMapping(value = { "/" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/", "index" }, method = RequestMethod.GET)
     public String index() {
         LOG.info("index page");
         return "index";
