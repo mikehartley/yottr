@@ -121,7 +121,7 @@ public class UserTest {
         user.setEmail("");
         assertSingleViolation(emailErrorMessage);
 
-        user.setEmail(randomAscii(4));
+        user.setEmail("asdf");
         assertSingleViolation(emailErrorMessage);
     }
 

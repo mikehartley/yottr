@@ -20,17 +20,11 @@ import uk.co.yottr.testconfig.ControllerTestConfig;
 @ContextConfiguration(classes = {ControllerTestConfig.class})
 @WebAppConfiguration
 public abstract class AbstractControllerTest {
-    public static final String PATH_TO_VIEWS = "/WEB-INF/views/";
-    public static final String JSP_SUFFIX = ".jsp";
 
     MockMvc mockMvc;
 
     @Autowired
     WebApplicationContext webApplicationContext;
-
-    String urlForView(String viewName) {
-        return PATH_TO_VIEWS + viewName + JSP_SUFFIX;
-    }
 
     @Before
     public void instantiateMockMvc() {

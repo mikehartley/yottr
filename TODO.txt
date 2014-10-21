@@ -2,8 +2,8 @@ The Drawing Board
 =================
 
 Tech:
-    Paging support on queries.
     Catch when username taken on signup.
+    Paging support on queries.
     Error pages for 404, 500.
     SQL initialisation script.
     UI acceptance testing using Selenium.
@@ -20,7 +20,7 @@ Tech:
 
 UI:
     Pagination.
-
+    Fix bootstrap column issues (must add to 12)
 User:
     Edit/Delete profile.
     Edit/Delete/Suspend ad.

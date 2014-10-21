@@ -34,7 +34,6 @@ public class AdminControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/admin/users").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("users"));
@@ -52,7 +51,6 @@ public class AdminControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/admin/user/" + userId + "/delete").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("users"));
@@ -83,7 +81,6 @@ public class AdminControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/admin/user/4/enabled/flip").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("users"));

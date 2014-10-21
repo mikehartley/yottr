@@ -38,7 +38,6 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/s/listings/new").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("boat"));
@@ -71,20 +70,19 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String dateRelevantToValue= "26/09/2014";
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML)
-                    .param(manufacturerProperty, manufacturerValue)
-                    .param(modelProperty, modelValue)
-                    .param(lengthProperty, lengthValue)
-                    .param(unitsImperialProperty, unitsImperialValue)
-                    .param(hullTypeProperty, hullTypeValue)
-                    .param(descriptionProperty, descriptionValue)
-                    .param(sailingStyleProperty, sailingStyleValue)
-                    .param(minimumQualificationByRankProperty, minimumQualificationValue)
-                    .param(dateRelevantToProperty, dateRelevantToValue)
-                    )
+                        .param(manufacturerProperty, manufacturerValue)
+                        .param(modelProperty, modelValue)
+                        .param(lengthProperty, lengthValue)
+                        .param(unitsImperialProperty, unitsImperialValue)
+                        .param(hullTypeProperty, hullTypeValue)
+                        .param(descriptionProperty, descriptionValue)
+                        .param(sailingStyleProperty, sailingStyleValue)
+                        .param(minimumQualificationByRankProperty, minimumQualificationValue)
+                        .param(dateRelevantToProperty, dateRelevantToValue)
+        )
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists(boatAttribute))
                 .andExpect(model().attribute(boatAttribute, hasProperty(manufacturerProperty, equalTo(manufacturerValue))))
@@ -111,7 +109,6 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().hasErrors())
                 .andExpect(view().name(viewNameWhenInError))
-                .andExpect(forwardedUrl(urlForView(viewNameWhenInError)))
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists(boatAttribute))
                 .andExpect(model().attribute(boatAttribute, hasProperty(manufacturerProperty, nullValue())));
@@ -125,7 +122,6 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("boats"));
@@ -140,14 +136,12 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(0));
 
         mockMvc.perform(get("/index").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
-                .andExpect(forwardedUrl(urlForView(viewName)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(0));
     }

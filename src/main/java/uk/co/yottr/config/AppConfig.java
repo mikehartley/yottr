@@ -59,16 +59,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public TemplateResolver templateResolver() {
-        ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
-        resolver.setPrefix("/WEB-INF/thymeleaf/");
-        resolver.setSuffix(".xhtml");
-        resolver.setTemplateMode("HTML5");
-        resolver.setCacheable(false);
-        return resolver;
-    }
-
-    @Bean
     public ViewResolver viewResolver() {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine());
@@ -91,5 +81,15 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         engine.addDialect(new LayoutDialect());
 
         return engine;
+    }
+
+    @Bean
+    public TemplateResolver templateResolver() {
+        ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
+        resolver.setPrefix("/WEB-INF/thymeleaf/");
+        resolver.setSuffix(".xhtml");
+        resolver.setTemplateMode("HTML5");
+        resolver.setCacheable(false);
+        return resolver;
     }
 }

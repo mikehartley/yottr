@@ -1,6 +1,7 @@
 package uk.co.yottr.model;
 
 import uk.co.yottr.security.Role;
+import uk.co.yottr.validator.UsernameAvailable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,7 @@ public class User {
     @Column(name = "username", unique = true, nullable = false, length = 50)
     @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 2, max = 50)
+    @UsernameAvailable
     private String username;
 
     @Column(name = "password", nullable = false, length = 60)
