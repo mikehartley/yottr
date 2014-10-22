@@ -2,7 +2,6 @@ The Drawing Board
 =================
 
 Tech:
-    Catch when username taken on signup.
     Paging support on queries.
     Error pages for 404, 500.
     SQL initialisation script.
