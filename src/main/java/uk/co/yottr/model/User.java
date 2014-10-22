@@ -1,5 +1,6 @@
 package uk.co.yottr.model;
 
+import org.springframework.stereotype.Component;
 import uk.co.yottr.security.Role;
 import uk.co.yottr.validator.UsernameAvailable;
 
@@ -18,6 +19,7 @@ import java.util.HashSet;
 
 @Entity
 @Table(name = "users")
+@Component
 public class User {
 
     private static final String REQUIRED_ERROR_MSG = "required";

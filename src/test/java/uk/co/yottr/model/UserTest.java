@@ -1,38 +1,50 @@
 package uk.co.yottr.model;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.testconfig.UnitConfig;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {UnitConfig.class})
+@TransactionConfiguration(defaultRollback = false)
+@Transactional
 public class UserTest {
-    private static Validator validator;
 
+    @Autowired
+    private Validator validator;
+
+    @Autowired
     private User user;
 
     private static final String SIZE_ERROR_MSG = "size must be between %d and %d";
     private static final String NOT_NULL_ERROR_MSG = "required";
 
-    @BeforeClass
-    public static void setUp() {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-    }
+    @Autowired
+    private UserRepository mockUserRepository;
 
     @Before
     public void beforeEachTest() {
-        user = createUser();
+        createUser();
     }
 
     @Test
@@ -56,6 +68,20 @@ public class UserTest {
 
         user.setUsername(randomAscii(51));
         assertSingleViolation(sizeErrorMessage);
+    }
+
+    @Test
+    public void whenUsernameIsTaken() {
+        final String username = "usr";
+        when(mockUserRepository.findByUsername(username)).thenReturn(new User());
+
+        user.setUsername(username);
+
+        final Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertEquals("should be one violation", 1, violations.size());
+
+        final ConstraintViolation<User> violation = violations.iterator().next();
+        assertEquals("unexpected error message", "Username not available", violation.getMessage());
     }
 
     @Test
@@ -149,8 +175,8 @@ public class UserTest {
         assertEquals(violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
     }
 
-    private User createUser() {
-        User user = new User();
+    private void createUser() {
+//        User user = new User();
         user.setUsername(randomAlphabetic(10));
         user.setPassword(randomAlphanumeric(10));
         user.setTitle("Mr");
@@ -161,6 +187,6 @@ public class UserTest {
         user.setCountry(User.Country.UK);
         user.setPostcode("p05tc0d3");
         user.setAboutMe("about");
-        return user;
+//        return user;
     }
 }

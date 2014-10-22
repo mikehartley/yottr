@@ -1,8 +1,7 @@
 package uk.co.yottr.validator;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 
@@ -14,9 +13,11 @@ import javax.validation.ConstraintValidatorContext;
  * All rights reserved.
  */
 
-public class UsernameAvailableValidator implements ConstraintValidator<UsernameAvailable, String>, ApplicationContextAware {
+@Component
+public class UsernameAvailableValidator implements ConstraintValidator<UsernameAvailable, String> {
 
-    private ApplicationContext applicationContext;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public void initialize(UsernameAvailable param) {
@@ -25,18 +26,11 @@ public class UsernameAvailableValidator implements ConstraintValidator<UsernameA
     @Override
     public boolean isValid(String username, ConstraintValidatorContext ctx) {
 
-        if (applicationContext == null) {
+        if (userRepository == null) {
             return true;
         }
 
-        UserRepository userRepository = applicationContext.getBean(UserRepository.class);
-
         final User user = userRepository.findByUsername(username);
         return user == null;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 }
