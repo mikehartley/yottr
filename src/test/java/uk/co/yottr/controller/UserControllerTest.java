@@ -1,11 +1,14 @@
 package uk.co.yottr.controller;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
+
+import java.security.Principal;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
@@ -24,17 +27,21 @@ public class UserControllerTest extends AbstractControllerTest {
     @Autowired
     private UserService mockUserService;
 
+    @Before
+    public void resetMockUserService() {
+        reset(mockUserService);
+    }
+
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(mockUserService);
     }
 
     @Test
-    public void testSignupPage() throws Exception {
-        final String viewName = "signup";
+    public void testGetSignupPage() throws Exception {
         mockMvc.perform(get("/signup").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("signup"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("user"));
@@ -42,7 +49,6 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSignupAction() throws Exception {
-        final String viewName = "signupSuccess";
         final String userAttribute = "user";
 
         final String usernameProperty = "username";
@@ -88,7 +94,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .param(aboutMeProperty, aboutMeValue))
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("signupSuccess"))
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists(userAttribute))
                 .andExpect(model().attribute(userAttribute, hasProperty(usernameProperty, equalTo(usernameValue))))
@@ -107,19 +113,54 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSignupActionWhenInError() throws Exception {
-        final String viewNameWhenInError = "signup";
         final String userAttribute = "user";
-
         final String usernameProperty = "username";
 
         mockMvc.perform(post("/signup").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(model().hasErrors())
-                .andExpect(view().name(viewNameWhenInError))
+                .andExpect(view().name("signup"))
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists(userAttribute))
                 .andExpect(model().attribute(userAttribute, hasProperty(usernameProperty, nullValue())));
 
         verify(mockUserService, never()).save(any(User.class), eq(true));
+    }
+
+    @Test
+    public void testGetMyDetailsPage() throws Exception {
+        final String username = "jimbob";
+
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        when(mockUserService.findByUsername(username)).thenReturn(new User());
+
+        mockMvc.perform(get("/s/myDetails").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("myDetails"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("user"));
+
+        verify(mockUserService).findByUsername(username);
+    }
+
+    @Test
+    public void testGetMyDetailsPageWhenUsernameNotFound() throws Exception {
+        final String username = "jimbob";
+
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        when(mockUserService.findByUsername(username)).thenReturn(null);
+
+        mockMvc.perform(get("/s/myDetails").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().attributeDoesNotExist("user"));
+
+        verify(mockUserService).findByUsername(username);
     }
 }

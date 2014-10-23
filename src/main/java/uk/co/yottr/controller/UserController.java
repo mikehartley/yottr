@@ -14,6 +14,7 @@ import uk.co.yottr.security.Role;
 import uk.co.yottr.service.UserService;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -30,7 +31,6 @@ public class UserController {
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public ModelAndView signup() {
-        LOG.info("Signup page (GET)");
 
         ModelAndView modelAndView = new ModelAndView("signup");
         modelAndView.addObject("user", new User());
@@ -42,10 +42,9 @@ public class UserController {
     public String signupAction(@Valid User user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
-            LOG.info("Returning signup.jsp page from signupAction");
             return "signup";
         }
-        LOG.info("Returning signupSuccess.jsp page");
+
         model.addAttribute("user", user);
         user.addRole(Role.FREE);
         user.setEnabled(true);
@@ -55,5 +54,24 @@ public class UserController {
         LOG.info("Signed up new user: " + user);
 
         return "signupSuccess";
+    }
+
+    @RequestMapping(value = "/s/myDetails", method = RequestMethod.GET)
+    public ModelAndView myDetails(Principal principal) {
+
+        final String currentUsername = principal.getName();
+        LOG.info("current username is: " + currentUsername);
+
+        final User currentUser = userService.findByUsername(currentUsername);
+        if (currentUser == null) {
+            return new ModelAndView("index");
+        }
+
+        currentUser.setPassword(null);
+
+        ModelAndView modelAndView = new ModelAndView("myDetails");
+        modelAndView.addObject("user", currentUser);
+
+        return modelAndView;
     }
 }

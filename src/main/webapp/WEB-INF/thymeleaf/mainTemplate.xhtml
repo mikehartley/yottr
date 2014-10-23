@@ -32,7 +32,7 @@
 </head>
 <!--/head-->
 <body>
-<header class="navbar navbar-inverse navbar-fixed-top wet-asphalt" role="banner">
+<header class="navbar navbar-inverse navbar-fixed-top wet-asphalt col-sm-12" role="banner">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -52,14 +52,11 @@
 
                 <li class="active"><a href="index.html" th:href="@{/}">Home</a></li>
 
-                <li sec:authorize="isAnonymous()"><a href="signup.html" th:href="@{/signup}">Register</a></li>
+                <li sec:authorize="isAnonymous()"><a href="signup.xhtml" th:href="@{/signup}">Register</a></li>
 
                 <li sec:authorize="hasRole('FREE')"><a href="newListing.html" th:href="@{/s/listings/new}">Add Boat</a></li>
                 <li sec:authorize="hasRole('FREE')"><a href="boatList.html" th:href="@{/s/listings/all}">View All</a></li>
-
-                <li><a href="#" th:href="@{/}">About</a></li>
-                <li><a href="#" th:href="@{/}">Contact</a></li>
-
+                <li sec:authorize="hasRole('FREE')"><a href="myDetails.html" th:href="@{/s/myDetails}">My Details</a></li>
                 <li sec:authorize="isAuthenticated()"><a href="index.html?logout" th:href="@{/logout}" id="logout-link">Logout</a></li>
             </ul>
         </div>
@@ -69,7 +66,7 @@
 
 <div class="gap"></div>
 
-<section layout:fragment="content" id="main-content" class="container">
+<section layout:fragment="content" id="main-content" class="container col-sm-12">
     <div class="row">
         <div class="col-sm-6">
             <h1>Left hand content</h1>
@@ -87,49 +84,15 @@
 
 <div class="gap"></div>
 
-<section id="bottom" class="wet-asphalt">
+<section id="bottom" class="wet-asphalt col-sm-12">
     <div class="container">
         <div class="row">
-            <div class="col-md-3 col-sm-6">
-                <h4>About</h4>
 
-                <p>Yottr has been a long time in the making.</p>
+            <div class="col-sm-9">
+                <h4 class="col-sm-12">Latest Listings</h4>
 
-                <p>Many years ago I thought it would be a great idea if there was a website for people who want
-                    to go sailing but either don't have enough crew, or don't have a boat.</p>
-
-                <p>I couldn't find one I liked so I decided to build my own.</p>
-
-                <p>This is it...</p>
-            </div>
-            <!--/.col-md-3-->
-
-            <div class="col-md-3 col-sm-6">
-                <h4>Useful Links</h4>
-
-                <div>
-                    <ul class="arrow">
-                        <li><a href="#">Weather</a></li>
-                        <li><a href="#">Tides</a></li>
-                        <li><a href="#">The Good Marina Guide</a></li>
-                        <li><a href="#">Chandlers</a></li>
-                        <li><a href="#">Schools and Courses</a></li>
-                        <li><a href="#">Skippers for Hire</a></li>
-                        <li><a href="#">Charter</a></li>
-                        <li><a href="#">RYA</a></li>
-                        <li><a href="#">RNLI Lifeboats</a></li>
-                        <li><a href="#">ARC</a></li>
-                        <li><a href="#">Ocean Youth Trust</a></li>
-                    </ul>
-                </div>
-            </div>
-            <!--/.col-md-3-->
-
-            <div class="col-md-3 col-sm-6">
-                <h4>Latest Listings</h4>
-
-                <div>
-                    <div class="media">
+                <div class="col-sm-12">
+                    <div class="media col-sm-4">
                         <div class="pull-left">
                             <img src="../../resources/images/blog/thumb1.jpg" th:src="@{/resources/images/blog/thumb1.jpg}" alt="" />
                         </div>
@@ -138,7 +101,7 @@
                             <small class="muted">Posted 17 Aug 2013</small>
                         </div>
                     </div>
-                    <div class="media">
+                    <div class="media col-sm-4">
                         <div class="pull-left">
                             <img src="../../resources/images/blog/thumb2.jpg" th:src="@{/resources/images/blog/thumb2.jpg}" alt="" />
                         </div>
@@ -147,7 +110,7 @@
                             <small class="muted">Posted 13 Sep 2013</small>
                         </div>
                     </div>
-                    <div class="media">
+                    <div class="media col-sm-4">
                         <div class="pull-left">
                             <img src="../../resources/images/blog/thumb3.jpg" th:src="@{/resources/images/blog/thumb3.jpg}" alt="" />
                         </div>
@@ -158,21 +121,25 @@
                     </div>
                 </div>
             </div>
-            <!--/.col-md-3-->
 
-            <div class="col-md-3 col-sm-6">
-                <h4>This space is could be yours</h4>
-                <p>All this space, just waiting to be used...</p>
-                <p>Perhaps you would like to advertise here?</p>
-                <p>If so then get in touch.</p>
+            <div class="col-sm-3">
+                <h4>Useful Links</h4>
+                <div>
+                    <ul class="arrow">
+                        <li><a href="#">Weather</a></li>
+                        <li><a href="#">Tides</a></li>
+                        <li><a href="#">Schools and Courses</a></li>
+                        <li><a href="#">Skippers for Hire</a></li>
+                    </ul>
+                </div>
             </div>
-            <!--/.col-md-3-->
+
         </div>
     </div>
 </section>
 <!--/#bottom-->
 
-<footer id="footer" class="midnight-blue">
+<footer id="footer" class="midnight-blue col-sm-12">
     <div class="container">
         <div class="row">
             <div class="col-sm-6">

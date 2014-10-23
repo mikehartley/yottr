@@ -1,12 +1,14 @@
 The Drawing Board
 =================
 
+* Next
+
 Tech:
     Paging support on queries.
     Error pages for 404, 500.
     SQL initialisation script.
-    UI acceptance testing using Selenium.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
+    Reference lists should be data driven, not hard coded.
 
     Look at Ansible for automated deployment and configuration management.
 
@@ -17,11 +19,14 @@ Tech:
         sign-up,
         password reset.
 
+    UI acceptance testing using Selenium.
+    Swear filter.
+
 UI:
     Pagination.
-    Fix bootstrap column issues (must add to 12)
+    Fix bootstrap column issues (must add to 12) (done: signup)
 User:
-    Edit/Delete profile.
+*   MANAGE PROFILE : Edit/Delete profile.
     Edit/Delete/Suspend ad.
     Searches.
     Saved searches.
