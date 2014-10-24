@@ -108,7 +108,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(userAttribute, hasProperty(postcodeProperty, equalTo(postcodeValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(aboutMeProperty, equalTo(aboutMeValue))));
 
-        verify(mockUserService, times(1)).save(any(User.class), eq(true));
+        verify(mockUserService).save(any(User.class), eq(true));
     }
 
     @Test
@@ -149,7 +149,6 @@ public class UserControllerTest extends AbstractControllerTest {
     @Test
     public void testGetMyDetailsPageWhenUsernameNotFound() throws Exception {
         final String username = "jimbob";
-
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
@@ -161,6 +160,73 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attributeDoesNotExist("user"));
 
+        verify(mockUserService).findByUsername(username);
+    }
+
+    @Test
+    public void testMyDetailsAction() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        User user = new User();
+        user.setUsername(username);
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
+        final String userAttribute = "user";
+
+        final String passwordProperty = "password";
+        final String passwordValue = "passwordValue";
+
+        final String titleProperty = "title";
+        final String titleValue = "titleValue";
+
+        final String firstNameProperty = "firstName";
+        final String firstNameValue = "firstNameValue";
+
+        final String lastNameProperty = "lastName";
+        final String lastNameValue = "lastNameValue";
+
+        final String emailProperty = "email";
+        final String emailValue = "email@Value";
+
+        final String mobileProperty = "mobile";
+        final String mobileValue = "mobileValue";
+
+        final String countryProperty = "country";
+        final String countryValue = User.Country.UK.name();
+
+        final String postcodeProperty = "postcode";
+        final String postcodeValue = "postcodeValue";
+
+        final String aboutMeProperty = "aboutMe";
+        final String aboutMeValue = "aboutMeValue";
+
+        mockMvc.perform(post("/s/myDetails").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                .param(passwordProperty, passwordValue)
+                .param(titleProperty, titleValue)
+                .param(firstNameProperty, firstNameValue)
+                .param(lastNameProperty, lastNameValue)
+                .param(emailProperty, emailValue)
+                .param(mobileProperty, mobileValue)
+                .param(countryProperty, countryValue)
+                .param(postcodeProperty, postcodeValue)
+                .param(aboutMeProperty, aboutMeValue))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:myDetails?updated"))
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists(userAttribute))
+                .andExpect(model().attribute(userAttribute, hasProperty(passwordProperty, equalTo(passwordValue))))
+                .andExpect(model().attribute(userAttribute, hasProperty(titleProperty, equalTo(titleValue))))
+                .andExpect(model().attribute(userAttribute, hasProperty(firstNameProperty, equalTo(firstNameValue))))
+                .andExpect(model().attribute(userAttribute, hasProperty(lastNameProperty, equalTo(lastNameValue))))
+                .andExpect(model().attribute(userAttribute, hasProperty(emailProperty, equalTo(emailValue))))
+                .andExpect(model().attribute(userAttribute, hasProperty(mobileProperty, equalTo(mobileValue))))
+                .andExpect(model().attribute(userAttribute, hasProperty(countryProperty, equalTo(User.Country.valueOf(countryValue)))))
+                .andExpect(model().attribute(userAttribute, hasProperty(postcodeProperty, equalTo(postcodeValue))))
+                .andExpect(model().attribute(userAttribute, hasProperty(aboutMeProperty, equalTo(aboutMeValue))));
+
+        verify(mockUserService).save(any(User.class), eq(true));
         verify(mockUserService).findByUsername(username);
     }
 }
