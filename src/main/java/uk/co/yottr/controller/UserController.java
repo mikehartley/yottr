@@ -56,7 +56,7 @@ public class UserController {
         return "signupSuccess";
     }
 
-    @RequestMapping(value = "/s/myDetails", method = RequestMethod.GET)
+    @RequestMapping(value = "/s/myDetails*", method = RequestMethod.GET)
     public ModelAndView myDetails(Principal principal) {
 
         final String currentUsername = principal.getName();
@@ -73,5 +73,47 @@ public class UserController {
         modelAndView.addObject("user", currentUser);
 
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/s/myDetails", method = RequestMethod.POST)
+    public String myDetailsAction(@Valid User userFromForm, BindingResult bindingResult, Principal principal) {
+
+        final User userForUpdate = userService.findByUsername(principal.getName());
+
+        if (bindingResult.getErrorCount() > 1) { // will always be username error
+
+            if (bindingResult.getErrorCount() == 2 && bindingResult.hasFieldErrors("password") && nullOrEmpty(userFromForm.getPassword())) {
+                LOG.info("password is in error because it is empty, but this just actually means keep existing password");
+            }
+            else {
+                LOG.info("Errors from myDetails: " + bindingResult.getAllErrors().toString());
+                return "myDetails";
+            }
+        }
+
+        userForUpdate.setTitle(userFromForm.getTitle());
+        userForUpdate.setFirstName(userFromForm.getFirstName());
+        userForUpdate.setLastName(userFromForm.getLastName());
+        userForUpdate.setEmail(userFromForm.getEmail());
+        userForUpdate.setMobile(userFromForm.getMobile());
+        userForUpdate.setCountry(userFromForm.getCountry());
+        userForUpdate.setPostcode(userFromForm.getPostcode());
+        userForUpdate.setAboutMe(userFromForm.getAboutMe());
+
+        if (nullOrEmpty(userFromForm.getPassword())) {
+            userService.save(userForUpdate, false);
+        }
+        else {
+            userForUpdate.setPassword(userFromForm.getPassword());
+            userService.save(userForUpdate, true);
+        }
+
+        LOG.info("Updated user: " + userForUpdate);
+
+        return "redirect:myDetails?updated";
+    }
+
+    private boolean nullOrEmpty(String string) {
+        return string == null || "".equals(string);
     }
 }

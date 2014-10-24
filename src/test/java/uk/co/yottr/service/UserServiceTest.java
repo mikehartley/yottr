@@ -36,7 +36,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testSave() throws Exception {
+    public void save() throws Exception {
 
         final String plaintextPassword = "this is plaintext";
 

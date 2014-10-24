@@ -17,6 +17,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 /*
@@ -33,7 +34,6 @@ public class UserTest {
     @Autowired
     private Validator validator;
 
-    @Autowired
     private User user;
 
     private static final String SIZE_ERROR_MSG = "size must be between %d and %d";
@@ -44,7 +44,8 @@ public class UserTest {
 
     @Before
     public void beforeEachTest() {
-        createUser();
+        reset(mockUserRepository);
+        user = createUser();
     }
 
     @Test
@@ -175,8 +176,8 @@ public class UserTest {
         assertEquals(violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
     }
 
-    private void createUser() {
-//        User user = new User();
+    private User createUser() {
+        User user = new User();
         user.setUsername(randomAlphabetic(10));
         user.setPassword(randomAlphanumeric(10));
         user.setTitle("Mr");
@@ -187,6 +188,6 @@ public class UserTest {
         user.setCountry(User.Country.UK);
         user.setPostcode("p05tc0d3");
         user.setAboutMe("about");
-//        return user;
+        return user;
     }
 }
