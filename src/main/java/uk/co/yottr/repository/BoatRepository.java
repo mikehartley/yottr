@@ -1,6 +1,6 @@
 package uk.co.yottr.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import uk.co.yottr.model.Boat;
 
 /*
@@ -8,6 +8,6 @@ import uk.co.yottr.model.Boat;
  * All rights reserved.
  */
 
-public interface BoatRepository extends CrudRepository<Boat, Long> {
+public interface BoatRepository extends PagingAndSortingRepository<Boat, Long> {
     Boat findByReference(String reference);
 }
