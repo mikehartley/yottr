@@ -24,7 +24,7 @@ import java.security.Principal;
 @Controller
 public class UserController {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;
@@ -113,7 +113,25 @@ public class UserController {
         return "redirect:myDetails?updated";
     }
 
+    @RequestMapping(value = "/s/deleteMe", method = RequestMethod.GET)
+    public String deleteMe(Principal principal) {
+
+        final String logoutUrl = "redirect:/logout";
+
+        final String currentUsername = principal.getName();
+        LOG.info("current username is: " + currentUsername);
+
+        final User currentUser = userService.findByUsername(currentUsername);
+        if (currentUser == null) {
+            return logoutUrl;
+        }
+
+        userService.delete(currentUser);
+        return logoutUrl;
+    }
+
     private boolean nullOrEmpty(String string) {
         return string == null || "".equals(string);
     }
 }
+

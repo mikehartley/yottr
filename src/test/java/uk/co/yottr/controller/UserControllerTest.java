@@ -229,4 +229,40 @@ public class UserControllerTest extends AbstractControllerTest {
         verify(mockUserService).save(any(User.class), eq(true));
         verify(mockUserService).findByUsername(username);
     }
+
+    @Test
+    public void testDeleteMe() throws Exception {
+        final String username = "jimbob";
+
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = new User();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
+        mockMvc.perform(get("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/logout"))
+                .andExpect(model().hasNoErrors());
+
+        verify(mockUserService).findByUsername(username);
+        verify(mockUserService).delete(user);
+    }
+
+    @Test
+    public void testDeleteMeWhenUserNotFound() throws Exception {
+        final String username = "who";
+
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        when(mockUserService.findByUsername(username)).thenReturn(null);
+
+        mockMvc.perform(get("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/logout"))
+                .andExpect(model().hasNoErrors());
+
+        verify(mockUserService).findByUsername(username);
+    }
 }

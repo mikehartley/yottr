@@ -98,6 +98,20 @@ public class UserServiceIT {
     }
 
     @Test
+    public void deleteByUser() throws Exception {
+
+        final User savedUser = userService.save(createUser(randomAlphanumeric(10)), true);
+
+        final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
+        assertTrue("user should exist before delete", userExistsBeforeDelete);
+
+        userService.delete(savedUser);
+
+        final boolean userExistsAfterDelete = userService.userExists(savedUser.getId());
+        assertFalse("user should not exist after delete", userExistsAfterDelete);
+    }
+
+    @Test
     public void allFieldsPersist() throws Exception {
         final String username = randomAlphanumeric(20);
         final String password = "password" + randomAlphanumeric(22);
