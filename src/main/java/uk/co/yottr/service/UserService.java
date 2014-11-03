@@ -7,9 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
  * All rights reserved.
@@ -39,15 +36,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> findAll() {
-
-        List<User> allUsers = new ArrayList<>();
-
-        for (User user : userRepository.findAll()) {
-            allUsers.add(user);
-        }
-
-        return allUsers;
+    public Iterable<User> findAll() {
+        return userRepository.findAll();
     }
 
     public void delete(User user) {

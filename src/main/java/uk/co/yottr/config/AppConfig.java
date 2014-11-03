@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -26,11 +29,18 @@ import uk.co.yottr.conversion.DateFormatter;
  * All rights reserved.
  */
 
-@EnableWebMvc
 @Configuration
+@EnableWebMvc
+@EnableSpringDataWebSupport
 @ComponentScan(value = { "uk.co.yottr.model", "uk.co.yottr.controller", "uk.co.yottr.service" })
 @Import({ SecurityConfig.class, PersistenceConfig.class })
 public class AppConfig extends WebMvcConfigurerAdapter {
+
+    @Bean
+    public PageableHandlerMethodArgumentResolver modifyPageableHandlerMethodArgumentResolver(PageableHandlerMethodArgumentResolver resolver) {
+        resolver.setFallbackPageable(new PageRequest(0, 4));
+        return resolver;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

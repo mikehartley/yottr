@@ -3,6 +3,8 @@ package uk.co.yottr.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -52,12 +54,13 @@ public class BoatController {
 	}
 
     @RequestMapping(value = "/s/listings/all", method = RequestMethod.GET)
-    public ModelAndView listBoats() {
+    public ModelAndView listBoats(Pageable pageable) {
         LOG.info("All listings page");
 
         ModelAndView modelAndView = new ModelAndView("boatList");
 
-        modelAndView.addObject("boats", boatService.findAll());
+        Page<Boat> boatPages = boatService.findAll(pageable);
+        modelAndView.addObject("boatPages", boatPages);
 
         return modelAndView;
     }

@@ -12,8 +12,6 @@ import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
 
-import java.util.Collection;
-
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
  * All rights reserved.
@@ -70,7 +68,7 @@ public class AdminController {
 
     private ModelAndView modelAndViewForManageUsers() {
         ModelAndView modelAndView = new ModelAndView("manageUsers");
-        Collection<User> allUsers = userService.findAll();
+        Iterable<User> allUsers = userService.findAll();
         modelAndView.addObject("users", allUsers);
         return modelAndView;
     }

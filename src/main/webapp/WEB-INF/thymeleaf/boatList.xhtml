@@ -15,7 +15,7 @@
         </div>
         <!--/.col-sm-6-->
         <div class="col-sm-6">
-            <div th:each="boat : ${boats}">
+            <div th:each="boat : ${boatPages}">
                 <strong>Date posted:</strong> <span th:text="${boat.datePosted}">01-Jan-1901</span><br/>
                 <strong>Date relevant to:</strong> <span th:text="${boat.dateRelevantTo}">01-Jan-1901</span><br/>
                 <strong>Reference:</strong><span th:text="${boat.reference}">ref001</span><br/>
@@ -32,6 +32,43 @@
                 <strong>Description:</strong> <span th:text="${boat.description}">Desc</span><br/>
                 <hr/>
             </div>
+
+            <div>
+                <p>Number: <span th:text="${boatPages.number}"></span></p>
+                <p>Size: <span th:text="${boatPages.size}"></span></p>
+                <p>Total pages: <span th:text="${boatPages.totalPages}"></span></p>
+                <p>Is First? <span th:text="${boatPages.isFirst()}"></span></p>
+                <p>Has Previous? <span th:text="${boatPages.hasPrevious()}"></span></p>
+                <p>Has Next? <span th:text="${boatPages.hasNext()}"></span></p>
+                <p>Is Last? <span th:text="${boatPages.isLast()}"></span></p>
+
+                <ul class="pagination">
+                    <li th:class="${boatPages.isFirst()}? 'disabled' : ''">
+                        <span th:if="${boatPages.isFirst()}">← First</span>
+                        <a th:if="${not boatPages.isFirst()}" th:href="@{/s/listings/all(page=0,size=${boatPages.size})}">← First</a>
+                    </li>
+                    <li th:class="${boatPages.hasPrevious()}? '' : 'disabled'">
+                        <span th:if="${not boatPages.hasPrevious()}">«</span>
+                        <a th:if="${boatPages.hasPrevious()}" th:href="@{/s/listings/all(page=${boatPages.number-1},size=${boatPages.size})}" title="Go to previous page">«</a>
+                    </li>
+
+                    <li th:each="i : ${#numbers.sequence(1,boatPages.totalPages)}" > <!--th:class="${item.current}? 'active' : ''"-->
+                        <span th:text="${i}">1</span>
+                        <!--<span th:if="${item.current()}" th:text="${item.number}">1</span>-->
+                        <!--<a th:if="${not item.current()}" th:href="@{${/s/listings/all}(page=${item.number},size=${boatPages.size})}"><span th:text="${item.number}">1</span></a>-->
+                    </li>
+
+                    <li th:class="${boatPages.hasNext()}? '' : 'disabled'">
+                        <span th:if="${not boatPages.hasNext()}">»</span>
+                        <a th:if="${boatPages.hasNext()}" th:href="@{/s/listings/all(page=${boatPages.number+1},size=${boatPages.size})}" title="Go to next page">»</a>
+                    </li>
+                    <li th:class="${boatPages.isLast()}? 'disabled' : ''">
+                        <span th:if="${boatPages.isLast()}">Last →</span>
+                        <a th:if="${not boatPages.isLast()}" th:href="@{/s/listings/all(page=${boatPages.totalPages-1},size=${boatPages.size})}">Last →</a>
+                    </li>
+                </ul>
+            </div>
+
         </div>
         <!--/.col-sm-6-->
     </div>

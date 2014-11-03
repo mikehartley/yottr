@@ -1,15 +1,14 @@
 package uk.co.yottr.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -36,15 +35,8 @@ public class BoatService {
     }
 
     @Transactional(readOnly = true)
-    public List<Boat> findAll() {
-
-        List<Boat> allBoats = new ArrayList<>();
-
-        for (Boat boat: boatRepository.findAll()) {
-            allBoats.add(boat);
-        }
-
-        return allBoats;
+    public Page<Boat> findAll(Pageable pageable) {
+        return boatRepository.findAll(pageable);
     }
 
     @Transactional

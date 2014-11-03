@@ -61,8 +61,17 @@ public class InitialiseDatabase {
         if (!ENABLED) return;
 
         initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
-        setupAdminUser();
-        addBoat();
+        setupAdminUser("mike");
+        addBoat("Halberg Rassay");
+    }
+
+    @Test
+    public void addLotsOfBoats() {
+        if (!ENABLED) return;
+
+        for (int i = 0; i < 20; i++) {
+            addBoat("Rust Bucket " + i);
+        }
     }
 
     public static void initialiseRyaSailCruisingLevels(RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
@@ -72,10 +81,10 @@ public class InitialiseDatabase {
         }
     }
 
-    private void setupAdminUser() {
+    private void setupAdminUser(String username) {
         User user = new User();
 
-        user.setUsername("mike");
+        user.setUsername(username);
         user.setPassword(new BCryptPasswordEncoder().encode("aph3xtwIn"));
         user.addRole(Role.ADMIN);
         user.addRole(Role.CREW);
@@ -93,10 +102,10 @@ public class InitialiseDatabase {
         userRepository.save(user);
     }
 
-    private void addBoat() {
+    private void addBoat(String manufacturer) {
         Boat boat = new Boat();
 
-        boat.setManufacturer("Halberg Rassay");
+        boat.setManufacturer(manufacturer);
         boat.setModel("HR50");
         boat.setLength(50);
         boat.setUnitsImperial(false);

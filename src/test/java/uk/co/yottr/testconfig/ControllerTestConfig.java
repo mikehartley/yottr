@@ -8,6 +8,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
@@ -24,10 +27,17 @@ import uk.co.yottr.service.UserService;
  * All rights reserved.
  */
 
-@EnableWebMvc
 @Configuration
+@EnableWebMvc
+@EnableSpringDataWebSupport
 @ComponentScan(value = { "uk.co.yottr.controller" })
 public class ControllerTestConfig {
+
+    @Bean
+    public PageableHandlerMethodArgumentResolver modifyPageableHandlerMethodArgumentResolver(PageableHandlerMethodArgumentResolver resolver) {
+        resolver.setFallbackPageable(new PageRequest(0, 5));
+        return resolver;
+    }
 
     @Bean
     public MessageSource messageSource() {

@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.initialise.InitialiseDatabase;
@@ -14,10 +15,12 @@ import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.junit.Assert.*;
+import static uk.co.yottr.builder.BoatBuilder.aBoat;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -48,7 +51,7 @@ public class BoatServiceIT {
 
         final String uniqueDescription = "some description with unique number : "  + new Random().nextLong();
 
-        Boat boat = createValidBoat(uniqueDescription);
+        Boat boat = aBoat().withDescription(uniqueDescription).build();
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -103,20 +106,11 @@ public class BoatServiceIT {
 
     @Test
     public void canSaveTwoBoats() {
-        boatService.save(createValidBoat("1"));
-        boatService.save(createValidBoat("2"));
-        assertTrue(boatService.findAll().size() >= 2);
-    }
-
-    private Boat createValidBoat(String description) {
-        Boat boat = new Boat();
-        boat.setDescription(description);
-        boat.setHullType(Boat.HullType.MONO);
-        boat.setLength(36);
-        boat.setUnitsImperial(true);
-        boat.setManufacturer("Halberg Rassy");
-        boat.setModel("HR36");
-        boat.setSailingStyle(SailingStyle.ALL);
-        return boat;
+        boatService.save(aBoat().withDescription("1").build());
+        boatService.save(aBoat().withDescription("2").build());
+        final Iterator<Boat> boatIterator = boatService.findAll(new PageRequest(0, 10)).iterator();
+        assertEquals("1", boatIterator.next().getDescription());
+        assertEquals("2", boatIterator.next().getDescription());
+        assertFalse(boatIterator.hasNext());
     }
 }

@@ -11,6 +11,7 @@ import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -73,9 +74,12 @@ public class UserServiceTest {
         userList.add(createUser("u2"));
         when(mockUserRepository.findAll()).thenReturn(userList);
 
-        final List<User> allUsers = userService.findAll();
+        final Iterable<User> allUsers = userService.findAll();
+        final Iterator<User> userIterator = allUsers.iterator();
 
-        assertArrayEquals("user list should be the same", userList.toArray(), allUsers.toArray());
+        assertEquals("u1", userIterator.next().getUsername());
+        assertEquals("u2", userIterator.next().getUsername());
+        assertFalse(userIterator.hasNext());
 
         verify(mockUserRepository).findAll();
         verifyNoMoreInteractions(mockUserRepository);

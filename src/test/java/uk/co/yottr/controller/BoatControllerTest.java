@@ -3,12 +3,15 @@ package uk.co.yottr.controller;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.SailingStyle;
 import uk.co.yottr.service.BoatService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
@@ -16,6 +19,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.co.yottr.builder.BoatBuilder.aBoat;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -118,15 +122,20 @@ public class BoatControllerTest extends AbstractControllerTest {
 
     @Test
     public void testListBoats() throws Exception {
+        final ArrayList<Boat> boatList = new ArrayList<>();
+        boatList.add(aBoat().build());
+        final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
+        when(mockBoatService.findAll(new PageRequest(1, 5))).thenReturn(boatPage); // page and size come from fallback settings as found in config
+
         final String viewName = "boatList";
         mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
-                .andExpect(model().attributeExists("boats"));
+                .andExpect(model().attributeExists("boatPages"));
 
-        verify(mockBoatService, times(1)).findAll();
+        verify(mockBoatService, times(1)).findAll(new PageRequest(1, 5));
     }
 
     @Test

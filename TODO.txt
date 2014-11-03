@@ -5,6 +5,7 @@ The Drawing Board
 
 Tech:
 *    Paging support on queries.
+    BoatService unit test.
     Error pages for 404, 500.
     SQL initialisation script.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
