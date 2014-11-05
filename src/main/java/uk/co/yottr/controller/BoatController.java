@@ -60,7 +60,7 @@ public class BoatController {
         ModelAndView modelAndView = new ModelAndView("boatList");
 
         Page<Boat> boatPages = boatService.findAll(pageable);
-        modelAndView.addObject("boatPages", boatPages);
+        modelAndView.addObject("wrapper", new PageWrapper<>(boatPages));
 
         return modelAndView;
     }

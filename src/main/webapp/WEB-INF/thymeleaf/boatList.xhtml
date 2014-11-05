@@ -15,7 +15,7 @@
         </div>
         <!--/.col-sm-6-->
         <div class="col-sm-6">
-            <div th:each="boat : ${boatPages}">
+            <div th:each="boat : ${wrapper.getPage()}">
                 <strong>Date posted:</strong> <span th:text="${boat.datePosted}">01-Jan-1901</span><br/>
                 <strong>Date relevant to:</strong> <span th:text="${boat.dateRelevantTo}">01-Jan-1901</span><br/>
                 <strong>Reference:</strong><span th:text="${boat.reference}">ref001</span><br/>
@@ -34,37 +34,37 @@
             </div>
 
             <div>
-                <p>Number: <span th:text="${boatPages.number}"></span></p>
-                <p>Size: <span th:text="${boatPages.size}"></span></p>
-                <p>Total pages: <span th:text="${boatPages.totalPages}"></span></p>
-                <p>Is First? <span th:text="${boatPages.isFirst()}"></span></p>
-                <p>Has Previous? <span th:text="${boatPages.hasPrevious()}"></span></p>
-                <p>Has Next? <span th:text="${boatPages.hasNext()}"></span></p>
-                <p>Is Last? <span th:text="${boatPages.isLast()}"></span></p>
+                <p>Number: <span th:text="${wrapper.getPage().number}"></span></p>
+                <p>Size: <span th:text="${wrapper.getPage().size}"></span></p>
+                <p>Total pages: <span th:text="${wrapper.getPage().totalPages}"></span></p>
+                <p>Is First? <span th:text="${wrapper.getPage().isFirst()}"></span></p>
+                <p>Has Previous? <span th:text="${wrapper.getPage().hasPrevious()}"></span></p>
+                <p>Has Next? <span th:text="${wrapper.getPage().hasNext()}"></span></p>
+                <p>Is Last? <span th:text="${wrapper.getPage().isLast()}"></span></p>
 
                 <ul class="pagination">
-                    <li th:class="${boatPages.isFirst()}? 'disabled' : ''">
-                        <span th:if="${boatPages.isFirst()}">← First</span>
-                        <a th:if="${not boatPages.isFirst()}" th:href="@{/s/listings/all(page=0,size=${boatPages.size})}">← First</a>
+                    <li th:class="${wrapper.getPage().isFirst()}? 'disabled' : ''">
+                        <span th:if="${wrapper.getPage().isFirst()}">← First</span>
+                        <a th:if="${not wrapper.getPage().isFirst()}" th:href="@{/s/listings/all(page=0,size=${wrapper.getPage().size})}">← First</a>
                     </li>
-                    <li th:class="${boatPages.hasPrevious()}? '' : 'disabled'">
-                        <span th:if="${not boatPages.hasPrevious()}">«</span>
-                        <a th:if="${boatPages.hasPrevious()}" th:href="@{/s/listings/all(page=${boatPages.number-1},size=${boatPages.size})}" title="Go to previous page">«</a>
+                    <li th:class="${wrapper.getPage().hasPrevious()}? '' : 'disabled'">
+                        <span th:if="${not wrapper.getPage().hasPrevious()}">«</span>
+                        <a th:if="${wrapper.getPage().hasPrevious()}" th:href="@{/s/listings/all(page=${wrapper.getPage().number-1},size=${wrapper.getPage().size})}" title="Go to previous page">«</a>
                     </li>
 
-                    <li th:each="i : ${#numbers.sequence(1,boatPages.totalPages)}" > <!--th:class="${item.current}? 'active' : ''"-->
-                        <span th:text="${i}">1</span>
+                    <li th:each="i : ${#numbers.sequence(wrapper.getRangeStart(), wrapper.getRangeEnd())}" > <!--th:class="${item.current}? 'active' : ''"-->
+                        <a th:href="@{/s/listings/all(page=${i},size=${wrapper.getPage().size})}"> <span th:text="${i}">1</span></a>
                         <!--<span th:if="${item.current()}" th:text="${item.number}">1</span>-->
-                        <!--<a th:if="${not item.current()}" th:href="@{${/s/listings/all}(page=${item.number},size=${boatPages.size})}"><span th:text="${item.number}">1</span></a>-->
+                        <!--<a th:if="${not item.current()}" th:href="@{${/s/listings/all}(page=${item.number},size=${wrapper.getPage().size})}"><span th:text="${item.number}">1</span></a>-->
                     </li>
 
-                    <li th:class="${boatPages.hasNext()}? '' : 'disabled'">
-                        <span th:if="${not boatPages.hasNext()}">»</span>
-                        <a th:if="${boatPages.hasNext()}" th:href="@{/s/listings/all(page=${boatPages.number+1},size=${boatPages.size})}" title="Go to next page">»</a>
+                    <li th:class="${wrapper.getPage().hasNext()}? '' : 'disabled'">
+                        <span th:if="${not wrapper.getPage().hasNext()}">»</span>
+                        <a th:if="${wrapper.getPage().hasNext()}" th:href="@{/s/listings/all(page=${wrapper.getPage().number+1},size=${wrapper.getPage().size})}" title="Go to next page">»</a>
                     </li>
-                    <li th:class="${boatPages.isLast()}? 'disabled' : ''">
-                        <span th:if="${boatPages.isLast()}">Last →</span>
-                        <a th:if="${not boatPages.isLast()}" th:href="@{/s/listings/all(page=${boatPages.totalPages-1},size=${boatPages.size})}">Last →</a>
+                    <li th:class="${wrapper.getPage().isLast()}? 'disabled' : ''">
+                        <span th:if="${wrapper.getPage().isLast()}">Last →</span>
+                        <a th:if="${not wrapper.getPage().isLast()}" th:href="@{/s/listings/all(page=${wrapper.getPage().totalPages-1},size=${wrapper.getPage().size})}">Last →</a>
                     </li>
                 </ul>
             </div>
