@@ -39,6 +39,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     @Bean
     public PageableHandlerMethodArgumentResolver modifyPageableHandlerMethodArgumentResolver(PageableHandlerMethodArgumentResolver resolver) {
         resolver.setFallbackPageable(new PageRequest(0, 4));
+        resolver.setMaxPageSize(30);
         return resolver;
     }
 
