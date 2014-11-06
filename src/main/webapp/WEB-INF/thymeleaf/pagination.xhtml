@@ -17,25 +17,25 @@
         <ul class="pagination">
             <li th:class="${wrapper.getPage().isFirst()}? 'disabled' : ''">
                 <span th:if="${wrapper.getPage().isFirst()}">← First</span>
-                <a th:if="${not wrapper.getPage().isFirst()}" th:href="@{/s/listings/all(page=0,size=${wrapper.getPage().size})}">← First</a>
+                <a th:if="${not wrapper.getPage().isFirst()}" th:href="@{${url}(page=0,size=${wrapper.getPage().size})}">← First</a>
             </li>
             <li th:class="${wrapper.getPage().hasPrevious()}? '' : 'disabled'">
                 <span th:if="${not wrapper.getPage().hasPrevious()}">«</span>
-                <a th:if="${wrapper.getPage().hasPrevious()}" th:href="@{/s/listings/all(page=${wrapper.getPage().number-1},size=${wrapper.getPage().size})}" title="Go to previous page">«</a>
+                <a th:if="${wrapper.getPage().hasPrevious()}" th:href="@{${url}(page=${wrapper.getPage().number-1},size=${wrapper.getPage().size})}" title="Go to previous page">«</a>
             </li>
 
             <li th:each="i : ${#numbers.sequence(wrapper.getRangeStart(), wrapper.getRangeEnd())}" >
                 <span th:if="${wrapper.getPage().number == i}" th:class="${wrapper.getPage().number == i}? 'active' : ''"><strong th:text="${i + 1}">1</strong></span>
-                <a th:if="${wrapper.getPage().number != i}" th:href="@{/s/listings/all(page=${i},size=${wrapper.getPage().size})}"><span th:text="${i + 1}">1</span></a>
+                <a th:if="${wrapper.getPage().number != i}" th:href="@{${url}(page=${i},size=${wrapper.getPage().size})}"><span th:text="${i + 1}">1</span></a>
             </li>
 
             <li th:class="${wrapper.getPage().hasNext()}? '' : 'disabled'">
                 <span th:if="${not wrapper.getPage().hasNext()}">»</span>
-                <a th:if="${wrapper.getPage().hasNext()}" th:href="@{/s/listings/all(page=${wrapper.getPage().number + 1},size=${wrapper.getPage().size})}" title="Go to next page">»</a>
+                <a th:if="${wrapper.getPage().hasNext()}" th:href="@{${url}(page=${wrapper.getPage().number + 1},size=${wrapper.getPage().size})}" title="Go to next page">»</a>
             </li>
             <li th:class="${wrapper.getPage().isLast()}? 'disabled' : ''">
                 <span th:if="${wrapper.getPage().isLast()}">Last →</span>
-                <a th:if="${not wrapper.getPage().isLast()}" th:href="@{/s/listings/all(page=${wrapper.getPage().totalPages - 1},size=${wrapper.getPage().size})}" th:text="'Last (' + ${wrapper.getPage().totalPages} + ') →'">Last</a>
+                <a th:if="${not wrapper.getPage().isLast()}" th:href="@{${url}(page=${wrapper.getPage().totalPages - 1},size=${wrapper.getPage().size})}" th:text="'Last (' + ${wrapper.getPage().totalPages} + ') →'">Last</a>
             </li>
         </ul>
     </div>

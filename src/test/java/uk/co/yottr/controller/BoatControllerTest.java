@@ -1,6 +1,7 @@
 package uk.co.yottr.controller;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.SailingStyle;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.testconfig.ConstantsForTests;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,6 +32,11 @@ public class BoatControllerTest extends AbstractControllerTest {
 
     @Autowired
     private BoatService mockBoatService;
+
+    @Before
+    public void resetMocks() {
+        reset(mockBoatService);
+    }
 
     @After
     public void afterEachTest() {
@@ -125,7 +132,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final ArrayList<Boat> boatList = new ArrayList<>();
         boatList.add(aBoat().build());
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
-        when(mockBoatService.findAll(new PageRequest(1, 5))).thenReturn(boatPage); // page and size come from fallback settings as found in config
+        when(mockBoatService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(boatPage); // page and size come from fallback settings as found in config
 
         final String viewName = "boatList";
         mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
@@ -133,9 +140,9 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
-                .andExpect(model().attributeExists("boatPages"));
+                .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockBoatService, times(1)).findAll(new PageRequest(1, 5));
+        verify(mockBoatService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test

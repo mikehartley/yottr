@@ -4,8 +4,7 @@ The Drawing Board
 * Next
 
 Tech:
-*    Paging support on queries.
-    BoatService unit test.
+*    BoatService unit test.
     Error pages for 404, 500.
     SQL initialisation script.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
@@ -24,8 +23,8 @@ Tech:
     Swear filter.
 
 UI:
-    Pagination.
-    Fix bootstrap column issues (must add to 12) (done: signup)
+    Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
+
 User:
     Edit/Delete/Suspend ad.
     Searches.

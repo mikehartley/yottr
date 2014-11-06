@@ -3,6 +3,8 @@ package uk.co.yottr.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,15 +28,15 @@ public class AdminController {
     private UserService userService;
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
-	public ModelAndView getUsers() {
+	public ModelAndView getUsers(Pageable pageable) {
 
         LOG.info("landed in [get] users method");
 
-        return modelAndViewForManageUsers();
+        return modelAndViewForManageUsers(pageable);
 	}
 
     @RequestMapping(value = "/admin/user/{id}/delete", method = RequestMethod.GET)
-    public ModelAndView deleteUser(@PathVariable long id) throws ResourceNotFoundException {
+    public ModelAndView deleteUser(@PathVariable long id, Pageable pageable) throws ResourceNotFoundException {
 
         LOG.info("deleting user with ID " + id);
 
@@ -42,11 +44,11 @@ public class AdminController {
 
         userService.delete(id);
 
-        return modelAndViewForManageUsers();
+        return modelAndViewForManageUsers(pageable);
     }
 
     @RequestMapping(value = "/admin/user/{id}/enabled/flip", method = RequestMethod.GET)
-    public ModelAndView updateUserEnabledStatus(@PathVariable long id) throws ResourceNotFoundException {
+    public ModelAndView updateUserEnabledStatus(@PathVariable long id, Pageable pageable) throws ResourceNotFoundException {
 
         LOG.info("updating enabled status for user with ID " + id);
 
@@ -56,7 +58,7 @@ public class AdminController {
         user.setEnabled(!user.isEnabled());
         userService.save(user, false);
 
-        return modelAndViewForManageUsers();
+        return modelAndViewForManageUsers(pageable);
     }
 
     private void checkUserExists(long id) throws ResourceNotFoundException {
@@ -66,10 +68,10 @@ public class AdminController {
         }
     }
 
-    private ModelAndView modelAndViewForManageUsers() {
+    private ModelAndView modelAndViewForManageUsers(Pageable pageable) {
         ModelAndView modelAndView = new ModelAndView("manageUsers");
-        Iterable<User> allUsers = userService.findAll();
-        modelAndView.addObject("users", allUsers);
+        Page<User> userPages = userService.findAll(pageable);
+        modelAndView.addObject("wrapper", new PageWrapper<>(userPages));
         return modelAndView;
     }
 }

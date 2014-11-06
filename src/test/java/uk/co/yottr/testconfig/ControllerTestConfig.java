@@ -35,7 +35,8 @@ public class ControllerTestConfig {
 
     @Bean
     public PageableHandlerMethodArgumentResolver modifyPageableHandlerMethodArgumentResolver(PageableHandlerMethodArgumentResolver resolver) {
-        resolver.setFallbackPageable(new PageRequest(0, 5));
+        resolver.setFallbackPageable(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        resolver.setMaxPageSize(30);
         return resolver;
     }
 

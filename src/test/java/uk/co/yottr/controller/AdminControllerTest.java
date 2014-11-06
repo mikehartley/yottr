@@ -4,9 +4,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
+import uk.co.yottr.testconfig.ConstantsForTests;
 
 import java.util.ArrayList;
 
@@ -37,7 +40,10 @@ public class AdminControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetUsers() throws Exception {
-        when(mockUserService.findAll()).thenReturn(new ArrayList<>());
+        final ArrayList<User> userList = new ArrayList<>();
+        userList.add(new User());
+        PageImpl<User> userPage = new PageImpl<>(userList);
+        when(mockUserService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(userPage);
 
         final String viewName = "manageUsers";
         mockMvc.perform(get("/admin/users").contentType(MediaType.TEXT_HTML))
@@ -45,9 +51,9 @@ public class AdminControllerTest extends AbstractControllerTest {
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
-                .andExpect(model().attributeExists("users"));
+                .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockUserService, times(1)).findAll();
+        verify(mockUserService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test
@@ -57,18 +63,21 @@ public class AdminControllerTest extends AbstractControllerTest {
         Long userId = 4L;
 
         when(mockUserService.userExists(userId)).thenReturn(true);
-        when(mockUserService.findAll()).thenReturn(new ArrayList<>());
+        final ArrayList<User> userList = new ArrayList<>();
+        userList.add(new User());
+        PageImpl<User> userPage = new PageImpl<>(userList);
+        when(mockUserService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(userPage);
 
         mockMvc.perform(get("/admin/user/" + userId + "/delete").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
-                .andExpect(model().attributeExists("users"));
+                .andExpect(model().attributeExists("wrapper"));
 
         verify(mockUserService, times(1)).userExists(userId);
         verify(mockUserService, times(1)).delete(userId);
-        verify(mockUserService, times(1)).findAll();
+        verify(mockUserService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test
@@ -88,19 +97,22 @@ public class AdminControllerTest extends AbstractControllerTest {
 
         when(mockUserService.userExists(userId)).thenReturn(true);
         when(mockUserService.findById(userId)).thenReturn(new User());
-        when(mockUserService.findAll()).thenReturn(new ArrayList<>());
+        final ArrayList<User> userList = new ArrayList<>();
+        userList.add(new User());
+        PageImpl<User> userPage = new PageImpl<>(userList);
+        when(mockUserService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(userPage);
 
         mockMvc.perform(get("/admin/user/4/enabled/flip").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
-                .andExpect(model().attributeExists("users"));
+                .andExpect(model().attributeExists("wrapper"));
 
         verify(mockUserService, times(1)).userExists(4L);
         verify(mockUserService, times(1)).findById(4L);
         verify(mockUserService, times(1)).save(any(User.class), eq(false));
-        verify(mockUserService, times(1)).findAll();
+        verify(mockUserService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test

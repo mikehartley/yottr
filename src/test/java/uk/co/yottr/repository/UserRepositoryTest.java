@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.model.User;
+import uk.co.yottr.testconfig.ConstantsForTests;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +32,12 @@ public class UserRepositoryTest {
             userRepository.save(createUser("user" + i));
         }
 
-        final Page<User> page1 = userRepository.findAll(new PageRequest(0, 4, Sort.Direction.ASC, "id"));
+        final PageRequest pageRequest = new PageRequest(
+                ConstantsForTests.DEFAULT_PAGE_REQUEST_START_PAGE,
+                ConstantsForTests.DEFAULT_PAGE_REQUEST_END_PAGE,
+                Sort.Direction.ASC,
+                "id");
+        final Page<User> page1 = userRepository.findAll(pageRequest);
         assertEquals(4, page1.getSize());
 
         int i = 0;

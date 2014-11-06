@@ -5,10 +5,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.testconfig.ConstantsForTests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -72,16 +74,16 @@ public class UserServiceTest {
         List<User> userList = new ArrayList<>();
         userList.add(createUser("u1"));
         userList.add(createUser("u2"));
-        when(mockUserRepository.findAll()).thenReturn(userList);
+        when(mockUserRepository.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(new PageImpl<>(userList));
 
-        final Iterable<User> allUsers = userService.findAll();
+        final Iterable<User> allUsers = userService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
         final Iterator<User> userIterator = allUsers.iterator();
 
         assertEquals("u1", userIterator.next().getUsername());
         assertEquals("u2", userIterator.next().getUsername());
         assertFalse(userIterator.hasNext());
 
-        verify(mockUserRepository).findAll();
+        verify(mockUserRepository).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
         verifyNoMoreInteractions(mockUserRepository);
     }
 
