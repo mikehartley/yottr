@@ -4,8 +4,7 @@ The Drawing Board
 * Next
 
 Tech:
-*    BoatService unit test.
-    Error pages for 404, 500.
+*    Error pages for 404, 500.
     SQL initialisation script.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
     Reference lists should be data driven, not hard coded.
