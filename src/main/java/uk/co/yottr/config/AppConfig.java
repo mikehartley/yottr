@@ -61,6 +61,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/about").setViewName("about");
+        registry.addViewController("/error/404").setViewName("error404");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 

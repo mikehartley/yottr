@@ -1,0 +1,23 @@
+<!--
+  ~ Copyright (c) 2014. Mike Hartley Solutions Ltd
+  ~ All rights reserved.
+  -->
+
+<web-app>
+
+    <!--<error-page>-->
+        <!--<exception-type>java.lang.Throwable</exception-type>-->
+        <!--<location>/error.xhtml</location>-->
+    <!--</error-page>-->
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404</location>
+    </error-page>
+
+    <!-- general error page -->
+    <!--<error-page>-->
+        <!--<location>/error.xhtml</location>-->
+    <!--</error-page>-->
+
+</web-app>
