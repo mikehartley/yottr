@@ -30,7 +30,7 @@ public class BoatService {
     @Transactional
     public Boat save(Boat boat) {
         final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(boat.getMinimumRequiredLevelByRank());
-        boat.setMinimumRequiredLevel(level);
+        boat.setMinimumRequiredLevel(level); // this needs to be non-transient, hence the look-up
         return boatRepository.save(boat);
     }
 

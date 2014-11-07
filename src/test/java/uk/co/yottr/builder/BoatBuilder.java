@@ -1,6 +1,7 @@
 package uk.co.yottr.builder;
 
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingStyle;
 
 /*
@@ -21,6 +22,7 @@ public class BoatBuilder {
         boat.setModel("HR36");
         boat.setSailingStyle(SailingStyle.ALL);
         boat.setDescription("Default Boat");
+        boat.setMinimumRequiredLevel(RyaSailCruisingLevel.COASTAL_SKIPPER);
         this.boat = boat;
     }
 
@@ -30,6 +32,11 @@ public class BoatBuilder {
 
     public BoatBuilder withDescription(String description) {
         boat.setDescription(description);
+        return this;
+    }
+
+    public BoatBuilder withMinimumRequiredLevel(RyaSailCruisingLevel level) {
+        boat.setMinimumRequiredLevel(level);
         return this;
     }
 
