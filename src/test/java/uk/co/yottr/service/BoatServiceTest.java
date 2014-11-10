@@ -37,12 +37,16 @@ public class BoatServiceTest {
     @Mock
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
 
+    @Mock
+    private ReferenceDataService referenceDataService;
+
     @Before
     public void init() {
         reset(boatRepository);
         reset(ryaSailCruisingLevelRepository);
+        reset(referenceDataService);
 
-        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository);
+        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository, referenceDataService);
     }
 
     @Test

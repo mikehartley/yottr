@@ -5,11 +5,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.SailingStyle;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.testconfig.ConstantsForTests;
 
 import java.time.LocalDate;
@@ -33,9 +33,13 @@ public class BoatControllerTest extends AbstractControllerTest {
     @Autowired
     private BoatService mockBoatService;
 
+    @Autowired
+    private ReferenceDataService mockReferenceDataService;
+
     @Before
     public void resetMocks() {
         reset(mockBoatService);
+        reset(mockReferenceDataService);
     }
 
     @After
@@ -50,8 +54,11 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists("boat"));
+                .andExpect(model().size(2))
+                .andExpect(model().attributeExists("boat"))
+                .andExpect(model().attributeExists("ryaSailCruisingLevels"));
+
+        verify(mockReferenceDataService).ryaSailCruisingLevels();
     }
 
     @Test

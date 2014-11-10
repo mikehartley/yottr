@@ -95,18 +95,11 @@
                         </div>
                     </div>
                     <div class="form-group" th:classappend="${#fields.hasErrors('minimumRequiredLevelByRank')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Sailing Style</label>
+                        <label for="title" class="col-lg-2 control-label">Minimum level required for crew</label>
 
                         <div class="col-lg-10">
                             <select th:field="*{minimumRequiredLevelByRank}">
-                                <option th:value="0"   th:text="${'None'}">None</option>
-                                <option th:value="100" th:text="${'Start Yachting'}">Start Yachting</option>
-                                <option th:value="200" th:text="${'Competent Crew'}">Competent Crew</option>
-                                <option th:value="300" th:text="${'Day Skipper'}">Day Skipper</option>
-                                <option th:value="400" th:text="${'Coastal Skipper'}">Coastal Skipper</option>
-                                <option th:value="500" th:text="${'Yachtmaster Coastal'}">Yachtmaster Coastal</option>
-                                <option th:value="600" th:text="${'Yachtmaster Offshore'}">Yachtmaster Offshore</option>
-                                <option th:value="700" th:text="${'Yachtmaster Ocean'}">Yachtmaster Ocean</option>
+                                <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.getRank()}" th:text="${level.getDisplayName()}">None</option>
                             </select>
                             <span class="help-block" th:if="${#fields.hasErrors('minimumRequiredLevelByRank')}" th:errors="*{minimumRequiredLevelByRank}">Bad Minimum Required Level</span>
                         </div>
@@ -118,13 +111,10 @@
                     </div>
                 </fieldset>
             </div>
-            <!--/.col-sm-6-->
         </form>
     </div>
-    <!--/.row-->
 
 </section>
-<!--/#index-content-->
 </body>
 </html>
 

@@ -4,10 +4,10 @@ The Drawing Board
 * Next
 
 Tech:
-*    Menus - current page should be highlighted.
+*    Reference lists should be data driven, not hard coded.
+    Menus - current page should be highlighted.
     SQL initialisation script.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
-    Reference lists should be data driven, not hard coded.
 
     Look at Ansible for automated deployment and configuration management.
 

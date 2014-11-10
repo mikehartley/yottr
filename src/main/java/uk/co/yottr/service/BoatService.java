@@ -20,11 +20,14 @@ public class BoatService {
 
     private BoatRepository boatRepository;
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
+    private ReferenceDataService referenceDataService;
 
     @Autowired
-    public BoatService(BoatRepository boatRepository, RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
+    public BoatService(BoatRepository boatRepository, RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository,
+                       ReferenceDataService referenceDataService) {
         this.boatRepository = boatRepository;
         this.ryaSailCruisingLevelRepository = ryaSailCruisingLevelRepository;
+        this.referenceDataService = referenceDataService;
     }
 
     @Transactional

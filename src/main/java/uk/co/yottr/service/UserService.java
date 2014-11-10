@@ -27,6 +27,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public User save(User user, boolean encodePassword) {
 
         if (encodePassword) {
@@ -38,26 +39,32 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    public void delete(User user) {
-        userRepository.delete(user);
-    }
-
+    @Transactional(readOnly = true)
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    @Transactional(readOnly = true)
     public User findById(Long id) {
         return userRepository.findOne(id);
     }
 
+    @Transactional
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+    @Transactional
     public void delete(Long id) {
         userRepository.delete(id);
     }
 
+    @Transactional(readOnly = true)
     public boolean userExists(Long id) {
         return userRepository.exists(id);
     }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.ReferenceDataService;
 
 import javax.validation.Valid;
 
@@ -27,16 +28,19 @@ public class BoatController {
 	private static final Logger LOG = LoggerFactory.getLogger(BoatController.class);
 
     private BoatService boatService;
+    private ReferenceDataService referenceDataService;
 
     @Autowired
-    public BoatController(BoatService boatService) {
+    public BoatController(BoatService boatService, ReferenceDataService referenceDataService) {
         this.boatService = boatService;
+        this.referenceDataService = referenceDataService;
     }
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
 	public String newListingPage(Model model) {
 		LOG.info("Returning newListing.jsp page from newListingPage");
 		model.addAttribute("boat", new Boat());
+        model.addAttribute("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
 		return "newListing";
 	}
 

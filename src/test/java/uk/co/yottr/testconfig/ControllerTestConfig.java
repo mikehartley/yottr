@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.servlet.ViewResolver;
@@ -20,6 +19,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
 /*
@@ -98,5 +98,10 @@ public class ControllerTestConfig {
     @Bean
     public UserService mockUserService() {
         return Mockito.mock(UserService.class);
+    }
+
+    @Bean
+    public ReferenceDataService mockReferenceDataService() {
+        return Mockito.mock(ReferenceDataService.class);
     }
  }
