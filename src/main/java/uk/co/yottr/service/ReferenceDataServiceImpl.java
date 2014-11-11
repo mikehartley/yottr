@@ -1,7 +1,9 @@
 package uk.co.yottr.service;
 
 import org.springframework.stereotype.Service;
+import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
+import uk.co.yottr.model.SailingStyle;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +29,27 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         Collections.sort(cruisingLevels, new RankComparator());
 
         return cruisingLevels;
+    }
+
+    @Override
+    public List<SailingStyle> sailingStyles() {
+        List<SailingStyle> sailingStyles = new ArrayList<>();
+
+        sailingStyles.add(SailingStyle.CRUISING);
+        sailingStyles.add(SailingStyle.RACING);
+        sailingStyles.add(SailingStyle.ALL);
+
+        return sailingStyles;
+    }
+
+    @Override
+    public List<Boat.HullType> hullTypes() {
+        List<Boat.HullType> hullTypes = new ArrayList<>();
+
+        hullTypes.add(Boat.HullType.MONO);
+        hullTypes.add(Boat.HullType.MULTI);
+
+        return hullTypes;
     }
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {

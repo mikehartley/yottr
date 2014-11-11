@@ -1,6 +1,8 @@
 package uk.co.yottr.service;
 
+import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
+import uk.co.yottr.model.SailingStyle;
 
 import java.util.List;
 
@@ -10,5 +12,7 @@ import java.util.List;
  */
 
 public interface ReferenceDataService {
-    public List<RyaSailCruisingLevel> ryaSailCruisingLevels();
+    List<RyaSailCruisingLevel> ryaSailCruisingLevels();
+    List<SailingStyle> sailingStyles();
+    List<Boat.HullType> hullTypes();
 }

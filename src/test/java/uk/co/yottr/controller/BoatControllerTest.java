@@ -45,6 +45,7 @@ public class BoatControllerTest extends AbstractControllerTest {
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(mockBoatService);
+        verifyNoMoreInteractions(mockReferenceDataService);
     }
 
     @Test
@@ -54,11 +55,15 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(2))
+                .andExpect(model().size(4))
                 .andExpect(model().attributeExists("boat"))
-                .andExpect(model().attributeExists("ryaSailCruisingLevels"));
+                .andExpect(model().attributeExists("ryaSailCruisingLevels"))
+                .andExpect(model().attributeExists("sailingStyles"))
+                .andExpect(model().attributeExists("hullTypes"));
 
         verify(mockReferenceDataService).ryaSailCruisingLevels();
+        verify(mockReferenceDataService).sailingStyles();
+        verify(mockReferenceDataService).hullTypes();
     }
 
     @Test

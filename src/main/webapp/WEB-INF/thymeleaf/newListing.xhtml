@@ -49,8 +49,7 @@
 
                         <div class="col-lg-10">
                             <select th:field="*{hullType}">
-                                <option th:value="MONO" th:text="${'Monohull'}">Monohull</option>
-                                <option th:value="MULTI" th:text="${'Multihull'}">Multihull</option>
+                                <option th:each="hullType : ${hullTypes}" th:value="${hullType}" th:text="${hullType}">Monohull</option>
                             </select>
                             <span class="help-block" th:if="${#fields.hasErrors('hullType')}" th:errors="*{hullType}">Bad Hull Type</span>
                         </div>
@@ -79,9 +78,7 @@
                         <div class="col-lg-10">
                             <select th:field="*{sailingStyle}">
                                 <option th:value="${''}" th:text="${'Select sailing style:'}">Select sailing style:</option>
-                                <option th:value="CRUISING" th:text="${'Cruising'}">Cruising</option>
-                                <option th:value="RACING" th:text="${'Racing'}">Racing</option>
-                                <option th:value="ALL" th:text="${'Both cruising and racing'}">Both cruising and racing</option>
+                                <option th:each="sailingStyle : ${sailingStyles}" th:value="${sailingStyle.name()}" th:text="${sailingStyle.getDisplayName()}">Cruising</option>
                             </select>
                             <span class="help-block" th:if="${#fields.hasErrors('sailingStyle')}" th:errors="*{sailingStyle}">Bad Sailing Style</span>
                         </div>

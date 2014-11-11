@@ -41,6 +41,8 @@ public class BoatController {
 		LOG.info("Returning newListing.jsp page from newListingPage");
 		model.addAttribute("boat", new Boat());
         model.addAttribute("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        model.addAttribute("sailingStyles", referenceDataService.sailingStyles());
+        model.addAttribute("hullTypes", referenceDataService.hullTypes());
 		return "newListing";
 	}
 
