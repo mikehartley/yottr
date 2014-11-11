@@ -4,7 +4,6 @@ The Drawing Board
 * Next
 
 Tech:
-*    Reference lists should be data driven, not hard coded.
     Menus - current page should be highlighted.
     SQL initialisation script.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
@@ -25,7 +24,7 @@ UI:
     Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
 
 User:
-    Edit/Delete/Suspend ad.
+*    Edit/Delete/Suspend ad.
     Searches.
     Saved searches.
     Favourites / watch list.

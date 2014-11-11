@@ -69,10 +69,6 @@ public class User {
     @Size(min = 11, max = 25)
     private String mobile;
 
-    public enum Country {
-        UK, OTHER
-    }
-
     @Enumerated(EnumType.STRING)
     @Column(name = "country")
     @NotNull

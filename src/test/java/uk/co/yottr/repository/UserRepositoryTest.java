@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 import uk.co.yottr.testconfig.ConstantsForTests;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
@@ -55,7 +56,7 @@ public class UserRepositoryTest {
         user.setLastName("Wizzy");
         user.setEmail("izzy@wizzy.test");
         user.setMobile("01234 123456");
-        user.setCountry(User.Country.UK);
+        user.setCountry(Country.UK);
         user.setPostcode("W8 4QT");
 
         return user;

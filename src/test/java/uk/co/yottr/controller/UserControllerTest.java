@@ -5,7 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
+import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
 import java.security.Principal;
@@ -27,14 +29,19 @@ public class UserControllerTest extends AbstractControllerTest {
     @Autowired
     private UserService mockUserService;
 
+    @Autowired
+    private ReferenceDataService mockReferenceDataService;
+
     @Before
     public void resetMockUserService() {
         reset(mockUserService);
+        reset(mockReferenceDataService);
     }
 
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(mockUserService);
+        verifyNoMoreInteractions(mockReferenceDataService);
     }
 
     @Test
@@ -43,8 +50,11 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("signup"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists("user"));
+                .andExpect(model().size(2))
+                .andExpect(model().attributeExists("user"))
+                .andExpect(model().attributeExists("countries"));
+
+        verify(mockReferenceDataService).countries();
     }
 
     @Test
@@ -73,7 +83,7 @@ public class UserControllerTest extends AbstractControllerTest {
         final String mobileValue = "mobileValue";
 
         final String countryProperty = "country";
-        final String countryValue = User.Country.UK.name();
+        final String countryValue = Country.UK.name();
 
         final String postcodeProperty = "postcode";
         final String postcodeValue = "postcodeValue";
@@ -104,7 +114,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(userAttribute, hasProperty(lastNameProperty, equalTo(lastNameValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(emailProperty, equalTo(emailValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(mobileProperty, equalTo(mobileValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(countryProperty, equalTo(User.Country.valueOf(countryValue)))))
+                .andExpect(model().attribute(userAttribute, hasProperty(countryProperty, equalTo(Country.valueOf(countryValue)))))
                 .andExpect(model().attribute(userAttribute, hasProperty(postcodeProperty, equalTo(postcodeValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(aboutMeProperty, equalTo(aboutMeValue))));
 
@@ -140,10 +150,12 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("myDetails"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists("user"));
+                .andExpect(model().size(2))
+                .andExpect(model().attributeExists("user"))
+                .andExpect(model().attributeExists("countries"));
 
         verify(mockUserService).findByUsername(username);
+        verify(mockReferenceDataService).countries();
     }
 
     @Test
@@ -194,7 +206,7 @@ public class UserControllerTest extends AbstractControllerTest {
         final String mobileValue = "mobileValue";
 
         final String countryProperty = "country";
-        final String countryValue = User.Country.UK.name();
+        final String countryValue = Country.UK.name();
 
         final String postcodeProperty = "postcode";
         final String postcodeValue = "postcodeValue";
@@ -222,7 +234,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(userAttribute, hasProperty(lastNameProperty, equalTo(lastNameValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(emailProperty, equalTo(emailValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(mobileProperty, equalTo(mobileValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(countryProperty, equalTo(User.Country.valueOf(countryValue)))))
+                .andExpect(model().attribute(userAttribute, hasProperty(countryProperty, equalTo(Country.valueOf(countryValue)))))
                 .andExpect(model().attribute(userAttribute, hasProperty(postcodeProperty, equalTo(postcodeValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(aboutMeProperty, equalTo(aboutMeValue))));
 

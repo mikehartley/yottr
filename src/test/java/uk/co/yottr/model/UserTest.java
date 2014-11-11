@@ -185,7 +185,7 @@ public class UserTest {
         user.setLastName("Last");
         user.setEmail("email@who.where");
         user.setMobile("123456789012");
-        user.setCountry(User.Country.UK);
+        user.setCountry(Country.UK);
         user.setPostcode("p05tc0d3");
         user.setAboutMe("about");
         return user;

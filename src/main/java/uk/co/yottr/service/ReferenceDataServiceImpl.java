@@ -2,6 +2,7 @@ package uk.co.yottr.service;
 
 import org.springframework.stereotype.Service;
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.Country;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingStyle;
 
@@ -50,6 +51,16 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         hullTypes.add(Boat.HullType.MULTI);
 
         return hullTypes;
+    }
+
+    @Override
+    public List<Country> countries() {
+        List<Country> countries = new ArrayList<>();
+
+        countries.add(Country.UK);
+        countries.add(Country.OTHER);
+
+        return countries;
     }
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {

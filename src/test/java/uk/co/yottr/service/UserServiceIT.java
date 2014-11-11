@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
 import uk.co.yottr.security.Role;
@@ -120,7 +121,7 @@ public class UserServiceIT {
         final String lastName = randomAlphabetic(20);
         final String email = randomAlphabetic(10) + "@" + randomAlphabetic(10) + "." + randomAlphabetic(10);
         final String mobile = randomNumeric(5) + " " + randomNumeric(6);
-        final User.Country country = new Random().nextBoolean() ? User.Country.UK : User.Country.OTHER;
+        final Country country = new Random().nextBoolean() ? Country.UK : Country.OTHER;
         final String postcode = randomAlphabetic(1) + randomNumeric(1) + " " + randomNumeric(1) + randomAlphabetic(2);
         final String aboutMe = "This is a bunch of text followed by some random characters " + randomAlphanumeric(50);
         final boolean enabled = true;
@@ -163,7 +164,7 @@ public class UserServiceIT {
         user.setLastName("Wizzy");
         user.setEmail("izzy@wizzy.test");
         user.setMobile(randomNumeric(5) + " " + randomNumeric(6));
-        user.setCountry(User.Country.UK);
+        user.setCountry(Country.UK);
         user.setPostcode("W8 4QT");
         user.setAboutMe("This is a bunch of text followed by some random characters " + randomAlphanumeric(50));
         user.setEnabled(true);

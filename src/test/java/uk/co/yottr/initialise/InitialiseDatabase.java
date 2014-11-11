@@ -10,10 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import uk.co.yottr.config.AppConfig;
-import uk.co.yottr.model.Boat;
-import uk.co.yottr.model.RyaSailCruisingLevel;
-import uk.co.yottr.model.SailingStyle;
-import uk.co.yottr.model.User;
+import uk.co.yottr.model.*;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.repository.UserRepository;
@@ -95,7 +92,7 @@ public class InitialiseDatabase {
         user.setLastName("H");
         user.setEmail("m@yottr.co.uk");
         user.setAboutMe("Nothing to see here.");
-        user.setCountry(User.Country.UK);
+        user.setCountry(Country.UK);
         user.setMobile("07973 000000");
         user.setPostcode("DY8 1AA");
 

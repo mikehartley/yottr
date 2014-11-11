@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.model.User;
 import uk.co.yottr.security.Role;
+import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
 import javax.validation.Valid;
@@ -26,14 +27,21 @@ public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
     private UserService userService;
+    private ReferenceDataService referenceDataService;
+
+    @Autowired
+    public UserController(UserService userService, ReferenceDataService referenceDataService) {
+        this.userService = userService;
+        this.referenceDataService = referenceDataService;
+    }
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public ModelAndView signup() {
 
         ModelAndView modelAndView = new ModelAndView("signup");
         modelAndView.addObject("user", new User());
+        modelAndView.addObject("countries", referenceDataService.countries());
 
         return modelAndView;
     }
@@ -71,6 +79,7 @@ public class UserController {
 
         ModelAndView modelAndView = new ModelAndView("myDetails");
         modelAndView.addObject("user", currentUser);
+        modelAndView.addObject("countries", referenceDataService.countries());
 
         return modelAndView;
     }

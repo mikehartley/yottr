@@ -3,6 +3,7 @@ package uk.co.yottr.service;
 import org.junit.Before;
 import org.junit.Test;
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.Country;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingStyle;
 
@@ -55,5 +56,13 @@ public class ReferenceDataServiceImplTest {
 
         assertEquals(Boat.HullType.MONO, hullTypes.get(0));
         assertEquals(Boat.HullType.MULTI, hullTypes.get(1));
+    }
+
+    @Test
+    public void testCountries() throws Exception {
+        final List<Country> countries = referenceDataService.countries();
+
+        assertEquals(Country.UK.getDisplayName(), countries.get(0).getDisplayName());
+        assertEquals(Country.OTHER.getDisplayName(), countries.get(1).getDisplayName());
     }
 }

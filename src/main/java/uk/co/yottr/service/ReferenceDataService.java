@@ -1,6 +1,7 @@
 package uk.co.yottr.service;
 
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.Country;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingStyle;
 
@@ -15,4 +16,5 @@ public interface ReferenceDataService {
     List<RyaSailCruisingLevel> ryaSailCruisingLevels();
     List<SailingStyle> sailingStyles();
     List<Boat.HullType> hullTypes();
+    List<Country> countries();
 }
