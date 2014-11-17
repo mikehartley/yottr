@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import uk.co.yottr.builder.BoatBuilder;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
+import uk.co.yottr.model.User;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -40,6 +42,8 @@ public class BoatServiceTest {
     @Mock
     private ReferenceDataService referenceDataService;
 
+    private User owner;
+
     @Before
     public void init() {
         reset(boatRepository);
@@ -47,12 +51,14 @@ public class BoatServiceTest {
         reset(referenceDataService);
 
         boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository, referenceDataService);
+
+        owner = aUser().build();
     }
 
     @Test
     public void testSave() throws Exception {
         final RyaSailCruisingLevel cruisingLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
-        Boat boat = BoatBuilder.aBoat().withMinimumRequiredLevel(cruisingLevel).build();
+        Boat boat = BoatBuilder.aBoat().withOwner(owner).withMinimumRequiredLevel(cruisingLevel).build();
         when(ryaSailCruisingLevelRepository.findByRank(cruisingLevel.getRank())).thenReturn(cruisingLevel);
 
         boatService.save(boat);
@@ -66,7 +72,7 @@ public class BoatServiceTest {
 
     @Test
     public void testFindAll() throws Exception {
-        Pageable pageable = mock(Pageable.class);
+        final Pageable pageable = mock(Pageable.class);
         final PageImpl<Boat> page = new PageImpl<>(new ArrayList<>());
         when(boatRepository.findAll(pageable)).thenReturn(page);
 
@@ -76,7 +82,7 @@ public class BoatServiceTest {
 
     @Test
     public void testDelete() throws Exception {
-        Boat boat = BoatBuilder.aBoat().build();
+        Boat boat = BoatBuilder.aBoat().withOwner(owner).build();
 
         boatService.delete(boat);
 
@@ -86,7 +92,7 @@ public class BoatServiceTest {
     @Test
     public void testFindByReference() throws Exception {
         String reference = "xyz";
-        Boat boat = BoatBuilder.aBoat().build();
+        Boat boat = BoatBuilder.aBoat().withOwner(owner).build();
         when(boatRepository.findByReference(reference)).thenReturn(boat);
 
         final Boat boatFromService = boatService.findByReference(reference);

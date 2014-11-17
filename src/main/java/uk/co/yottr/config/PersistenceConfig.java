@@ -45,6 +45,7 @@ public class PersistenceConfig {
             create-drop: drop the schema at the end of the session.
         */
         prop.put("hibernate.hbm2ddl.auto", "update");
+//        prop.put("hibernate.hbm2ddl.auto", "create");
         return prop;
     }
 

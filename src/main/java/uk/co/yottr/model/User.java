@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -81,6 +82,9 @@ public class User {
     @Column(name = "about_me", length = 400)
     @Size(max = 400)
     private String aboutMe;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Boat> boatListings = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -190,6 +194,10 @@ public class User {
         Collection<UserRole> newRoles = new ArrayList<>(userRoles);
         newRoles.add(new UserRole(role));
         userRoles = newRoles;
+    }
+
+    public List<Boat> getBoatListings() {
+        return boatListings;
     }
 
     @Override

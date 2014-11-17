@@ -9,8 +9,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -23,6 +23,7 @@ public class BoatTest {
     private static final String SIZE_ERROR_MSG = "size must be between %d and %d";
     private static final String REQUIRED_ERROR_MSG = "required";
 
+    private User owner;
     private Boat boat;
 
     @BeforeClass
@@ -32,7 +33,8 @@ public class BoatTest {
 
     @Before
     public void beforeEachTest() {
-        boat = createValidBoat();
+        owner = aUser().build();
+        boat = createValidBoat(owner);
     }
 
     @Test
@@ -136,6 +138,34 @@ public class BoatTest {
         assertEquals(Boat.HullType.MONO, new Boat().getHullType());
     }
 
+    @Test
+    public void suspended() {
+        assertFalse(boat.isSuspended());
+
+        boat.setSuspended(true);
+
+        assertTrue(boat.isSuspended());
+    }
+
+    @Test
+    public void ownerSetWithConstructor() {
+        User owner1 = aUser().withUsername("u1").build();
+        Boat ownersBoat = new Boat(owner1);
+
+        assertEquals("owner that was set via boat constructor", owner1, ownersBoat.getOwner());
+        assertSame("back reference to boat from owner", owner1.getBoatListings().get(0), ownersBoat);
+    }
+
+    @Test
+    public void ownerSetWithSetter() {
+        User owner1 = aUser().withUsername("u1").build();
+        Boat ownersBoat = new Boat();
+        ownersBoat.setOwner(owner1);
+
+        assertEquals("owner that was set via setter", owner1, ownersBoat.getOwner());
+        assertSame("back reference to boat from owner", owner1.getBoatListings().get(0), ownersBoat);
+    }
+
     private void assertSingleViolation(String expectedErrorMessage) {
         Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
         assertEquals(violations.toString(), 1, violations.size());
@@ -143,8 +173,8 @@ public class BoatTest {
         assertEquals(violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
     }
 
-    private Boat createValidBoat() {
-        Boat boat = new Boat();
+    private Boat createValidBoat(User user) {
+        Boat boat = new Boat(user);
         boat.setManufacturer("blah");
         boat.setModel("blah");
         boat.setLength(10);

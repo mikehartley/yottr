@@ -7,7 +7,7 @@
 
     <!--<error-page>-->
         <!--<exception-type>java.lang.Throwable</exception-type>-->
-        <!--<location>/error.xhtml</location>-->
+        <!--<location>/error/404</location>-->
     <!--</error-page>-->
 
     <error-page>
@@ -17,7 +17,7 @@
 
     <!-- general error page -->
     <!--<error-page>-->
-        <!--<location>/error.xhtml</location>-->
+        <!--<location>/error/404</location>-->
     <!--</error-page>-->
 
 </web-app>

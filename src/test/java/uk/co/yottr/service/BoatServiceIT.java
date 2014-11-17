@@ -1,5 +1,6 @@
 package uk.co.yottr.service;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +12,7 @@ import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingStyle;
+import uk.co.yottr.model.User;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
 
@@ -18,9 +20,11 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.Random;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.junit.Assert.*;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
+import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -35,14 +39,27 @@ public class BoatServiceIT {
     private BoatService boatService;
 
     @Autowired
-    RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
+    private UserService userService;
+
+    @Autowired
+    private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
+
+    private User owner;
 
     @Before
     public void initialiseReferenceData() {
 
         if (ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.NONE.getRank()) == null) {
-
             InitialiseDatabase.initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
+        }
+
+        owner = userService.save(aUser().build(), false);
+    }
+
+    @After
+    public void clearData() {
+        for (Boat boat : boatService.findAll(new PageRequest(0, 9999))) {
+            boatService.delete(boat);
         }
     }
 
@@ -51,7 +68,7 @@ public class BoatServiceIT {
 
         final String uniqueDescription = "some description with unique number : "  + new Random().nextLong();
 
-        Boat boat = aBoat().withDescription(uniqueDescription).build();
+        Boat boat = aBoat().withOwner(owner).withDescription(uniqueDescription).build();
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -77,8 +94,9 @@ public class BoatServiceIT {
         final SailingStyle sailingStyle = SailingStyle.RACING;
         final LocalDate now = LocalDate.now();
         final LocalDate dateRelevantTo = LocalDate.now();
+        final User owner = createUser();
 
-        Boat boat = new Boat();
+        Boat boat = new Boat(owner);
         boat.setDescription(description);
         boat.setHullType(hullType);
         boat.setLength(length);
@@ -102,15 +120,22 @@ public class BoatServiceIT {
         assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());
         assertEquals("sailing style", sailingStyle, savedBoat.getSailingStyle());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
+        assertEquals("owner", owner, savedBoat.getOwner());
     }
 
     @Test
     public void canSaveTwoBoats() {
-        boatService.save(aBoat().withDescription("1").build());
-        boatService.save(aBoat().withDescription("2").build());
+        boatService.save(aBoat().withOwner(owner).withDescription("1").build());
+        boatService.save(aBoat().withOwner(owner).withDescription("2").build());
         final Iterator<Boat> boatIterator = boatService.findAll(new PageRequest(0, 10)).iterator();
         assertEquals("1", boatIterator.next().getDescription());
         assertEquals("2", boatIterator.next().getDescription());
         assertFalse(boatIterator.hasNext());
+    }
+
+    private User createUser() {
+        final String username = randomAlphabetic(10);
+        final User user = aUser().withUsername(username).build();
+        return userService.save(user, false);
     }
 }

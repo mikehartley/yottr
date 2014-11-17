@@ -51,9 +51,8 @@ public class Boat {
     private boolean isUnitsImperial = true;
 
     public enum HullType {
-        MONO, MULTI
+        MONO, MULTI;
     }
-
     @Enumerated(EnumType.STRING)
     @Column(name = "hull_type", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
@@ -80,13 +79,29 @@ public class Boat {
     @NotNull(message = REQUIRED_ERROR_MSG)
     private SailingStyle sailingStyle;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @Column(name = "suspended", nullable = false)
+    private boolean suspended;
+
     /**
-     * Constructs a new Boat.
+     * For Hibernate.
      */
-    public Boat() {
+    Boat() {
         this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
         this.datePosted = LocalDate.now();
         this.minimumRequiredLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.NONE);
+    }
+
+    /**
+     * Public constructor with boat owner.
+     * @param owner the user responsible for posting the listing.
+     */
+    public Boat(User owner) {
+        this();
+        setOwner(owner);
     }
 
     public String getReference() {
@@ -181,5 +196,22 @@ public class Boat {
 
     public void setSailingStyle(SailingStyle sailingStyle) {
         this.sailingStyle = sailingStyle;
+    }
+
+    public boolean isSuspended() {
+        return suspended;
+    }
+
+    public void setSuspended(boolean suspended) {
+        this.suspended = suspended;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+        owner.getBoatListings().add(this);
     }
 }

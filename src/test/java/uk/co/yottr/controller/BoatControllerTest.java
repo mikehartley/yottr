@@ -8,10 +8,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.SailingStyle;
+import uk.co.yottr.model.User;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
+import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.ConstantsForTests;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -22,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
+import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -34,24 +38,36 @@ public class BoatControllerTest extends AbstractControllerTest {
     private BoatService mockBoatService;
 
     @Autowired
+    private UserService mockUserService;
+
+    @Autowired
     private ReferenceDataService mockReferenceDataService;
 
     @Before
     public void resetMocks() {
         reset(mockBoatService);
+        reset(mockUserService);
         reset(mockReferenceDataService);
     }
 
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(mockBoatService);
+        verifyNoMoreInteractions(mockUserService);
         verifyNoMoreInteractions(mockReferenceDataService);
     }
 
     @Test
     public void testNewListingPage() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
         final String viewName = "newListing";
-        mockMvc.perform(get("/s/listings/new").contentType(MediaType.TEXT_HTML))
+        mockMvc.perform(get("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
@@ -61,14 +77,34 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists("sailingStyles"))
                 .andExpect(model().attributeExists("hullTypes"));
 
+        verify(mockUserService).findByUsername(username);
         verify(mockReferenceDataService).ryaSailCruisingLevels();
         verify(mockReferenceDataService).sailingStyles();
         verify(mockReferenceDataService).hullTypes();
     }
 
     @Test
+    public void testMyListingsPage() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
+        final String viewName = "myListings";
+        mockMvc.perform(get("/s/listings/mine").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name(viewName))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("boatListings"));
+
+        verify(mockUserService).findByUsername(username);
+    }
+
+    @Test
     public void testNewListingAction() throws Exception {
-        final String viewName = "newListingSuccess";
         final String boatAttribute = "boat";
 
         final String manufacturerProperty = "manufacturer";
@@ -105,7 +141,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         )
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("newListingSuccess"))
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists(boatAttribute))
                 .andExpect(model().attribute(boatAttribute, hasProperty(manufacturerProperty, equalTo(manufacturerValue))))
@@ -123,18 +159,15 @@ public class BoatControllerTest extends AbstractControllerTest {
 
     @Test
     public void testSignupActionWhenInError() throws Exception {
-        final String viewNameWhenInError = "newListing";
         final String boatAttribute = "boat";
-
-        final String manufacturerProperty = "manufacturer";
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(model().hasErrors())
-                .andExpect(view().name(viewNameWhenInError))
+                .andExpect(view().name("newListing"))
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists(boatAttribute))
-                .andExpect(model().attribute(boatAttribute, hasProperty(manufacturerProperty, nullValue())));
+                .andExpect(model().attribute(boatAttribute, hasProperty("manufacturer", nullValue())));
 
         verify(mockBoatService, never()).save(any(Boat.class));
     }
@@ -142,14 +175,13 @@ public class BoatControllerTest extends AbstractControllerTest {
     @Test
     public void testListBoats() throws Exception {
         final ArrayList<Boat> boatList = new ArrayList<>();
-        boatList.add(aBoat().build());
+        boatList.add(aBoat().withOwner(aUser().build()).build());
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
         when(mockBoatService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(boatPage); // page and size come from fallback settings as found in config
 
-        final String viewName = "boatList";
         mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("boatList"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("wrapper"));
@@ -172,5 +204,58 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(view().name(viewName))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(0));
+    }
+
+    @Test
+    public void testMyListings() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat(aBoat()).build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
+        mockMvc.perform(get("/s/listings/mine").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("myListings"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("boatListings"));
+
+        verify(mockUserService).findByUsername(username);
+    }
+
+    @Test
+    public void testFlipSuspended() throws Exception {
+        final String boatReference = "ref1";
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+        final Boat boat = aBoat().withOwner(user).build();
+        when(mockBoatService.findByReference(boatReference)).thenReturn(boat);
+
+        mockMvc.perform(get("/s/listings/" + boatReference + "/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("myListings"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("boatListings"));
+
+        verify(mockBoatService).findByReference(boatReference);
+        verify(mockBoatService).save(boat);
+        verify(mockUserService).findByUsername(username);
+    }
+
+    @Test
+    public void testFlipSuspendedWhenBoatNotFound() throws Exception {
+        final String unknownBoatReference = "wtf";
+
+        mockMvc.perform(get("/s/listings/" + unknownBoatReference + "/suspended/flip").contentType(MediaType.TEXT_HTML))
+                .andExpect(status().isNotFound());
+
+        verify(mockBoatService).findByReference(unknownBoatReference);
     }
 }

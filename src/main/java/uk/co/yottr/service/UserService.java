@@ -46,7 +46,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        final User user = userRepository.findByUsername(username);
+        user.getBoatListings().size();
+        return user;
     }
 
     @Transactional(readOnly = true)

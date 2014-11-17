@@ -9,6 +9,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import uk.co.yottr.config.AppConfig;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.BoatRepository;
@@ -38,6 +42,9 @@ public class InitialiseDatabase {
     private static final boolean ENABLED = false; // this should be left as false unless you're initialising the database
 
     @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -58,17 +65,26 @@ public class InitialiseDatabase {
         if (!ENABLED) return;
 
         initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
-        setupAdminUser("mike");
-        addBoat("Halberg Rassay");
+
+        final User adminUser = setupUserWithRoles("mike", Role.ADMIN, Role.FREE, Role.CREW);
+        addBoatsWithOwner(adminUser, 50);
+
+        final User userOne = setupUserWithRoles("UserOne", Role.CREW, Role.FREE);
+        addBoatsWithOwner(userOne, 3);
     }
 
-    @Test
-    public void addLotsOfBoats() {
-        if (!ENABLED) return;
+    private void addBoatsWithOwner(User owner, int numberOfBoats) {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
 
-        for (int i = 0; i < 20; i++) {
-            addBoat("Rust Bucket " + i);
-        }
+                for (int i = 0; i < numberOfBoats; i++) {
+                    addBoat(owner.getUsername() + "'s Rust Bucket " + i, owner);
+                }
+
+            }
+        });
     }
 
     public static void initialiseRyaSailCruisingLevels(RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
@@ -78,14 +94,16 @@ public class InitialiseDatabase {
         }
     }
 
-    private void setupAdminUser(String username) {
+    private User setupUserWithRoles(String username, Role... roles) {
         User user = new User();
 
         user.setUsername(username);
         user.setPassword(new BCryptPasswordEncoder().encode("aph3xtwIn"));
-        user.addRole(Role.ADMIN);
-        user.addRole(Role.CREW);
-        user.addRole(Role.FREE);
+
+        for (Role role : roles) {
+            user.addRole(role);
+        }
+
         user.setEnabled(true);
         user.setTitle("Mr");
         user.setFirstName("Mike");
@@ -96,11 +114,11 @@ public class InitialiseDatabase {
         user.setMobile("07973 000000");
         user.setPostcode("DY8 1AA");
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    private void addBoat(String manufacturer) {
-        Boat boat = new Boat();
+    private void addBoat(String manufacturer, User owner) {
+        Boat boat = new Boat(userRepository.findByUsername(owner.getUsername()));
 
         boat.setManufacturer(manufacturer);
         boat.setModel("HR50");

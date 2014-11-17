@@ -57,6 +57,7 @@
                 <li sec:authorize="hasRole('FREE')"><a href="newListing.html" th:href="@{/s/listings/new}">Add Boat</a></li>
                 <li sec:authorize="hasRole('FREE')"><a href="boatList.html" th:href="@{/s/listings/all}">View All</a></li>
                 <li sec:authorize="hasRole('FREE')"><a href="myDetails.html" th:href="@{/s/myDetails}">My Details</a></li>
+                <li sec:authorize="hasRole('FREE')"><a href="myListings.html" th:href="@{/s/listings/mine}">My Listings</a></li>
                 <li sec:authorize="isAuthenticated()"><a href="index.html?logout" th:href="@{/logout}" id="logout-link">Logout</a></li>
             </ul>
         </div>

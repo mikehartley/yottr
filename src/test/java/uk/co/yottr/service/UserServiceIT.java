@@ -17,6 +17,7 @@ import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
 import static org.junit.Assert.*;
+import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -38,7 +39,7 @@ public class UserServiceIT {
 
         final String username = "user"  + randomAlphanumeric(12);
 
-        User user = createUser(username);
+        final User user = aUser().withUsername(username).build();
 
         final User savedUser = userService.save(user, true);
 
@@ -61,7 +62,7 @@ public class UserServiceIT {
     public void userWithRoles() throws Exception {
 
         final Role expectedRole = Role.CREW;
-        User user = createUser(randomAlphanumeric(10));
+        final User user = aUser().withUsername(randomAlphanumeric(10)).build();
         user.addRole(expectedRole);
 
         final User savedUser = userService.save(user, true);
@@ -76,7 +77,7 @@ public class UserServiceIT {
     public void findById() throws Exception {
 
         final String username = randomAlphanumeric(10);
-        User user = createUser(username);
+        final User user = aUser().withUsername(username).build();
         final User savedUser = userService.save(user, true);
 
         final User foundUser = userService.findById(savedUser.getId());
@@ -87,7 +88,7 @@ public class UserServiceIT {
     @Test
     public void deleteByIdAndUserExists() throws Exception {
 
-        final User savedUser = userService.save(createUser(randomAlphanumeric(10)), true);
+        final User savedUser = userService.save(aUser().withUsername(randomAlphanumeric(10)).build(), true);
 
         final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
         assertTrue("user should exist before delete", userExistsBeforeDelete);
@@ -101,7 +102,7 @@ public class UserServiceIT {
     @Test
     public void deleteByUser() throws Exception {
 
-        final User savedUser = userService.save(createUser(randomAlphanumeric(10)), true);
+        final User savedUser = userService.save(aUser().withUsername(randomAlphanumeric(10)).build(), true);
 
         final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
         assertTrue("user should exist before delete", userExistsBeforeDelete);
@@ -152,23 +153,5 @@ public class UserServiceIT {
         assertEquals("postcode", postcode, savedUser.getPostcode());
         assertEquals("aboutMe", aboutMe, savedUser.getAboutMe());
         assertEquals("enabled", enabled, savedUser.isEnabled());
-    }
-
-    private User createUser(String username) {
-        User user = new User();
-
-        user.setUsername(username);
-        user.setPassword("password" + randomAlphanumeric(6));
-        user.setTitle("Mr");
-        user.setFirstName("Izzy");
-        user.setLastName("Wizzy");
-        user.setEmail("izzy@wizzy.test");
-        user.setMobile(randomNumeric(5) + " " + randomNumeric(6));
-        user.setCountry(Country.UK);
-        user.setPostcode("W8 4QT");
-        user.setAboutMe("This is a bunch of text followed by some random characters " + randomAlphanumeric(50));
-        user.setEnabled(true);
-
-        return user;
     }
 }
