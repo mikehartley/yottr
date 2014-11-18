@@ -37,6 +37,8 @@
                     <span th:if="${boat.isSuspended()}">Re-enable</span>
                     <span th:if="${!boat.isSuspended()}">Suspend listing</span>
                 </a>
+                | <a th:href="@{/s/listings/{boatReference}/delete(boatReference=${boat.reference})}"
+                     onclick="return confirm('You want to permanently delete this listing?')">Delete listing</a>
                 <hr/>
             </div>
         </div>

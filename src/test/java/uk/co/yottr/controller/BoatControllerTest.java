@@ -227,7 +227,6 @@ public class BoatControllerTest extends AbstractControllerTest {
 
     @Test
     public void testFlipSuspended() throws Exception {
-        final String boatReference = "ref1";
         final String username = "jimbob";
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
@@ -235,46 +234,66 @@ public class BoatControllerTest extends AbstractControllerTest {
         final User user = aUser().withUsername(username).withBoat().build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
         final Boat boat = user.getBoatListings().get(0);
-        when(mockBoatService.findByReference(boatReference)).thenReturn(boat);
 
-        mockMvc.perform(get("/s/listings/" + boatReference + "/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+        mockMvc.perform(get("/s/listings/" + boat.getReference() + "/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
                 .andExpect(view().name("myListings"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("boatListings"));
 
-        verify(mockBoatService).findByReference(boatReference);
         verify(mockBoatService).save(boat);
         verify(mockUserService, times(2)).findByUsername(username);
     }
 
     @Test
-    public void testFlipSuspendedWhenBoatNotFound() throws Exception {
-        final String unknownBoatReference = "wtf";
-
-        mockMvc.perform(get("/s/listings/" + unknownBoatReference + "/suspended/flip").contentType(MediaType.TEXT_HTML))
-                .andExpect(status().isNotFound());
-
-        verify(mockBoatService).findByReference(unknownBoatReference);
-    }
-
-    @Test
     public void testFlipSuspendedWhenBoatDoesntBelongToPrincipal() throws Exception {
-        final String boatReference = "ref1";
         final String username = "jimbob";
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
-        final Boat boat = aBoat().withOwner(aUser().withUsername("someother").build()).build();
-        when(mockBoatService.findByReference(boatReference)).thenReturn(boat);
 
-        mockMvc.perform(get("/s/listings/" + boatReference + "/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+        mockMvc.perform(get("/s/listings/unknownref/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isNotFound());
 
-        verify(mockBoatService).findByReference(boatReference);
+        verify(mockUserService).findByUsername(username);
+    }
+
+    @Test
+    public void testDeleteListing() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+        final Boat boat = user.getBoatListings().get(0);
+
+        mockMvc.perform(get("/s/listings/" + boat.getReference() + "/delete").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("myListings"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("boatListings"));
+
+        verify(mockBoatService).delete(boat);
+        verify(mockUserService, times(2)).findByUsername(username);
+    }
+
+    @Test
+    public void testDeleteListingWhenBoatDoesntBelongToPrincipal() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat(aBoat()).build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
+        mockMvc.perform(get("/s/listings/unknownref/delete").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isNotFound());
+
         verify(mockUserService).findByUsername(username);
     }
 }

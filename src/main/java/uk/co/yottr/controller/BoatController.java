@@ -97,12 +97,7 @@ public class BoatController {
 
         LOG.info("updating suspended status for boat listing with reference " + boatReference);
 
-        final Boat boat = boatService.findByReference(boatReference);
-        if (boat == null) {
-            throw new ResourceNotFoundException("No boat found with reference " + boatReference);
-        }
-
-        checkThatBoatBelongsToPrincipal(boat, principal);
+        final Boat boat = findBoat(boatReference, principal);
 
         boat.setSuspended(!boat.isSuspended());
         boatService.save(boat);
@@ -110,14 +105,25 @@ public class BoatController {
         return modelAndViewForMyListings(principal);
     }
 
-    private void checkThatBoatBelongsToPrincipal(Boat boat, Principal principal) throws ResourceNotFoundException {
-        final String boatReference = boat.getReference();
+    @RequestMapping(value = "/s/listings/{boatReference}/delete", method = RequestMethod.GET)
+    public ModelAndView deleteUser(@PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
+
+        LOG.info("deleting listing with boat reference " + boatReference);
+
+        final Boat boat = findBoat(boatReference, principal);
+
+        boatService.delete(boat);
+
+        return modelAndViewForMyListings(principal);
+    }
+
+    private Boat findBoat(String boatReference, Principal principal) throws ResourceNotFoundException {
 
         final User user = userService.findByUsername(principal.getName());
 
         for (Boat userBoat : user.getBoatListings()) {
             if (userBoat.getReference().equals(boatReference)) {
-                return;
+                return userBoat;
             }
         }
 
