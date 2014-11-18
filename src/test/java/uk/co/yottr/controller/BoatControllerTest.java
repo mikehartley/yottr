@@ -246,7 +246,7 @@ public class BoatControllerTest extends AbstractControllerTest {
 
         verify(mockBoatService).findByReference(boatReference);
         verify(mockBoatService).save(boat);
-        verify(mockUserService).findByUsername(username);
+        verify(mockUserService, times(2)).findByUsername(username);
     }
 
     @Test

@@ -89,8 +89,7 @@ public class BoatController {
     public ModelAndView myListings(Principal principal) {
         LOG.info("My listings page");
 
-        final User user = userService.findByUsername(principal.getName());
-        return modelAndViewForMyListings(user);
+        return modelAndViewForMyListings(principal);
     }
 
     @RequestMapping(value = "/s/listings/{boatReference}/suspended/flip", method = RequestMethod.GET)
@@ -103,17 +102,18 @@ public class BoatController {
             throw new ResourceNotFoundException("No boat found with reference " + boatReference);
         }
 
-        final User user = userService.findByUsername(principal.getName());
-        checkThatBoatBelongsToPrincipal(boat, user);
+        checkThatBoatBelongsToPrincipal(boat, principal);
 
         boat.setSuspended(!boat.isSuspended());
         boatService.save(boat);
 
-        return modelAndViewForMyListings(user);
+        return modelAndViewForMyListings(principal);
     }
 
-    private void checkThatBoatBelongsToPrincipal(Boat boat, User user) throws ResourceNotFoundException {
+    private void checkThatBoatBelongsToPrincipal(Boat boat, Principal principal) throws ResourceNotFoundException {
         final String boatReference = boat.getReference();
+
+        final User user = userService.findByUsername(principal.getName());
 
         for (Boat userBoat : user.getBoatListings()) {
             if (userBoat.getReference().equals(boatReference)) {
@@ -124,8 +124,9 @@ public class BoatController {
         throw new ResourceNotFoundException(String.format("No boat with reference %s found for user %s", boatReference, user.getUsername()));
     }
 
-    private ModelAndView modelAndViewForMyListings(User user) {
+    private ModelAndView modelAndViewForMyListings(Principal principal) {
         final ModelAndView modelAndView = new ModelAndView("myListings");
+        final User user = userService.findByUsername(principal.getName());
         modelAndView.addObject("boatListings", user.getBoatListings());
         return modelAndView;
     }

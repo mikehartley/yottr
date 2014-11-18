@@ -84,6 +84,7 @@ public class User {
     private String aboutMe;
 
     @OneToMany(mappedBy = "owner")
+    @OrderBy("reference")
     private List<Boat> boatListings = new ArrayList<>();
 
     public Long getId() {
