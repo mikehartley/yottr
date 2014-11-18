@@ -89,7 +89,8 @@ public class BoatController {
     public ModelAndView myListings(Principal principal) {
         LOG.info("My listings page");
 
-        return modelAndViewForMyListings(principal.getName());
+        final User user = userService.findByUsername(principal.getName());
+        return modelAndViewForMyListings(user);
     }
 
     @RequestMapping(value = "/s/listings/{boatReference}/suspended/flip", method = RequestMethod.GET)
@@ -102,15 +103,29 @@ public class BoatController {
             throw new ResourceNotFoundException("No boat found with reference " + boatReference);
         }
 
+        final User user = userService.findByUsername(principal.getName());
+        checkThatBoatBelongsToPrincipal(boat, user);
+
         boat.setSuspended(!boat.isSuspended());
         boatService.save(boat);
 
-        return modelAndViewForMyListings(principal.getName());
+        return modelAndViewForMyListings(user);
     }
 
-    private ModelAndView modelAndViewForMyListings(String username) {
+    private void checkThatBoatBelongsToPrincipal(Boat boat, User user) throws ResourceNotFoundException {
+        final String boatReference = boat.getReference();
+
+        for (Boat userBoat : user.getBoatListings()) {
+            if (userBoat.getReference().equals(boatReference)) {
+                return;
+            }
+        }
+
+        throw new ResourceNotFoundException(String.format("No boat with reference %s found for user %s", boatReference, user.getUsername()));
+    }
+
+    private ModelAndView modelAndViewForMyListings(User user) {
         final ModelAndView modelAndView = new ModelAndView("myListings");
-        final User user = userService.findByUsername(username);
         modelAndView.addObject("boatListings", user.getBoatListings());
         return modelAndView;
     }

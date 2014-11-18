@@ -234,7 +234,7 @@ public class BoatControllerTest extends AbstractControllerTest {
 
         final User user = aUser().withUsername(username).withBoat().build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
-        final Boat boat = aBoat().withOwner(user).build();
+        final Boat boat = user.getBoatListings().get(0);
         when(mockBoatService.findByReference(boatReference)).thenReturn(boat);
 
         mockMvc.perform(get("/s/listings/" + boatReference + "/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
@@ -257,5 +257,24 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(mockBoatService).findByReference(unknownBoatReference);
+    }
+
+    @Test
+    public void testFlipSuspendedWhenBoatDoesntBelongToPrincipal() throws Exception {
+        final String boatReference = "ref1";
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+        final Boat boat = aBoat().withOwner(aUser().withUsername("someother").build()).build();
+        when(mockBoatService.findByReference(boatReference)).thenReturn(boat);
+
+        mockMvc.perform(get("/s/listings/" + boatReference + "/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isNotFound());
+
+        verify(mockBoatService).findByReference(boatReference);
+        verify(mockUserService).findByUsername(username);
     }
 }

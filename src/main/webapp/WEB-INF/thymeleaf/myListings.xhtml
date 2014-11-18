@@ -31,6 +31,12 @@
                 <strong>Minimum required RYA sail cruising qualification:</strong> <span th:text="${boat.minimumRequiredLevel.displayName}">Not too bad</span><br/>
                 <strong>Sailing style:</strong> <span th:text="${boat.sailingStyle.displayName}">Racing</span><br/>
                 <strong>Description:</strong> <span th:text="${boat.description}">Desc</span><br/>
+                <br/>
+                <strong th:if="${boat.isSuspended()}">This listing is currently suspended.</strong><br/>
+                <a th:href="@{/s/listings/{boatReference}/suspended/flip(boatReference=${boat.reference})}">
+                    <span th:if="${boat.isSuspended()}">Re-enable</span>
+                    <span th:if="${!boat.isSuspended()}">Suspend listing</span>
+                </a>
                 <hr/>
             </div>
         </div>
