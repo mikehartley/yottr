@@ -3,6 +3,7 @@ package uk.co.yottr.controller;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,10 +68,9 @@ public class BoatControllerTest extends AbstractControllerTest {
         final User user = aUser().withUsername(username).withBoat().build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
 
-        final String viewName = "newListing";
         mockMvc.perform(get("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("newListing"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(4))
                 .andExpect(model().attributeExists("boat"))
@@ -92,10 +93,9 @@ public class BoatControllerTest extends AbstractControllerTest {
         final User user = aUser().withUsername(username).withBoat().build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
 
-        final String viewName = "myListings";
         mockMvc.perform(get("/s/listings/mine").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("myListings"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("boatListings"));
@@ -295,5 +295,101 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(mockUserService).findByUsername(username);
+    }
+
+    @Test
+    public void testEditListingPage() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+        final Boat boat = user.getBoatListings().get(0);
+
+        mockMvc.perform(get("/s/listings/" + boat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editListing"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().size(4))
+                .andExpect(model().attributeExists("boat"))
+                .andExpect(model().attributeExists("ryaSailCruisingLevels"))
+                .andExpect(model().attributeExists("sailingStyles"))
+                .andExpect(model().attributeExists("hullTypes"));
+
+        verify(mockUserService).findByUsername(username);
+        verify(mockReferenceDataService).ryaSailCruisingLevels();
+        verify(mockReferenceDataService).sailingStyles();
+        verify(mockReferenceDataService).hullTypes();
+    }
+
+    @Test
+    public void testEditListingAction() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+        final Boat originalBoat = user.getBoatListings().get(0);
+        final Boat savedBoat = new Boat(user);
+
+        final String manufacturerProperty = "manufacturer";
+        final String manufacturerValue = "manufacturerValueEdited";
+        final String modelProperty = "model";
+        final String modelValue = "modelValueEdited";
+        final String lengthProperty = "length";
+        final String lengthValue = "33";
+        final String unitsImperialProperty = "unitsImperial";
+        final String unitsImperialValue = "false";
+        final String hullTypeProperty = "hullType";
+        final String hullTypeValue = "MULTI";
+        final String descriptionProperty = "description";
+        final String descriptionValue = "descriptionValueEdited";
+        final String sailingStyleProperty = "sailingStyle";
+        final String sailingStyleValue = "RACING";
+        final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
+        final String minimumQualificationValue = "300";
+        final int minimumQualificationValueAsInt = Integer.parseInt(minimumQualificationValue);
+        final String dateRelevantToProperty = "dateRelevantTo";
+        final String dateRelevantToValue= "26/09/2015";
+
+        when(mockBoatService.save(any(Boat.class))).thenReturn(savedBoat);
+
+        final String boatAttribute = "boat";
+
+        mockMvc.perform(post("/s/listings/" + originalBoat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param(manufacturerProperty, manufacturerValue)
+                        .param(modelProperty, modelValue)
+                        .param(lengthProperty, lengthValue)
+                        .param(unitsImperialProperty, unitsImperialValue)
+                        .param(hullTypeProperty, hullTypeValue)
+                        .param(descriptionProperty, descriptionValue)
+                        .param(sailingStyleProperty, sailingStyleValue)
+                        .param(minimumQualificationByRankProperty, minimumQualificationValue)
+                        .param(dateRelevantToProperty, dateRelevantToValue)
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(model().hasNoErrors())
+                .andExpect(view().name("redirect:/s/listings/mine?updated"))
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists(boatAttribute))
+                .andExpect(model().attribute(boatAttribute, is(savedBoat)));
+
+        ArgumentCaptor<Boat> boatArgumentCaptor = ArgumentCaptor.forClass(Boat.class);
+        verify(mockBoatService).save(boatArgumentCaptor.capture());
+        verify(mockUserService).findByUsername(username);
+
+        final Boat boatThatWasSaved = boatArgumentCaptor.getValue();
+        assertEquals(manufacturerValue, boatThatWasSaved.getManufacturer());
+        assertEquals(modelValue, boatThatWasSaved.getModel());
+        assertEquals(Integer.valueOf(lengthValue), boatThatWasSaved.getLength());
+        assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());
+        assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());
+        assertEquals(Boat.HullType.valueOf(hullTypeValue), boatThatWasSaved.getHullType());
+        assertEquals(descriptionValue, boatThatWasSaved.getDescription());
+        assertEquals(SailingStyle.valueOf(sailingStyleValue), boatThatWasSaved.getSailingStyle());
+        assertEquals(minimumQualificationValueAsInt, boatThatWasSaved.getMinimumRequiredLevelByRank());
+        assertEquals(LocalDate.of(2015, 9, 26), boatThatWasSaved.getDateRelevantTo());
     }
 }

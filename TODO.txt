@@ -24,13 +24,12 @@ UI:
     Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
 
 User:
-*    Edit ad.
+*    Can post a maximum of 3 adverts by default.
     Searches.
     Saved searches.
     Favourites / watch list.
     Send message to admin (might be covered by having an email account).
     Password rules.
-    Can post a maximum of 2 adverts by default.
     Signup has some kind of captcha type thing.
 
 Admin:

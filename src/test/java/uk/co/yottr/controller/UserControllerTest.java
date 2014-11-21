@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -181,9 +182,7 @@ public class UserControllerTest extends AbstractControllerTest {
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
-        User user = new User();
-        user.setUsername(username);
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockUserService.findByUsername(username)).thenReturn(aUser().withUsername(username).build());
 
         final String userAttribute = "user";
 

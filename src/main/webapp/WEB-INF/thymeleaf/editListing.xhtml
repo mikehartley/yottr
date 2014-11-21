@@ -10,10 +10,10 @@
 <body>
 <section layout:fragment="content" id="index-content" class="container">
     <div class="row">
-        <form method="post" th:action="@{/s/listings/new}" th:object="${boat}" th:id="signup-form">
+        <form method="post" th:action="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}" th:object="${boat}" th:id="signup-form">
 
             <div class="col-sm-6">
-                <h2>Enter boat details:</h2>
+                <h2>Edit boat details:</h2>
 
                 <fieldset>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

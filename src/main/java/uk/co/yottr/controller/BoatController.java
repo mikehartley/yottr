@@ -45,8 +45,6 @@ public class BoatController {
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
 	public String newListingPage(Model model, Principal principal) {
-		LOG.info("Returning newListing.jsp page from newListingPage");
-
         final User user = userService.findByUsername(principal.getName());
 
         model.addAttribute("boat", new Boat(user));
@@ -61,11 +59,8 @@ public class BoatController {
 	public String newListingAction(@Valid Boat boat, BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
-			LOG.info("Returning newListing.jsp page from saveBoatAction");
 			return "newListing";
 		}
-
-        LOG.info("Returning newListingSuccess.jsp page");
 
         model.addAttribute("boat", boat);
         boatService.save(boat);
@@ -85,7 +80,7 @@ public class BoatController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/s/listings/mine", method = RequestMethod.GET)
+    @RequestMapping(value = "/s/listings/mine*", method = RequestMethod.GET)
     public ModelAndView myListings(Principal principal) {
         LOG.info("My listings page");
 
@@ -115,6 +110,49 @@ public class BoatController {
         boatService.delete(boat);
 
         return modelAndViewForMyListings(principal);
+    }
+
+    @RequestMapping(value = "/s/listings/{boatReference}/edit", method = RequestMethod.GET)
+    public ModelAndView editListingPage(@PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
+
+        LOG.info("editing listing with boat reference " + boatReference);
+
+        final Boat boat = findBoat(boatReference, principal);
+
+        final ModelAndView modelAndView = new ModelAndView("editListing");
+        modelAndView.addObject("boat", boat);
+        modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
+        modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/s/listings/{boatReference}/edit", method = RequestMethod.POST)
+    public ModelAndView editListingAction(@Valid Boat boatFromForm, @PathVariable String boatReference,
+                                          BindingResult bindingResult, Principal principal) throws ResourceNotFoundException {
+        if (bindingResult.hasErrors()) {
+            LOG.info(bindingResult.toString());
+            return new ModelAndView("editListing");
+        }
+
+        final Boat boatForUpdate = findBoat(boatReference, principal);
+        boatForUpdate.setManufacturer(boatFromForm.getManufacturer());
+        boatForUpdate.setModel(boatFromForm.getModel());
+        boatForUpdate.setLength(boatFromForm.getLength());
+        boatForUpdate.setUnitsImperial(boatFromForm.isUnitsImperial());
+        boatForUpdate.setHullType(boatFromForm.getHullType());
+        boatForUpdate.setDescription(boatFromForm.getDescription());
+        boatForUpdate.setDateRelevantTo(boatFromForm.getDateRelevantTo());
+        boatForUpdate.setMinimumRequiredLevel(boatFromForm.getMinimumRequiredLevel());
+        boatForUpdate.setSailingStyle(boatFromForm.getSailingStyle());
+        boatForUpdate.setSuspended(boatFromForm.isSuspended());
+
+        final Boat updatedBoat = boatService.save(boatForUpdate);
+
+        final ModelAndView modelAndView = new ModelAndView("redirect:/s/listings/mine?updated");
+        modelAndView.addObject("boat", updatedBoat);
+        return modelAndView;
     }
 
     private Boat findBoat(String boatReference, Principal principal) throws ResourceNotFoundException {
