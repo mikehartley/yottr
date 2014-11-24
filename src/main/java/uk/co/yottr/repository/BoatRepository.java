@@ -1,5 +1,7 @@
 package uk.co.yottr.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import uk.co.yottr.model.Boat;
 
@@ -10,4 +12,5 @@ import uk.co.yottr.model.Boat;
 
 public interface BoatRepository extends PagingAndSortingRepository<Boat, Long> {
     Boat findByReference(String reference);
+    Page<Boat> findBySuspended(boolean suspended, Pageable pageable);
 }

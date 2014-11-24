@@ -124,6 +124,19 @@ public class UserServiceTest {
     }
 
     @Test
+    public void findByUsernameWhenNotFound() {
+        final String username = "u1";
+
+        when(mockUserRepository.findByUsername(username)).thenReturn(null);
+
+        final User foundUser = userService.findByUsername(username);
+
+        assertNull("user should not have been found", foundUser);
+        verify(mockUserRepository).findByUsername(username);
+        verifyNoMoreInteractions(mockUserRepository);
+    }
+
+    @Test
     public void findById() {
         Long id = 5L;
         User user = createUser("u1");

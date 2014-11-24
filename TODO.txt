@@ -24,7 +24,7 @@ UI:
     Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
 
 User:
-*    Can post a maximum of 3 adverts by default.
+*   Can post a maximum of 2 adverts by default.
     Searches.
     Saved searches.
     Favourites / watch list.

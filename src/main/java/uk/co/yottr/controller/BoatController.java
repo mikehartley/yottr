@@ -74,7 +74,7 @@ public class BoatController {
 
         ModelAndView modelAndView = new ModelAndView("boatList");
 
-        Page<Boat> boatPages = boatService.findAll(pageable);
+        Page<Boat> boatPages = boatService.findAllExcludingSuspended(pageable);
         modelAndView.addObject("wrapper", new PageWrapper<>(boatPages));
 
         return modelAndView;

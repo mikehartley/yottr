@@ -177,7 +177,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final ArrayList<Boat> boatList = new ArrayList<>();
         boatList.add(aBoat().withOwner(aUser().build()).build());
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
-        when(mockBoatService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(boatPage); // page and size come from fallback settings as found in config
+        when(mockBoatService.findAllExcludingSuspended(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(boatPage); // page and size come from fallback settings as found in config
 
         mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
@@ -186,7 +186,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockBoatService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockBoatService, times(1)).findAllExcludingSuspended(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test

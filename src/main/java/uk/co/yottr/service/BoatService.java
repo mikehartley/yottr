@@ -20,14 +20,11 @@ public class BoatService {
 
     private BoatRepository boatRepository;
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
-    private ReferenceDataService referenceDataService;
 
     @Autowired
-    public BoatService(BoatRepository boatRepository, RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository,
-                       ReferenceDataService referenceDataService) {
+    public BoatService(BoatRepository boatRepository, RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
         this.boatRepository = boatRepository;
         this.ryaSailCruisingLevelRepository = ryaSailCruisingLevelRepository;
-        this.referenceDataService = referenceDataService;
     }
 
     @Transactional
@@ -50,5 +47,11 @@ public class BoatService {
     @Transactional(readOnly = true)
     public Boat findByReference(String reference) {
         return boatRepository.findByReference(reference);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Boat> findAllExcludingSuspended(Pageable pageable) {
+        final boolean suspended = false;
+        return boatRepository.findBySuspended(suspended, pageable);
     }
 }

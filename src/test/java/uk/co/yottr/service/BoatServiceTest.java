@@ -18,7 +18,7 @@ import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
@@ -39,18 +39,14 @@ public class BoatServiceTest {
     @Mock
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
 
-    @Mock
-    private ReferenceDataService referenceDataService;
-
     private User owner;
 
     @Before
     public void init() {
         reset(boatRepository);
         reset(ryaSailCruisingLevelRepository);
-        reset(referenceDataService);
 
-        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository, referenceDataService);
+        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository);
 
         owner = aUser().build();
     }
@@ -77,7 +73,7 @@ public class BoatServiceTest {
         when(boatRepository.findAll(pageable)).thenReturn(page);
 
         final Page<Boat> pageFromService = boatService.findAll(pageable);
-        assertEquals("page from service", page, pageFromService);
+        assertSame("page from service", page, pageFromService);
     }
 
     @Test
@@ -97,6 +93,19 @@ public class BoatServiceTest {
 
         final Boat boatFromService = boatService.findByReference(reference);
 
-        assertEquals("boat from service", boat, boatFromService);
+        assertSame("boat from service", boat, boatFromService);
+    }
+
+    @Test
+    public void testFindAllExcludingSuspended() throws Exception {
+        final Pageable pageable = mock(Pageable.class);
+        final ArrayList<Boat> boatList = new ArrayList<>();
+        final PageImpl<Boat> page = new PageImpl<>(boatList);
+        final boolean suspended = false;
+        when(boatRepository.findBySuspended(suspended, pageable)).thenReturn(page);
+
+        final Page<Boat> resultFromService = boatService.findAllExcludingSuspended(pageable);
+
+        assertSame("result from service", page, resultFromService);
     }
 }

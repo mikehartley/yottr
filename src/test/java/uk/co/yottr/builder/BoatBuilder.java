@@ -21,6 +21,7 @@ public class BoatBuilder {
     private SailingStyle sailingStyle = SailingStyle.ALL;
     private String description = "Default Boat";
     private RyaSailCruisingLevel minimumRequiredLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
+    private boolean suspended;
 
     private BoatBuilder() {
     }
@@ -44,6 +45,11 @@ public class BoatBuilder {
         return this;
     }
 
+    public BoatBuilder withSuspended(boolean suspended) {
+        this.suspended = suspended;
+        return this;
+    }
+
     public Boat build() {
 
         if (owner == null) {
@@ -59,6 +65,7 @@ public class BoatBuilder {
         boat.setSailingStyle(sailingStyle);
         boat.setDescription(description);
         boat.setMinimumRequiredLevel(minimumRequiredLevel);
+        boat.setSuspended(suspended);
 
         return boat;
     }
