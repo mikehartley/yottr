@@ -52,7 +52,7 @@ public class UserServiceTest {
 
         userService.save(userWithPlaintextPassword, true);
 
-        verify(passwordEncoder, times(1)).encode(plaintextPassword);
+        verify(passwordEncoder).encode(plaintextPassword);
         verify(mockUserRepository).save(any(User.class));
     }
 

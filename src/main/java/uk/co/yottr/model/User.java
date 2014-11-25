@@ -5,6 +5,7 @@ import uk.co.yottr.security.Role;
 import uk.co.yottr.validator.UsernameAvailable;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -83,9 +84,13 @@ public class User {
     @Size(max = 400)
     private String aboutMe;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     @OrderBy("reference")
     private List<Boat> boatListings = new ArrayList<>();
+
+    @Column(name = "max_listings")
+    @Min(value = 0, message = "must not be negative")
+    private Integer maxListings = 2;
 
     public Long getId() {
         return id;
@@ -198,7 +203,19 @@ public class User {
     }
 
     public List<Boat> getBoatListings() {
-        return boatListings;
+        return boatListings; //TODO return immutable list
+    }
+
+    public Integer getMaxListings() {
+        return maxListings;
+    }
+
+    public void setMaxListings(Integer maxListings) {
+        this.maxListings = maxListings;
+    }
+
+    public boolean isAllowedMoreListings() {
+        return getBoatListings().size() < getMaxListings();
     }
 
     @Override

@@ -25,8 +25,10 @@
                 <strong>About:</strong> <span th:text="${user.aboutMe}">About me...</span><br/>
                 <strong>Roles:</strong> <span th:text="${user.userRoles}">ADMIN</span><br/>
                 <strong>Account enabled:</strong> <span th:text="${user.enabled}">true</span><br/>
-                <strong>Boat adverts:</strong> <span>TODO (max 3)</span><br/>
-                EDIT | <a th:href="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">FLIP ENABLED</a> | <a th:href="@{/admin/user/{userid}/delete(userid=${user.id})}">DELETE</a><br/>
+                <strong>Max listings:</strong> <span th:text="${user.maxListings}">2</span><br/>
+                <strong>Boat listings:</strong> <span th:text="${user.boatListings.size()}">1</span><br/>
+                EDIT | <a th:href="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">FLIP ENABLED</a> |
+                <a th:href="@{/admin/user/{userid}/delete(userid=${user.id})}" onclick="return confirm('Confirm user deletion')">DELETE</a><br/>
                 <hr/>
             </div>
 

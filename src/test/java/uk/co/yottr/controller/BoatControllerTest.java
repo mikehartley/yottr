@@ -72,8 +72,9 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("newListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(4))
+                .andExpect(model().size(5))
                 .andExpect(model().attributeExists("boat"))
+                .andExpect(model().attributeExists("allowedMoreListings"))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
                 .andExpect(model().attributeExists("sailingStyles"))
                 .andExpect(model().attributeExists("hullTypes"));
@@ -105,6 +106,13 @@ public class BoatControllerTest extends AbstractControllerTest {
 
     @Test
     public void testNewListingAction() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
         final String boatAttribute = "boat";
 
         final String manufacturerProperty = "manufacturer";
@@ -128,7 +136,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2014";
 
-        mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML)
+        mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
                         .param(manufacturerProperty, manufacturerValue)
                         .param(modelProperty, modelValue)
                         .param(lengthProperty, lengthValue)
@@ -154,22 +162,52 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(boatAttribute, hasProperty(minimumQualificationProperty, hasProperty("rank", equalTo(minimumQualificationValueAsInt)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(dateRelevantToProperty, equalTo(LocalDate.of(2014, 9, 26)))));
 
-        verify(mockBoatService, times(1)).save(any(Boat.class));
+        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).save(any(Boat.class));
     }
 
     @Test
-    public void testSignupActionWhenInError() throws Exception {
-        final String boatAttribute = "boat";
+    public void testNewListingActionWhenAtMaxListings() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
 
-        mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML))
-                .andExpect(status().isOk())
-                .andExpect(model().hasErrors())
-                .andExpect(view().name("newListing"))
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists(boatAttribute))
-                .andExpect(model().attribute(boatAttribute, hasProperty("manufacturer", nullValue())));
+        final User user = aUser().withUsername(username).withMaxListings(0).build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
 
-        verify(mockBoatService, never()).save(any(Boat.class));
+        final String manufacturerProperty = "manufacturer";
+        final String manufacturerValue = "manufacturerValue";
+        final String modelProperty = "model";
+        final String modelValue = "modelValue";
+        final String lengthProperty = "length";
+        final String lengthValue = "55";
+        final String unitsImperialProperty = "unitsImperial";
+        final String unitsImperialValue = "true";
+        final String hullTypeProperty = "hullType";
+        final String hullTypeValue = "MONO";
+        final String descriptionProperty = "description";
+        final String descriptionValue = "descriptionValue";
+        final String sailingStyleProperty = "sailingStyle";
+        final String sailingStyleValue = "ALL";
+        final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
+        final String minimumQualificationValue = "400";
+        final String dateRelevantToProperty = "dateRelevantTo";
+        final String dateRelevantToValue= "26/09/2014";
+
+        mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param(manufacturerProperty, manufacturerValue)
+                        .param(modelProperty, modelValue)
+                        .param(lengthProperty, lengthValue)
+                        .param(unitsImperialProperty, unitsImperialValue)
+                        .param(hullTypeProperty, hullTypeValue)
+                        .param(descriptionProperty, descriptionValue)
+                        .param(sailingStyleProperty, sailingStyleValue)
+                        .param(minimumQualificationByRankProperty, minimumQualificationValue)
+                        .param(dateRelevantToProperty, dateRelevantToValue)
+        )
+                .andExpect(status().isForbidden());
+
+        verify(mockUserService).findByUsername(username);
     }
 
     @Test
@@ -186,7 +224,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockBoatService, times(1)).findAllExcludingSuspended(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockBoatService).findAllExcludingSuspended(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test

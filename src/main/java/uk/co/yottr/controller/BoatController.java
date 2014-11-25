@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
@@ -48,6 +49,7 @@ public class BoatController {
         final User user = userService.findByUsername(principal.getName());
 
         model.addAttribute("boat", new Boat(user));
+        model.addAttribute("allowedMoreListings", user.isAllowedMoreListings());
         model.addAttribute("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
         model.addAttribute("sailingStyles", referenceDataService.sailingStyles());
         model.addAttribute("hullTypes", referenceDataService.hullTypes());
@@ -56,11 +58,13 @@ public class BoatController {
 	}
 
 	@RequestMapping(value = "/s/listings/new", method = RequestMethod.POST)
-	public String newListingAction(@Valid Boat boat, BindingResult bindingResult, Model model) {
+	public String newListingAction(@Valid Boat boat, BindingResult bindingResult, Model model, Principal principal) throws IllegalOperationException {
 		if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
 			return "newListing";
 		}
+
+        checkIsWithinListingLimit(principal);
 
         model.addAttribute("boat", boat);
         boatService.save(boat);
@@ -153,6 +157,13 @@ public class BoatController {
         final ModelAndView modelAndView = new ModelAndView("redirect:/s/listings/mine?updated");
         modelAndView.addObject("boat", updatedBoat);
         return modelAndView;
+    }
+
+    private void checkIsWithinListingLimit(Principal principal) throws IllegalOperationException {
+        final User user = userService.findByUsername(principal.getName());
+        if (user.getBoatListings().size() >=  user.getMaxListings()) {
+            throw new IllegalOperationException("User is already at listing limit.");
+        }
     }
 
     private Boat findBoat(String boatReference, Principal principal) throws ResourceNotFoundException {

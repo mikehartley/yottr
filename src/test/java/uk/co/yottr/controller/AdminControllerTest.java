@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
@@ -53,7 +52,7 @@ public class AdminControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockUserService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockUserService).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test
@@ -75,9 +74,9 @@ public class AdminControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockUserService, times(1)).userExists(userId);
-        verify(mockUserService, times(1)).delete(userId);
-        verify(mockUserService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockUserService).userExists(userId);
+        verify(mockUserService).delete(userId);
+        verify(mockUserService).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test
@@ -87,7 +86,7 @@ public class AdminControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/admin/user/" + userId + "/delete").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isNotFound());
 
-        verify(mockUserService, times(1)).userExists(userId);
+        verify(mockUserService).userExists(userId);
     }
 
     @Test
@@ -109,10 +108,10 @@ public class AdminControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockUserService, times(1)).userExists(4L);
-        verify(mockUserService, times(1)).findById(4L);
-        verify(mockUserService, times(1)).save(any(User.class), eq(false));
-        verify(mockUserService, times(1)).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockUserService).userExists(4L);
+        verify(mockUserService).findById(4L);
+        verify(mockUserService).save(any(User.class), eq(false));
+        verify(mockUserService).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test
@@ -122,6 +121,6 @@ public class AdminControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/admin/user/" + userId + "/enabled/flip").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isNotFound());
 
-        verify(mockUserService, times(1)).userExists(userId);
+        verify(mockUserService).userExists(userId);
     }
 }

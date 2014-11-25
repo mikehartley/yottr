@@ -44,12 +44,18 @@ public class UserBuilder {
     }
 
     public UserBuilder withBoat(BoatBuilder boatBuilder) {
-        user.getBoatListings().add(boatBuilder.withOwner(user).build());
+        boatBuilder.withOwner(user).build();
+
         return this;
     }
 
     public UserBuilder withBoat() {
         return withBoat(aBoat());
+    }
+
+    public UserBuilder withMaxListings(int maxListings) {
+        user.setMaxListings(maxListings);
+        return this;
     }
 
     public User build() {

@@ -16,7 +16,7 @@ import javax.validation.Validator;
 import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -167,6 +167,35 @@ public class UserTest {
 
         user.setMobile(randomNumeric(26));
         assertSingleViolation(sizeErrorMessage);
+    }
+
+    @Test
+    public void maxListings() {
+        final String maxListingsErrorMessage = "must not be negative";
+
+        user.setMaxListings(-1);
+        assertSingleViolation(maxListingsErrorMessage);
+    }
+
+    @Test
+    public void maxListingsDefault() {
+        assertEquals(Integer.valueOf(2), new User().getMaxListings());
+    }
+
+    @Test
+    public void isAllowedMoreListingsReturnsTrueWhenLimitNotReached() {
+        user.setMaxListings(2);
+        new Boat(user);
+
+        assertTrue("user should be allowed more listings", user.isAllowedMoreListings());
+    }
+
+    @Test
+    public void isAllowedMoreListingsReturnsFalseWhenLimitReached() {
+        user.setMaxListings(1);
+        new Boat(user);
+
+        assertFalse("user should not be allowed more listings", user.isAllowedMoreListings());
     }
 
     private void assertSingleViolation(String expectedErrorMessage) {

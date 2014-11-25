@@ -10,7 +10,7 @@
 <body>
 <section layout:fragment="content" id="index-content" class="container">
     <div class="row">
-        <form method="post" th:action="@{/s/listings/new}" th:object="${boat}" th:id="signup-form">
+        <form method="post" th:action="@{/s/listings/new}" th:object="${boat}" th:id="signup-form" th:if="${allowedMoreListings}">
 
             <div class="col-sm-6">
                 <h2>Enter boat details:</h2>
@@ -64,7 +64,7 @@
                     </div>
                 </fieldset>
             </div>
-            <!--/.col-sm-6-->
+
             <div class="col-sm-6">
                 <div class="gap"></div>
                 <div class="gap"></div>
@@ -109,6 +109,9 @@
                 </fieldset>
             </div>
         </form>
+        <div th:if="${not allowedMoreListings}">
+            You have reached the limit of the number of listings you can have. If you would like to post more listings then please contact admin.
+        </div>
     </div>
 
 </section>

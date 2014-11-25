@@ -67,7 +67,7 @@ public class InitialiseDatabase {
         initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
 
         final User adminUser = setupUserWithRoles("mike", Role.ADMIN, Role.FREE, Role.CREW);
-        addBoatsWithOwner(adminUser, 50);
+        addBoatsWithOwner(adminUser, 15);
 
         final User userOne = setupUserWithRoles("UserOne", Role.CREW, Role.FREE);
         addBoatsWithOwner(userOne, 3);
@@ -129,7 +129,8 @@ public class InitialiseDatabase {
         boat.setSailingStyle(SailingStyle.CRUISING);
         boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
 
-        final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank());
+        final int rank = RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank();
+        final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(rank);
         boat.setMinimumRequiredLevel(level);
 
         boatRepository.save(boat);

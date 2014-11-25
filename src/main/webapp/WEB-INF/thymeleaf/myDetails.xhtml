@@ -19,9 +19,9 @@
             </div>
 
             <fieldset>
-                <div class="form-group" th:classappend="${#fields.hasErrors('username')}? 'has-error'">
+                <div class="form-group">
                     <label class="col-sm-4 control-label text-right">Username</label>
-                    <label class="col-sm-8 control-label" th:text="*{username}">Username</label>
+                    <label class="col-sm-8 control-label" th:text="${user.getUsername()}">Username</label>
                 </div>
                 <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
                     <label for="password" class="col-sm-4 control-label text-right">Change Password</label>
@@ -97,6 +97,10 @@
                         <textarea th:rows="4" th:cols="40" th:maxlength="400" class="form-control" id="aboutMe" placeholder="About Me" th:field="*{aboutMe}"></textarea>
                         <span class="help-block" th:if="${#fields.hasErrors('aboutMe')}" th:errors="*{aboutMe}">Bad About Me</span>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label text-right">Listings</label>
+                    <label class="col-sm-8 control-label"><span th:text="${user.getBoatListings().size()}">1</span> out of a maximum of <span th:text="${user.getMaxListings()}">2</span></label>
                 </div>
                 <div class="gap">&nbsp;</div>
 
