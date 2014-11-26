@@ -24,15 +24,15 @@ UI:
     Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
 
 User:
-*   Can post a maximum of 2 adverts by default.
-    Searches.
+*    Search for listings by reference/date posted/date relevant to/length/qualification/sailing style.
     Saved searches.
     Favourites / watch list.
     Send message to admin (might be covered by having an email account).
     Password rules.
-    Signup has some kind of captcha type thing.
+    Signup has some kind of captcha thing.
 
 Admin:
+    Search for user by username/name/email/date joined.
     Edit user profile.
     Edit/Delete/Suspend ad.
     IP address blocking.
