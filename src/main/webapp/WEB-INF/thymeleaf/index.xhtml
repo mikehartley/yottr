@@ -57,7 +57,65 @@
             <div sec:authorize="isAuthenticated()">
                 <h2>Search</h2>
 
-                <p>This is where you'll be able to seach from.</p>
+                <form>
+                    <table>
+                        <tr>
+                            <td>Reference</td>
+                            <td><input type="search"/></td>
+                        </tr>
+
+                        <tr><td colspan="2">&nbsp;</td></tr>
+
+                        <tr>
+                            <td>Date Posted</td>
+                            <td><input type="date" placeholder="dd/mm/yyyy (leave blank for any)"/></td>
+                        </tr>
+                        <tr>
+                            <td>Date Relevant To</td>
+                            <td><input type="date" placeholder="dd/mm/yyyy (leave blank for any)"/></td>
+                        </tr>
+                        <tr>
+                            <td>Minimum Qualification</td>
+                            <td>
+                                <select>
+                                    <option>None</option>
+                                    <option>Good</option>
+                                    <option>Better</option>
+                                    <option>Best</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sailing Style</td>
+                            <td>
+                                <select>
+                                    <option>Any</option>
+                                    <option>Racing</option>
+                                    <option>Cruising</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Money</td>
+                            <td>
+                                <select>
+                                    <option>Free</option>
+                                    <option>I Pay Them At Cost</option>
+                                    <option>I Pay Them Commercial Rates</option>
+                                    <option>They Pay Me At Cost</option>
+                                    <option>They Pay Me Commercial Rates</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr><td colspan="3">&nbsp;</td></tr>
+
+                        <tr>
+                            <td colspan="2" align="right"><input type="submit" value="Search"/></td>
+                        </tr>
+                    </table>
+                </form>
+
             </div>
         </div>
         <!--/.col-sm-6-->

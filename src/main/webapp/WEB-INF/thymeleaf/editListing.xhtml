@@ -87,7 +87,7 @@
                         <label for="title" class="col-lg-2 control-label">Date which this advert is relevant to (optional):</label>
 
                         <div class="col-lg-10">
-                            <input type="text" class="form-control" id="dateRelevantTo" placeholder="Date Relevant To" th:field="*{dateRelevantTo}"/>
+                            <input type="date" class="form-control" id="dateRelevantTo" placeholder="dd/mm/yyyy" th:field="*{dateRelevantTo}"/>
                             <span class="help-block" th:if="${#fields.hasErrors('dateRelevantTo')}" th:errors="*{dateRelevantTo}">Bad Date Relevant To</span>
                         </div>
                     </div>
