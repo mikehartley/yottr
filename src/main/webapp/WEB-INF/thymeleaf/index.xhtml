@@ -77,27 +77,29 @@
                         <tr>
                             <td>Minimum Qualification</td>
                             <td>
-                                <select>
-                                    <option>None</option>
-                                    <option>Good</option>
-                                    <option>Better</option>
-                                    <option>Best</option>
+                                <select><!-- th:field="*{minimumRequiredLevelByRank}">-->
+                                    <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.getRank()}" th:text="${level.getDisplayName()}">None</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td>Sailing Style</td>
                             <td>
-                                <select>
-                                    <option>Any</option>
-                                    <option>Racing</option>
-                                    <option>Cruising</option>
+                                <select><!-- th:field="*{sailingStyle}">-->
+                                    <option th:value="${''}" th:text="${'Any'}">Any</option>
+                                    <option th:each="sailingStyle : ${sailingStyles}" th:value="${sailingStyle.name()}" th:text="${sailingStyle.getDisplayName()}">Cruising</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td>Money</td>
                             <td>
+                                <select><!-- th:field="*{sailingStyle}">-->
+                                    <option th:value="${''}" th:text="${'Any'}">Any</option>
+                                    <option th:each="financialArrangement : ${financialArrangements}"
+                                            th:value="${financialArrangement.name()}"
+                                            th:text="${financialArrangement.getDisplayName()}">Free</option>
+                                </select>
                                 <select>
                                     <option>Free</option>
                                     <option>I Pay Them At Cost</option>

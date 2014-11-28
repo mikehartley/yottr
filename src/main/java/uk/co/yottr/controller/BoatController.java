@@ -187,8 +187,11 @@ public class BoatController {
     }
 
     @RequestMapping(value = { "/", "index" }, method = RequestMethod.GET)
-    public String index() {
-        LOG.info("index page");
-        return "index";
+    public ModelAndView index() {
+        final ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
+        modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
+        return modelAndView;
     }
 }

@@ -1,10 +1,7 @@
 package uk.co.yottr.service;
 
 import org.springframework.stereotype.Service;
-import uk.co.yottr.model.Boat;
-import uk.co.yottr.model.Country;
-import uk.co.yottr.model.RyaSailCruisingLevel;
-import uk.co.yottr.model.SailingStyle;
+import uk.co.yottr.model.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +58,19 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         countries.add(Country.OTHER);
 
         return countries;
+    }
+
+    @Override
+    public List<FinancialArrangement> financialArrangements() {
+        List<FinancialArrangement> financialArrangements = new ArrayList<>();
+
+        financialArrangements.add(FinancialArrangement.FREE);
+        financialArrangements.add(FinancialArrangement.PAY_THEM_COST);
+        financialArrangements.add(FinancialArrangement.PAY_THEM_COMMERCIAL);
+        financialArrangements.add(FinancialArrangement.PAY_ME_COST);
+        financialArrangements.add(FinancialArrangement.PAY_ME_COMMERCIAL);
+
+        return financialArrangements;
     }
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {

@@ -229,19 +229,26 @@ public class BoatControllerTest extends AbstractControllerTest {
 
     @Test
     public void testIndex() throws Exception {
-        final String viewName = "index";
+        testIndexWithUrl("/");
+        testIndexWithUrl("/index");
+    }
 
-        mockMvc.perform(get("/").contentType(MediaType.TEXT_HTML))
-                .andExpect(status().isOk())
-                .andExpect(view().name(viewName))
-                .andExpect(model().hasNoErrors())
-                .andExpect(model().size(0));
+    private void testIndexWithUrl(String url) throws Exception {
 
-        mockMvc.perform(get("/index").contentType(MediaType.TEXT_HTML))
+        reset(mockReferenceDataService);
+
+        mockMvc.perform(get(url).contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("index"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(0));
+                .andExpect(model().size(3))
+                .andExpect(model().attributeExists("ryaSailCruisingLevels"))
+                .andExpect(model().attributeExists("sailingStyles"))
+                .andExpect(model().attributeExists("hullTypes"));
+
+        verify(mockReferenceDataService).ryaSailCruisingLevels();
+        verify(mockReferenceDataService).sailingStyles();
+        verify(mockReferenceDataService).hullTypes();
     }
 
     @Test
