@@ -30,6 +30,12 @@ public class FinancialArrangement {
         }
     }
 
+    public static FinancialArrangement FREE =  new FinancialArrangement(FinancialArrangementEnum.FREE);
+    public static FinancialArrangement PAY_THEM_COST =  new FinancialArrangement(FinancialArrangementEnum.PAY_THEM_COST);
+    public static FinancialArrangement PAY_THEM_COMMERCIAL =  new FinancialArrangement(FinancialArrangementEnum.PAY_THEM_COMMERCIAL);
+    public static FinancialArrangement PAY_ME_COST =  new FinancialArrangement(FinancialArrangementEnum.PAY_ME_COST);
+    public static FinancialArrangement PAY_ME_COMMERCIAL =  new FinancialArrangement(FinancialArrangementEnum.PAY_ME_COMMERCIAL);
+
     @Id
     @Column(name = "name")
     private String name;

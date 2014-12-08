@@ -53,6 +53,7 @@ public class BoatController {
         model.addAttribute("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
         model.addAttribute("sailingStyles", referenceDataService.sailingStyles());
         model.addAttribute("hullTypes", referenceDataService.hullTypes());
+        model.addAttribute("financialArrangements", referenceDataService.financialArrangements());
 
         return "newListing";
 	}

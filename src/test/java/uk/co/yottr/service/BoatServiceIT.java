@@ -50,9 +50,10 @@ public class BoatServiceIT {
     @Before
     public void initialiseReferenceData() {
 
-        if (ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.NONE.getRank()) == null) {
+        if (ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.NONE.getRank()) == null) {//TODO check this in initialise method
             InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
         }
+        //TODO initialise financial arrangements
 
         owner = userService.save(aUser().build(), false);
     }

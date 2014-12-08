@@ -79,6 +79,11 @@ public class Boat {
     @NotNull(message = REQUIRED_ERROR_MSG)
     private SailingStyle sailingStyle;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "financial_arrangement")
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private FinancialArrangement financialArrangement;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -196,6 +201,14 @@ public class Boat {
 
     public void setSailingStyle(SailingStyle sailingStyle) {
         this.sailingStyle = sailingStyle;
+    }
+
+    public FinancialArrangement getFinancialArrangement() {
+        return financialArrangement;
+    }
+
+    public void setFinancialArrangement(FinancialArrangement financialArrangement) {
+        this.financialArrangement = financialArrangement;
     }
 
     public boolean isSuspended() {

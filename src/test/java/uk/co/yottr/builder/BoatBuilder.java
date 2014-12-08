@@ -1,9 +1,6 @@
 package uk.co.yottr.builder;
 
-import uk.co.yottr.model.Boat;
-import uk.co.yottr.model.RyaSailCruisingLevel;
-import uk.co.yottr.model.SailingStyle;
-import uk.co.yottr.model.User;
+import uk.co.yottr.model.*;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -21,6 +18,7 @@ public class BoatBuilder {
     private SailingStyle sailingStyle = SailingStyle.ALL;
     private String description = "Default Boat";
     private RyaSailCruisingLevel minimumRequiredLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
+    private FinancialArrangement financialArrangement = FinancialArrangement.FREE;
     private boolean suspended;
 
     private BoatBuilder() {
@@ -65,6 +63,7 @@ public class BoatBuilder {
         boat.setSailingStyle(sailingStyle);
         boat.setDescription(description);
         boat.setMinimumRequiredLevel(minimumRequiredLevel);
+        boat.setFinancialArrangement(financialArrangement);
         boat.setSuspended(suspended);
 
         return boat;

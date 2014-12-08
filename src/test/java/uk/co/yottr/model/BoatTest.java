@@ -108,6 +108,12 @@ public class BoatTest {
     }
 
     @Test
+    public void financialArrangement() {
+        boat.setFinancialArrangement(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
+    }
+
+    @Test
     public void canSetAndGetMinQualificationByRank() {
         boat.setMinimumRequiredLevel(RyaSailCruisingLevel.NONE);
 
@@ -181,6 +187,7 @@ public class BoatTest {
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("blah");
         boat.setSailingStyle(SailingStyle.ALL);
+        boat.setFinancialArrangement(FinancialArrangement.PAY_ME_COMMERCIAL);
         return boat;
     }
 }

@@ -24,7 +24,8 @@ UI:
     Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
 
 User:
-*    Search for listings by reference/date posted/date relevant to/length/qualification/sailing style.
+*    Add financial arrangements to Add Boat, Add Boat Success, View All, My Listings
+    Search for listings by reference/date posted/date relevant to/length/qualification/sailing style.
     Saved searches.
     Favourites / watch list.
     Send message to admin (might be covered by having an email account).

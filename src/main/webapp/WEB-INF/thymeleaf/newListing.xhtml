@@ -101,6 +101,18 @@
                             <span class="help-block" th:if="${#fields.hasErrors('minimumRequiredLevelByRank')}" th:errors="*{minimumRequiredLevelByRank}">Bad Minimum Required Level</span>
                         </div>
                     </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('financialArrangement')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Money</label>
+
+                        <div class="col-lg-10">
+                            <select th:field="*{financialArrangement}">
+                                <option th:each="financialArrangement : ${financialArrangements}"
+                                        th:value="${financialArrangement.getName()}"
+                                        th:text="${financialArrangement.getDisplayName()}">Free</option>
+                            </select>
+                            <span class="help-block" th:if="${#fields.hasErrors('financialArrangement')}" th:errors="*{financialArrangement}">Bad Money</span>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="col-lg-offset-2 col-lg-10">
                             <button type="submit" class="btn btn-default">Save</button>
