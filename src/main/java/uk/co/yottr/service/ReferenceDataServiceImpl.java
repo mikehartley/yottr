@@ -62,15 +62,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 
     @Override
     public List<FinancialArrangement> financialArrangements() {
-        List<FinancialArrangement> financialArrangements = new ArrayList<>();
+        List<FinancialArrangement> financialArrangementEnums = new ArrayList<>();
 
-        financialArrangements.add(FinancialArrangement.FREE);
-        financialArrangements.add(FinancialArrangement.PAY_THEM_COST);
-        financialArrangements.add(FinancialArrangement.PAY_THEM_COMMERCIAL);
-        financialArrangements.add(FinancialArrangement.PAY_ME_COST);
-        financialArrangements.add(FinancialArrangement.PAY_ME_COMMERCIAL);
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.FREE));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_THEM_COST));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_THEM_COMMERCIAL));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_ME_COST));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_ME_COMMERCIAL));
 
-        return financialArrangements;
+        return financialArrangementEnums;
     }
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {

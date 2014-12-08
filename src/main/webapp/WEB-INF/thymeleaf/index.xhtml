@@ -56,6 +56,7 @@
             </div>
             <div sec:authorize="isAuthenticated()">
                 <h2>Search</h2>
+                <h5>(all fields are optional)</h5>
 
                 <form>
                     <table>
@@ -68,11 +69,11 @@
 
                         <tr>
                             <td>Date Posted</td>
-                            <td><input type="date" placeholder="dd/mm/yyyy (leave blank for any)"/></td>
+                            <td><input type="date" placeholder="dd/mm/yyyy"/></td>
                         </tr>
                         <tr>
                             <td>Date Relevant To</td>
-                            <td><input type="date" placeholder="dd/mm/yyyy (leave blank for any)"/></td>
+                            <td><input type="date" placeholder="dd/mm/yyyy"/></td>
                         </tr>
                         <tr>
                             <td>Minimum Qualification</td>
@@ -97,15 +98,8 @@
                                 <select><!-- th:field="*{sailingStyle}">-->
                                     <option th:value="${''}" th:text="${'Any'}">Any</option>
                                     <option th:each="financialArrangement : ${financialArrangements}"
-                                            th:value="${financialArrangement.name()}"
+                                            th:value="${financialArrangement.getName()}"
                                             th:text="${financialArrangement.getDisplayName()}">Free</option>
-                                </select>
-                                <select>
-                                    <option>Free</option>
-                                    <option>I Pay Them At Cost</option>
-                                    <option>I Pay Them Commercial Rates</option>
-                                    <option>They Pay Me At Cost</option>
-                                    <option>They Pay Me Commercial Rates</option>
                                 </select>
                             </td>
                         </tr>

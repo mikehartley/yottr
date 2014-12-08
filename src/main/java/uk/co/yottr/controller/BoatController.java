@@ -192,6 +192,7 @@ public class BoatController {
         modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
         modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
         modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
+        modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
         return modelAndView;
     }
 }

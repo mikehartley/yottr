@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import uk.co.yottr.config.AppConfig;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.BoatRepository;
+import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.security.Role;
@@ -64,7 +65,7 @@ public class InitialiseDatabase {
     public void init() {
         if (!ENABLED) return;
 
-        initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
+        initialise(ryaSailCruisingLevelRepository);
 
         final User adminUser = setupUserWithRoles("mike", Role.ADMIN, Role.FREE, Role.CREW);
         addBoatsWithOwner(adminUser, 15);
@@ -87,10 +88,17 @@ public class InitialiseDatabase {
         });
     }
 
-    public static void initialiseRyaSailCruisingLevels(RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
+    public static void initialise(RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
         final List<RyaSailCruisingLevel.Level> levels = Arrays.asList(RyaSailCruisingLevel.Level.values());
         for (RyaSailCruisingLevel.Level level : levels) {
             ryaSailCruisingLevelRepository.save(new RyaSailCruisingLevel(level));
+        }
+    }
+
+    public static void initialise(FinancialArrangementRepository financialArrangementRepository) {
+        final List<FinancialArrangement.FinancialArrangementEnum> arrangements = Arrays.asList(FinancialArrangement.FinancialArrangementEnum.values());
+        for (FinancialArrangement.FinancialArrangementEnum arrangement : arrangements) {
+            financialArrangementRepository.save(new FinancialArrangement(arrangement));
         }
     }
 

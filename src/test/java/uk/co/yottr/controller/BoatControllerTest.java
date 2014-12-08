@@ -241,14 +241,16 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(3))
+                .andExpect(model().size(4))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
                 .andExpect(model().attributeExists("sailingStyles"))
-                .andExpect(model().attributeExists("hullTypes"));
+                .andExpect(model().attributeExists("hullTypes"))
+                .andExpect(model().attributeExists("financialArrangements"));
 
         verify(mockReferenceDataService).ryaSailCruisingLevels();
         verify(mockReferenceDataService).sailingStyles();
         verify(mockReferenceDataService).hullTypes();
+        verify(mockReferenceDataService).financialArrangements();
     }
 
     @Test

@@ -51,7 +51,7 @@ public class BoatServiceIT {
     public void initialiseReferenceData() {
 
         if (ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.NONE.getRank()) == null) {
-            InitialiseDatabase.initialiseRyaSailCruisingLevels(ryaSailCruisingLevelRepository);
+            InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
         }
 
         owner = userService.save(aUser().build(), false);
