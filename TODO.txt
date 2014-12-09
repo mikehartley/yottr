@@ -24,8 +24,7 @@ UI:
     Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
 
 User:
-*    Add financial arrangements to Add Boat, Add Boat Success, View All, My Listings
-    Search for listings by reference/date posted/date relevant to/length/qualification/sailing style.
+*    Search for listings by reference/date posted/date relevant to/length/qualification/sailing style.
     Saved searches.
     Favourites / watch list.
     Send message to admin (might be covered by having an email account).
@@ -39,6 +38,7 @@ Admin:
     IP address blocking.
     
 Other:
+    Financial arrangement wording currently only makes sense from the perspective of a searcher. Change wording to make neutral, or have different version for poster.
     Agree with DJ on how to go about using his server.
     Terms and Conditions page
     About page

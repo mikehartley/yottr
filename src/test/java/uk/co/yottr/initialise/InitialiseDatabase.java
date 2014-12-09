@@ -54,6 +54,9 @@ public class InitialiseDatabase {
     @Autowired
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
 
+    @Autowired
+    private FinancialArrangementRepository financialArrangementRepository;
+
     @Before
     public void ensureRepositoryHasBeenInjected() {
         Assert.assertNotNull("check spring configuration : userRepository was not injected", userRepository);
@@ -66,12 +69,19 @@ public class InitialiseDatabase {
         if (!ENABLED) return;
 
         initialise(ryaSailCruisingLevelRepository);
+        initialise(financialArrangementRepository);
 
         final User adminUser = setupUserWithRoles("mike", Role.ADMIN, Role.FREE, Role.CREW);
+        updateListingsLimit(adminUser, 50);
         addBoatsWithOwner(adminUser, 15);
 
         final User userOne = setupUserWithRoles("UserOne", Role.CREW, Role.FREE);
         addBoatsWithOwner(userOne, 3);
+    }
+
+    private void updateListingsLimit(User user, int listingsLimit) {
+        user.setMaxListings(listingsLimit);
+        userRepository.save(user);
     }
 
     private void addBoatsWithOwner(User owner, int numberOfBoats) {
@@ -89,6 +99,8 @@ public class InitialiseDatabase {
     }
 
     public static void initialise(RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
+        if (ryaSailCruisingLevelRepository.findAll().iterator().hasNext()) return;
+
         final List<RyaSailCruisingLevel.Level> levels = Arrays.asList(RyaSailCruisingLevel.Level.values());
         for (RyaSailCruisingLevel.Level level : levels) {
             ryaSailCruisingLevelRepository.save(new RyaSailCruisingLevel(level));
@@ -96,6 +108,8 @@ public class InitialiseDatabase {
     }
 
     public static void initialise(FinancialArrangementRepository financialArrangementRepository) {
+        if (financialArrangementRepository.findAll().iterator().hasNext()) return;
+
         final List<FinancialArrangement.FinancialArrangementEnum> arrangements = Arrays.asList(FinancialArrangement.FinancialArrangementEnum.values());
         for (FinancialArrangement.FinancialArrangementEnum arrangement : arrangements) {
             financialArrangementRepository.save(new FinancialArrangement(arrangement));
@@ -136,6 +150,7 @@ public class InitialiseDatabase {
         boat.setDescription("You want to sail around the world? You need to look elsewhere, my tub is purely a gin palace.");
         boat.setSailingStyle(SailingStyle.CRUISING);
         boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
+        boat.setFinancialArrangement(FinancialArrangement.PAY_THEM_COST);
 
         final int rank = RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank();
         final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(rank);

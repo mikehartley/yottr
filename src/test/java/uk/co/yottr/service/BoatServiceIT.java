@@ -10,10 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.initialise.InitialiseDatabase;
-import uk.co.yottr.model.Boat;
-import uk.co.yottr.model.RyaSailCruisingLevel;
-import uk.co.yottr.model.SailingStyle;
-import uk.co.yottr.model.User;
+import uk.co.yottr.model.*;
+import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
 
@@ -45,15 +43,16 @@ public class BoatServiceIT {
     @Autowired
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
 
+    @Autowired
+    private FinancialArrangementRepository financialArrangementRepository;
+
     private User owner;
 
     @Before
     public void initialiseReferenceData() {
 
-        if (ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.NONE.getRank()) == null) {//TODO check this in initialise method
-            InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
-        }
-        //TODO initialise financial arrangements
+        InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
+        InitialiseDatabase.initialise(financialArrangementRepository);
 
         owner = userService.save(aUser().build(), false);
     }
@@ -108,6 +107,7 @@ public class BoatServiceIT {
         final LocalDate now = LocalDate.now();
         final LocalDate dateRelevantTo = LocalDate.now();
         final User owner = createUser();
+        final FinancialArrangement financialArrangement = FinancialArrangement.PAY_ME_COMMERCIAL;
 
         Boat boat = new Boat(owner);
         boat.setDescription(description);
@@ -119,6 +119,7 @@ public class BoatServiceIT {
         boat.setMinimumRequiredLevel(minLevel);
         boat.setSailingStyle(sailingStyle);
         boat.setDateRelevantTo(dateRelevantTo);
+        boat.setFinancialArrangement(financialArrangement);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -134,6 +135,7 @@ public class BoatServiceIT {
         assertEquals("sailing style", sailingStyle, savedBoat.getSailingStyle());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
         assertEquals("owner", owner, savedBoat.getOwner());
+        assertEquals("financialArrangement", financialArrangement, savedBoat.getFinancialArrangement());
     }
 
     @Test

@@ -49,26 +49,27 @@ public class BoatController {
         final User user = userService.findByUsername(principal.getName());
 
         model.addAttribute("boat", new Boat(user));
-        model.addAttribute("allowedMoreListings", user.isAllowedMoreListings());
-        model.addAttribute("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
-        model.addAttribute("sailingStyles", referenceDataService.sailingStyles());
-        model.addAttribute("hullTypes", referenceDataService.hullTypes());
-        model.addAttribute("financialArrangements", referenceDataService.financialArrangements());
+        addModelAttributesForNewListing(model, user);
 
         return "newListing";
 	}
 
-	@RequestMapping(value = "/s/listings/new", method = RequestMethod.POST)
+    @RequestMapping(value = "/s/listings/new", method = RequestMethod.POST)
 	public String newListingAction(@Valid Boat boat, BindingResult bindingResult, Model model, Principal principal) throws IllegalOperationException {
-		if (bindingResult.hasErrors()) {
-            LOG.info(bindingResult.toString());
-			return "newListing";
-		}
+        final User user = userService.findByUsername(principal.getName());
 
-        checkIsWithinListingLimit(principal);
+        if (bindingResult.hasErrors()) {
+            LOG.info(bindingResult.toString());
+            addModelAttributesForNewListing(model, user);
+            return "newListing";
+        }
+
+        checkIsWithinListingLimit(user);
+
+        boat.setOwner(user);
+        boatService.save(boat);
 
         model.addAttribute("boat", boat);
-        boatService.save(boat);
 
         return "newListingSuccess";
 	}
@@ -160,8 +161,15 @@ public class BoatController {
         return modelAndView;
     }
 
-    private void checkIsWithinListingLimit(Principal principal) throws IllegalOperationException {
-        final User user = userService.findByUsername(principal.getName());
+    private void addModelAttributesForNewListing(Model model, User user) {
+        model.addAttribute("allowedMoreListings", user.isAllowedMoreListings());
+        model.addAttribute("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        model.addAttribute("sailingStyles", referenceDataService.sailingStyles());
+        model.addAttribute("hullTypes", referenceDataService.hullTypes());
+        model.addAttribute("financialArrangements", referenceDataService.financialArrangements());
+    }
+
+    private void checkIsWithinListingLimit(User user) throws IllegalOperationException {
         if (user.getBoatListings().size() >=  user.getMaxListings()) {
             throw new IllegalOperationException("User is already at listing limit.");
         }

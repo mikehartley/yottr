@@ -3,6 +3,7 @@ package uk.co.yottr.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /*
  * Copyright (c) 2014. Mike Hartley Solutions Ltd
@@ -10,6 +11,7 @@ import javax.persistence.Id;
  */
 
 @Entity
+@Table(name = "financial_arrangement")
 public class FinancialArrangement {
 
     public enum FinancialArrangementEnum {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.FinancialArrangement;
 import uk.co.yottr.model.SailingStyle;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.BoatService;
@@ -137,6 +138,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final int minimumQualificationValueAsInt = Integer.parseInt(minimumQualificationValue);
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2014";
+        final String financialArrangementProperty = "financialArrangement";
+        final String financialArrangementValue = FinancialArrangement.FREE.getName();
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
                         .param(manufacturerProperty, manufacturerValue)
@@ -148,6 +151,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param(sailingStyleProperty, sailingStyleValue)
                         .param(minimumQualificationByRankProperty, minimumQualificationValue)
                         .param(dateRelevantToProperty, dateRelevantToValue)
+                        .param(financialArrangementProperty, financialArrangementValue)
         )
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
@@ -162,7 +166,9 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(boatAttribute, hasProperty(descriptionProperty, equalTo(descriptionValue))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(sailingStyleProperty, equalTo(SailingStyle.valueOf(sailingStyleValue)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(minimumQualificationProperty, hasProperty("rank", equalTo(minimumQualificationValueAsInt)))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(dateRelevantToProperty, equalTo(LocalDate.of(2014, 9, 26)))));
+                .andExpect(model().attribute(boatAttribute, hasProperty(dateRelevantToProperty, equalTo(LocalDate.of(2014, 9, 26)))))
+                .andExpect(model().attribute(boatAttribute, hasProperty(financialArrangementProperty, hasProperty("name", equalTo(financialArrangementValue)))))
+        ;
 
         verify(mockUserService).findByUsername(username);
         verify(mockBoatService).save(any(Boat.class));
@@ -195,6 +201,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String minimumQualificationValue = "400";
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2014";
+        final String financialArrangementProperty = "financialArrangement";
+        final String financialArrangementValue = FinancialArrangement.FREE.getName();
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
                         .param(manufacturerProperty, manufacturerValue)
@@ -206,6 +214,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param(sailingStyleProperty, sailingStyleValue)
                         .param(minimumQualificationByRankProperty, minimumQualificationValue)
                         .param(dateRelevantToProperty, dateRelevantToValue)
+                        .param(financialArrangementProperty, financialArrangementValue)
         )
                 .andExpect(status().isForbidden());
 
@@ -402,6 +411,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final int minimumQualificationValueAsInt = Integer.parseInt(minimumQualificationValue);
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2015";
+        final String financialArrangementProperty = "financialArrangement";
+        final String financialArrangementValue = FinancialArrangement.FREE.getName();
 
         when(mockBoatService.save(any(Boat.class))).thenReturn(savedBoat);
 
@@ -417,6 +428,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param(sailingStyleProperty, sailingStyleValue)
                         .param(minimumQualificationByRankProperty, minimumQualificationValue)
                         .param(dateRelevantToProperty, dateRelevantToValue)
+                        .param(financialArrangementProperty, financialArrangementValue)
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().hasNoErrors())
