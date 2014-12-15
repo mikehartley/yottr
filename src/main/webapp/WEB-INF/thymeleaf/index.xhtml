@@ -61,13 +61,6 @@
                 <form>
                     <table>
                         <tr>
-                            <td>Reference</td>
-                            <td><input type="search"/></td>
-                        </tr>
-
-                        <tr><td colspan="2">&nbsp;</td></tr>
-
-                        <tr>
                             <td>Date Posted</td>
                             <td><input type="date" placeholder="dd/mm/yyyy"/></td>
                         </tr>
@@ -80,6 +73,15 @@
                             <td>
                                 <select><!-- th:field="*{minimumRequiredLevelByRank}">-->
                                     <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.getRank()}" th:text="${level.getDisplayName()}">None</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Frequency/Duration</td>
+                            <td>
+                                <select><!-- th:field="*{frequencyAndDuration}">-->
+                                    <option th:value="${''}" th:text="${'Any'}">Any</option>
+                                    <option th:each="frequencyAndDuration : ${frequencyAndDurationOptions}" th:value="${frequencyAndDuration.name()}" th:text="${frequencyAndDuration.getDisplayName()}">Weekends</option>
                                 </select>
                             </td>
                         </tr>
@@ -104,7 +106,14 @@
                             </td>
                         </tr>
 
-                        <tr><td colspan="3">&nbsp;</td></tr>
+                        <tr><td colspan="2">&nbsp;</td></tr>
+
+                        <tr>
+                            <td>Reference</td>
+                            <td><input type="search"/></td>
+                        </tr>
+
+                        <tr><td colspan="2">&nbsp;</td></tr>
 
                         <tr>
                             <td colspan="2" align="right"><input type="submit" value="Search"/></td>

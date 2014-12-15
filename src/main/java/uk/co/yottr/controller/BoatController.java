@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,33 +44,38 @@ public class BoatController {
     }
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
-	public String newListingPage(Model model, Principal principal) {
+	public ModelAndView newListingPage(Principal principal) {
         final User user = userService.findByUsername(principal.getName());
 
-        model.addAttribute("boat", new Boat(user));
-        addModelAttributesForNewListing(model, user);
+        ModelAndView modelAndView = new ModelAndView("newListing");
 
-        return "newListing";
+        modelAndView.addObject("boat", new Boat(user));
+        addModelAttributesForNewListing(modelAndView, user);
+
+        return modelAndView;
 	}
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.POST)
-	public String newListingAction(@Valid Boat boat, BindingResult bindingResult, Model model, Principal principal) throws IllegalOperationException {
+	public ModelAndView newListingAction(@Valid Boat boat, BindingResult bindingResult, Principal principal) throws IllegalOperationException {
         final User user = userService.findByUsername(principal.getName());
 
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
-            addModelAttributesForNewListing(model, user);
-            return "newListing";
+            ModelAndView modelAndView = new ModelAndView("newListing");
+            addModelAttributesForNewListing(modelAndView, user);
+            return modelAndView;
         }
+
+        ModelAndView modelAndView = new ModelAndView("newListingSuccess");
 
         checkIsWithinListingLimit(user);
 
         boat.setOwner(user);
         boatService.save(boat);
 
-        model.addAttribute("boat", boat);
+        modelAndView.addObject("boat", boat);
 
-        return "newListingSuccess";
+        return modelAndView;
 	}
 
     @RequestMapping(value = "/s/listings/all", method = RequestMethod.GET)
@@ -161,12 +165,24 @@ public class BoatController {
         return modelAndView;
     }
 
-    private void addModelAttributesForNewListing(Model model, User user) {
-        model.addAttribute("allowedMoreListings", user.isAllowedMoreListings());
-        model.addAttribute("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
-        model.addAttribute("sailingStyles", referenceDataService.sailingStyles());
-        model.addAttribute("hullTypes", referenceDataService.hullTypes());
-        model.addAttribute("financialArrangements", referenceDataService.financialArrangements());
+    @RequestMapping(value = { "/", "index" }, method = RequestMethod.GET)
+    public ModelAndView index() {
+        final ModelAndView modelAndView = new ModelAndView("index");
+        addReferenceData(modelAndView);
+        return modelAndView;
+    }
+
+    private void addModelAttributesForNewListing(ModelAndView modelAndView, User user) {
+        modelAndView.addObject("allowedMoreListings", user.isAllowedMoreListings());
+        addReferenceData(modelAndView);
+    }
+
+    private void addReferenceData(ModelAndView modelAndView) {
+        modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
+        modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
+        modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
+        modelAndView.addObject("frequencyAndDuration", referenceDataService.frequencyAndDuration());
     }
 
     private void checkIsWithinListingLimit(User user) throws IllegalOperationException {
@@ -192,16 +208,6 @@ public class BoatController {
         final ModelAndView modelAndView = new ModelAndView("myListings");
         final User user = userService.findByUsername(principal.getName());
         modelAndView.addObject("boatListings", user.getBoatListings());
-        return modelAndView;
-    }
-
-    @RequestMapping(value = { "/", "index" }, method = RequestMethod.GET)
-    public ModelAndView index() {
-        final ModelAndView modelAndView = new ModelAndView("index");
-        modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
-        modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
-        modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
-        modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
         return modelAndView;
     }
 }
