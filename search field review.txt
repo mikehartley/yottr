@@ -1,0 +1,282 @@
+Crewseekers
+===========
+
+Trip types
+----------
+Short notice board
+Professional work
+Cruising
+Racing
+Deliveries/Mile building
+Long term
+
+Locations
+---------
+UK
+Northern Europe
+Mediterranean
+Atlantic Crossing
+Caribbean
+North America
+South America
+Africa & Asia
+Pacific
+Australia & New Zealand
+Wilderness Sailing
+
+Qualifications
+--------------
+Beginner/Novice
+Upto Competent Crew
+Upto Day Skipper
+Upto Coastal Skipper
+Upto Yachtmaster
+Upto Yachmaster Ocean
+
+Frequency
+---------
+Day/Midweek
+Weekends
+Holidays
+Long Term
+
++Boat reference as a stand alone field with it's own search button
+ --------------
+
+Fields on advert:
+	Title
+	Boat details (make & model)
+	Location
+	Destination
+	Availability
+	Financial arrangements
+	Travel expenses
+	Date posted/updated
+	Reference
+	1 Picture
+
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+Ocean crew link
+===============
+
+Voyage start date
+----------------- 
+Date
+
+Voyage end date
+----------------- 
+Date
+
+Hull
+----
+Monohull
+Catamaran
+Trimaran
+
+Rally
+-----
+Various ARCs
+...
+
+Voyage start region
+-------------------
+Caribbean
+Central & North America
+Mediterranean & Black Sea
+North Indian Ocean & Red Sea
+North Pacific Islands
+Northern Europe
+South America
+South East Asia & East Asia
+South Indian Ocean
+West Africa & South Atlantic Islands
+Western Europe & North Atlantic
+Antarctica & Sub-Antarctic Islands
+Worldwide
+
+Voyage end region
+-----------------
+Caribbean
+Central & North America
+Mediterranean & Black Sea
+North Indian Ocean & Red Sea
+North Pacific Islands
+Northern Europe
+South America
+South East Asia & East Asia
+South Indian Ocean
+West Africa & South Atlantic Islands
+Western Europe & North Atlantic
+Antarctica & Sub-Antarctic Islands
+Worldwide
+
+Money
+-----
+Paid position
+Captain pays all expenses
+Daily contribution from crew
+Voyage cost
+
+Experience
+----------
+Ocean sailing instructor
+Captain
+Watch-leader
+Does not matter
+
+Fields on advert:
+	Title
+	Posted by <name> on <date>
+	Reference
+	When
+	Where
+	With (boat details)
+	Crew role
+	Number of crew required
+	When posted
+	Free text
+
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+http://www.findacrew.net/
+
+Availability
+------------
+Ready now or in the future
+Ready now only
+
+Position type options
+---------------------
+All
+Recreational
+Professional
+Commercial
+
+Payment and Contribution Options
+--------------------------------
+Contribute - crew contributes to share some agreed expenses
+Unpaid - not expecting to be paid, or to pay any expenses
+Paid - crew is paid
+
+Location
+--------
+Currently at this location
+Planned destination
+Either at current or planned destination
+	Location by: area/country, search (finds lat/long of town!), or lat/long
+		     search radius
+
+Language spoken
+---------------
+<full list>
+
+Team requests
+-------------
+Anyone
+Individuals
+Teams
+
+Vessel type
+-----------
+Cargo, sailing, motor yachts, submarine...
+
+Other
+-----
+Premium members only
+ID verified
+With pictures only
+
+Advanced
+--------
+Gender
+Age ranges
+Available positions by role
+Type of journey
+Luxury class
+Min max vessel length
+Smoking
+With confirmed mobiles
+Members who updated after <date>
+Members who registered after <date>
+
+Advert fields:
+From date - to date, for min-max time
+
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+www.crewrecruit.com
+
+No search facility.
+
+Advert fields...
+
+Picture, Age, Gender, Craft, Destination, Username, Ad text
+
+Owner profile after clicking through:
+	Boat info (make, model)
+	Age (of owner)
+	Crew required (in terms of roles)
+	Destination
+	Journey reason 
+	Sail date
+	Further information (free text)
+
+Seems to be free to post and search.
+Out of date adverts still appear.
+Somewhat basic.
+
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+http://www.sailingnetworks.com/
+
+Search is rubbish because you have to update your profile in order to change search parameters,
+no way to filter out boats that you have to pay for,
+not even a way to filter out commercial boats,
+and locations isn't great - have to select up to 4 places you can get to, so can't
+just select south coast for example.
+
+Advert fields:
+
+Title
+Picture
+Description text
+When
+Where
+Updated date
+--more--
+Charter box
+	multiple photos
+	Design
+	Hull colour
+	Construction
+	Type of offering (skippered / charter)
+	Activity (corp hosp, cruising, team building)
+	Prices
+	max guests
+	no of cabins
+	certification
+	where
+	detailed details
+Individual berths box
+Activities (training, mile building, cruising, ocean/long distance)
+availability (weekdays, weekends, holidays, long-term)
+prices from
+max berths
+no of cabins
+certification
+no of crew
+detailed details
+
+When registering: Personal-Location-Interests-Classes-Quals-Questions-Favourites-other contact details-photo-availability
+Name, Address, Age, email, sailing since, interested in (cruising power, cruising sail, ,
+yacht racing, professional yacht crew), positions (owner, skipper, crew, navigator, guest, watch
+leader, stewardess)
+Availability: Interested in delivery, cruising, racing, dinghy, professional, ocean/long dist,
+training, mile building
+I'm available: weekdays, weekends, holidays, long-term
+I can get to: <4 locations>
+Dates
+Can provide own transport
+Am willing to share/pay expenses
+What I would really like is... <free text>
