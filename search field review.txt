@@ -139,7 +139,7 @@ Fields on advert:
 
 +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 
-http://www.findacrew.net/
+findacrew.net
 
 Availability
 ------------
@@ -205,7 +205,7 @@ From date - to date, for min-max time
 
 +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 
-www.crewrecruit.com
+crewrecruit.com
 
 No search facility.
 
@@ -228,7 +228,7 @@ Somewhat basic.
 
 +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 
-http://www.sailingnetworks.com/
+sailingnetworks.com
 
 Search is rubbish because you have to update your profile in order to change search parameters,
 no way to filter out boats that you have to pay for,
@@ -259,14 +259,30 @@ Charter box
 	where
 	detailed details
 Individual berths box
-Activities (training, mile building, cruising, ocean/long distance)
-availability (weekdays, weekends, holidays, long-term)
-prices from
-max berths
-no of cabins
-certification
-no of crew
-detailed details
+	Activities (training, mile building, cruising, ocean/long distance)
+	availability (weekdays, weekends, holidays, long-term)
+	prices from
+	max berths
+	no of cabins
+	certification
+	no of crew
+	detailed details
+We are looking for crew box
+	Interest (Cruising)
+	When
+	Where
+	Financial (shared contribution - max £25 per day)
+	Travel costs
+	Notes
+	From <date>
+	Until <date>
+	Updated <date>
+	--more--
+	Design
+	Sail Number
+	Hull Colour
+	Built <date>
+	Construction
 
 When registering: Personal-Location-Interests-Classes-Quals-Questions-Favourites-other contact details-photo-availability
 Name, Address, Age, email, sailing since, interested in (cruising power, cruising sail, ,
@@ -280,3 +296,47 @@ Dates
 Can provide own transport
 Am willing to share/pay expenses
 What I would really like is... <free text>
+
+Add Boat
+--------
+Name
+Design: Type (yacht) Model (list of known models)
+Sail Number
+Hull Material
+Year built
+Description
+--once registered--
+Builder
+Hull number
+Super structure material
+Super structure colour
+Deck colour
+Rigging manufacturer
+Sail manufacturer
+Mast manufacturer
+Location
++ Lots of other details - Identification numbers, Engine details, Safety equipment
+
+...and no obvious way of deleting the boat once added!
+
+Crew needed tab
+---------------
+(not for advertising commercial packages where crew pay for berths)
+Self managed commercial advertising is £25/month.
+Also offered is a managed service. They answer the phone, email, make bookings and take payment.
+They can advertise for skippers, mates and general sailing positions.
+Create teams for organising crew. This premium service is £100 per month for up to 10 bookings, then
+a small commission. Discount for multiple boats.
+
+For non-commercial:
+Crew needed for (delivery, cruising, racing, dinghy, professional, ocean/long dist)
+Frequency (weekdays, weekends, holidays, long-term)
+Where <crap 4 location selection>
+Date from-until or leave blank for permanently listed
+Financial arrangements (no contrib, shared up to £25/day, working passage, paid position)
+Travel expenses (paid by crew, paid by owner, negotiable)
+Notes
+
+Crew Section
+------------
+Crew can register their profile and be searchable.
