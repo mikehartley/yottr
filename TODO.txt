@@ -4,6 +4,7 @@ The Drawing Board
 * Next
 
 Tech:
+    Add new fields from review.
     Menus - current page should be highlighted.
     SQL initialisation script.
     Check that text doesn't lead to injection attacks, if so use some kind of encoder.
@@ -62,3 +63,5 @@ Long term:
     Commercial adverts.
     Resale channel.
     Google Maps for results.
+    Email posters after a set period of inactivity to confirm that advert is still relevant.
+    Crew profiles so that owners and organisations can search for crew directly.
