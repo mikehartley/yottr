@@ -1,0 +1,14 @@
+ADVERT
+------
+Title
+Picture
+Description
+When [from-to]
+    From: must be before To if To is not null. may be null.
+    To: must be after To, or may be null which means open ended
+Last updated (automatic)
+Purpose : Delivery, Cruising, Racing, Long term, Professional
+Propulsion: : Sail, Power
+Financial arrangements : no contribution required, food only (no boat costs), shared (<£25/day), priced, paid position
+Money Amount : if financial arrangements is priced or paid, otherwise null. Must be >0.
+Money Amount Period : Per - day, week, month, year, trip
