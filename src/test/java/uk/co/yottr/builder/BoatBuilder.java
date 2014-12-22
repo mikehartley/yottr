@@ -13,8 +13,7 @@ public class BoatBuilder {
     private Boat.HullType hullType = Boat.HullType.MONO;
     private int length = 36;
     private boolean unitsImperial = true;
-    private String manufacturer = "Halberg Rassy";
-    private String model = "HR36";
+    private String makeAndModel = "Halberg Rassy HR36";
     private SailingStyle sailingStyle = SailingStyle.ALL;
     private String description = "Default Boat";
     private RyaSailCruisingLevel minimumRequiredLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
@@ -58,8 +57,7 @@ public class BoatBuilder {
         boat.setHullType(hullType);
         boat.setLength(length);
         boat.setUnitsImperial(unitsImperial);
-        boat.setManufacturer(manufacturer);
-        boat.setModel(model);
+        boat.setMakeAndModel(makeAndModel);
         boat.setSailingStyle(sailingStyle);
         boat.setDescription(description);
         boat.setMinimumRequiredLevel(minimumRequiredLevel);

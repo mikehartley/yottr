@@ -23,7 +23,6 @@ public class BoatTest {
     private static final String SIZE_ERROR_MSG = "size must be between %d and %d";
     private static final String REQUIRED_ERROR_MSG = "required";
 
-    private User owner;
     private Boat boat;
 
     @BeforeClass
@@ -33,8 +32,7 @@ public class BoatTest {
 
     @Before
     public void beforeEachTest() {
-        owner = aUser().build();
-        boat = createValidBoat(owner);
+        boat = createValidBoat(aUser().build());
     }
 
     @Test
@@ -44,30 +42,16 @@ public class BoatTest {
     }
 
     @Test
-    public void manufacturer() {
-        final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 1, 30);
+    public void makeAndModel() {
+        final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 1, 60);
 
-        boat.setManufacturer(null);
+        boat.setMakeAndModel(null);
         assertSingleViolation(REQUIRED_ERROR_MSG);
 
-        boat.setManufacturer("");
+        boat.setMakeAndModel("");
         assertSingleViolation(sizeErrorMessage);
 
-        boat.setManufacturer("1234567890123456789012345678901");
-        assertSingleViolation(sizeErrorMessage);
-    }
-
-    @Test
-    public void model() {
-        final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 1, 30);
-
-        boat.setModel(null);
-        assertSingleViolation(REQUIRED_ERROR_MSG);
-
-        boat.setModel("");
-        assertSingleViolation(sizeErrorMessage);
-
-        boat.setModel("1234567890123456789012345678901");
+        boat.setMakeAndModel("1234567890123456789012345678901234567890123456789012345678901");
         assertSingleViolation(sizeErrorMessage);
     }
 
@@ -181,8 +165,7 @@ public class BoatTest {
 
     private Boat createValidBoat(User user) {
         Boat boat = new Boat(user);
-        boat.setManufacturer("blah");
-        boat.setModel("blah");
+        boat.setMakeAndModel("blah");
         boat.setLength(10);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("blah");

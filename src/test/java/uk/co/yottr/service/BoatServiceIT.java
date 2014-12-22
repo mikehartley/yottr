@@ -100,8 +100,7 @@ public class BoatServiceIT {
         final Boat.HullType hullType = Boat.HullType.MONO;
         final Integer length = new Random().nextInt(99) + 3;
         final boolean unitsImperial = true;
-        final String manufacturer = randomAlphanumeric(15);
-        final String model = randomAlphanumeric(10);
+        final String makeAndModel = randomAlphanumeric(15);
         final RyaSailCruisingLevel minLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.COASTAL_SKIPPER);
         final SailingStyle sailingStyle = SailingStyle.RACING;
         final LocalDate now = LocalDate.now();
@@ -114,8 +113,7 @@ public class BoatServiceIT {
         boat.setHullType(hullType);
         boat.setLength(length);
         boat.setUnitsImperial(unitsImperial);
-        boat.setManufacturer(manufacturer);
-        boat.setModel(model);
+        boat.setMakeAndModel(makeAndModel);
         boat.setMinimumRequiredLevel(minLevel);
         boat.setSailingStyle(sailingStyle);
         boat.setDateRelevantTo(dateRelevantTo);
@@ -127,8 +125,7 @@ public class BoatServiceIT {
         assertEquals("hullType", hullType, savedBoat.getHullType());
         assertEquals("length", length, savedBoat.getLength());
         assertEquals("unitsImperial", unitsImperial, savedBoat.isUnitsImperial());
-        assertEquals("manufacturer", manufacturer, savedBoat.getManufacturer());
-        assertEquals("model", model, savedBoat.getModel());
+        assertEquals("makeAndModel", makeAndModel, savedBoat.getMakeAndModel());
         assertNotNull("reference", savedBoat.getReference());
         assertEquals("date posted", now.atStartOfDay(), savedBoat.getDatePosted().atStartOfDay());
         assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());

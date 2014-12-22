@@ -147,8 +147,7 @@ public class BoatController {
         }
 
         final Boat boatForUpdate = findBoat(boatReference, principal);
-        boatForUpdate.setManufacturer(boatFromForm.getManufacturer());
-        boatForUpdate.setModel(boatFromForm.getModel());
+        boatForUpdate.setMakeAndModel(boatFromForm.getMakeAndModel());
         boatForUpdate.setLength(boatFromForm.getLength());
         boatForUpdate.setUnitsImperial(boatFromForm.isUnitsImperial());
         boatForUpdate.setHullType(boatFromForm.getHullType());
@@ -182,7 +181,6 @@ public class BoatController {
         modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
         modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
         modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
-        modelAndView.addObject("frequencyAndDuration", referenceDataService.frequencyAndDuration());
     }
 
     private void checkIsWithinListingLimit(User user) throws IllegalOperationException {

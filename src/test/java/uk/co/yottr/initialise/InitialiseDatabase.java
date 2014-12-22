@@ -139,11 +139,10 @@ public class InitialiseDatabase {
         return userRepository.save(user);
     }
 
-    private void addBoat(String manufacturer, User owner) {
+    private void addBoat(String makeAndModel, User owner) {
         Boat boat = new Boat(userRepository.findByUsername(owner.getUsername()));
 
-        boat.setManufacturer(manufacturer);
-        boat.setModel("HR50");
+        boat.setMakeAndModel(makeAndModel);
         boat.setLength(50);
         boat.setUnitsImperial(false);
         boat.setHullType(Boat.HullType.MONO);

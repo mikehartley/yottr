@@ -21,12 +21,12 @@ Where to: only mandatory if frequency=trip
 Travel expenses: paid by crew, paid by owner, negotiable
 Number of crew wanted : min (must be > 0), max (optional, <99)
 Looking for (role required) : crew, mate, skipper, doesn't matter
-Boat Details : Make/model (currently separate but should merge)
 Smoking : No, Yes outside, Yes inside/outside
 -----
 DONE:
 -----
 Boat reference : (automatic)
+Make and Model
 Description
 Financial arrangements : no contribution required, food only (no boat costs), shared fixed, shared variable, priced (a commercial offering), paid position
 Qualifications (or Equivalent) : None - RYA YM Ocean

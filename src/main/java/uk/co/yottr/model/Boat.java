@@ -31,15 +31,10 @@ public class Boat {
     @Column(name = "reference", nullable = false, unique = true)
     private String reference;
 
-    @Column(name = "manufacturer", nullable = false)
+    @Column(name = "makeAndModel", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
-	@Size(min=1, max=30)
-    private String manufacturer;
-
-    @Column(name = "model", nullable = false)
-    @NotNull(message = REQUIRED_ERROR_MSG)
-    @Size(min=1, max=30)
-    private String model;
+	@Size(min=1, max=60)
+    private String makeAndModel;
 
     @Column(name = "length", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
@@ -113,20 +108,12 @@ public class Boat {
         return reference;
     }
 
-    public String getManufacturer() {
-        return manufacturer;
+    public String getMakeAndModel() {
+        return makeAndModel;
     }
 
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
+    public void setMakeAndModel(String makeAndModel) {
+        this.makeAndModel = makeAndModel;
     }
 
     public Integer getLength() {

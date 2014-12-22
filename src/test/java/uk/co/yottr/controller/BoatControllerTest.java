@@ -118,10 +118,8 @@ public class BoatControllerTest extends AbstractControllerTest {
 
         final String boatAttribute = "boat";
 
-        final String manufacturerProperty = "manufacturer";
-        final String manufacturerValue = "manufacturerValue";
-        final String modelProperty = "model";
-        final String modelValue = "modelValue";
+        final String makeAndModelProperty = "makeAndModel";
+        final String makeAndModelValue = "makeAndModelValue";
         final String lengthProperty = "length";
         final String lengthValue = "55";
         final String unitsImperialProperty = "unitsImperial";
@@ -142,8 +140,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String financialArrangementValue = FinancialArrangement.FREE.getName();
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
-                        .param(manufacturerProperty, manufacturerValue)
-                        .param(modelProperty, modelValue)
+                        .param(makeAndModelProperty, makeAndModelValue)
                         .param(lengthProperty, lengthValue)
                         .param(unitsImperialProperty, unitsImperialValue)
                         .param(hullTypeProperty, hullTypeValue)
@@ -158,8 +155,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("newListingSuccess"))
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists(boatAttribute))
-                .andExpect(model().attribute(boatAttribute, hasProperty(manufacturerProperty, equalTo(manufacturerValue))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(modelProperty, equalTo(modelValue))))
+                .andExpect(model().attribute(boatAttribute, hasProperty(makeAndModelProperty, equalTo(makeAndModelValue))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(lengthProperty, equalTo(Integer.parseInt(lengthValue)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(unitsImperialProperty, equalTo(true))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(hullTypeProperty, equalTo(Boat.HullType.valueOf(hullTypeValue)))))
@@ -183,10 +179,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final User user = aUser().withUsername(username).withMaxListings(0).build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
 
-        final String manufacturerProperty = "manufacturer";
-        final String manufacturerValue = "manufacturerValue";
-        final String modelProperty = "model";
-        final String modelValue = "modelValue";
+        final String makeAndModelProperty = "makeAndModel";
+        final String makeAndModelValue = "makeAndModelValue";
         final String lengthProperty = "length";
         final String lengthValue = "55";
         final String unitsImperialProperty = "unitsImperial";
@@ -205,8 +199,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String financialArrangementValue = FinancialArrangement.FREE.getName();
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
-                        .param(manufacturerProperty, manufacturerValue)
-                        .param(modelProperty, modelValue)
+                        .param(makeAndModelProperty, makeAndModelValue)
                         .param(lengthProperty, lengthValue)
                         .param(unitsImperialProperty, unitsImperialValue)
                         .param(hullTypeProperty, hullTypeValue)
@@ -392,10 +385,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final Boat originalBoat = user.getBoatListings().get(0);
         final Boat savedBoat = new Boat(user);
 
-        final String manufacturerProperty = "manufacturer";
-        final String manufacturerValue = "manufacturerValueEdited";
-        final String modelProperty = "model";
-        final String modelValue = "modelValueEdited";
+        final String makeAndModelProperty = "makeAndModel";
+        final String makeAndModelValue = "makeAndModelValueEdited";
         final String lengthProperty = "length";
         final String lengthValue = "33";
         final String unitsImperialProperty = "unitsImperial";
@@ -419,8 +410,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String boatAttribute = "boat";
 
         mockMvc.perform(post("/s/listings/" + originalBoat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
-                        .param(manufacturerProperty, manufacturerValue)
-                        .param(modelProperty, modelValue)
+                        .param(makeAndModelProperty, makeAndModelValue)
                         .param(lengthProperty, lengthValue)
                         .param(unitsImperialProperty, unitsImperialValue)
                         .param(hullTypeProperty, hullTypeValue)
@@ -442,8 +432,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         verify(mockUserService).findByUsername(username);
 
         final Boat boatThatWasSaved = boatArgumentCaptor.getValue();
-        assertEquals(manufacturerValue, boatThatWasSaved.getManufacturer());
-        assertEquals(modelValue, boatThatWasSaved.getModel());
+        assertEquals(makeAndModelValue, boatThatWasSaved.getMakeAndModel());
         assertEquals(Integer.valueOf(lengthValue), boatThatWasSaved.getLength());
         assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());
         assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());

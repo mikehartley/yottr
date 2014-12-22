@@ -18,20 +18,12 @@
                 <fieldset>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-                    <div class="form-group" th:classappend="${#fields.hasErrors('manufacturer')}? 'has-error'">
-                        <label for="manufacturer" class="col-lg-2 control-label">Manufacturer</label>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('makeAndModel')}? 'has-error'">
+                        <label for="makeAndModel" class="col-lg-2 control-label">Manufacturer</label>
 
                         <div class="col-lg-10">
-                            <input type="text" class="form-control" id="manufacturer" placeholder="Manufacturer" th:field="*{manufacturer}"/>
-                            <span class="help-block" th:if="${#fields.hasErrors('manufacturer')}" th:errors="*{manufacturer}">Bad manufacturer</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('model')}? 'has-error'">
-                        <label for="model" class="col-lg-2 control-label">Model</label>
-
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control" id="model" placeholder="Model" th:field="*{model}"/>
-                            <span class="help-block" th:if="${#fields.hasErrors('model')}" th:errors="*{model}">Bad model</span>
+                            <input type="text" class="form-control" id="makeAndModel" placeholder="Manufacturer" th:field="*{makeAndModel}"/>
+                            <span class="help-block" th:if="${#fields.hasErrors('makeAndModel')}" th:errors="*{makeAndModel}">Bad Make and Model</span>
                         </div>
                     </div>
                     <div class="form-group" th:classappend="${#fields.hasErrors('length')}? 'has-error'">
