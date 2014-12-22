@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
-import uk.co.yottr.model.SailingStyle;
+import uk.co.yottr.model.SailingPurpose;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
@@ -77,13 +77,13 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists("boat"))
                 .andExpect(model().attributeExists("allowedMoreListings"))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
-                .andExpect(model().attributeExists("sailingStyles"))
+                .andExpect(model().attributeExists("sailingPurposes"))
                 .andExpect(model().attributeExists("hullTypes"))
                 .andExpect(model().attributeExists("financialArrangements"));
 
         verify(mockUserService).findByUsername(username);
         verify(mockReferenceDataService).ryaSailCruisingLevels();
-        verify(mockReferenceDataService).sailingStyles();
+        verify(mockReferenceDataService).sailingPurposes();
         verify(mockReferenceDataService).hullTypes();
         verify(mockReferenceDataService).financialArrangements();
     }
@@ -128,8 +128,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String hullTypeValue = "MONO";
         final String descriptionProperty = "description";
         final String descriptionValue = "descriptionValue";
-        final String sailingStyleProperty = "sailingStyle";
-        final String sailingStyleValue = "ALL";
+        final String sailingPurposeProperty = "sailingPurpose";
+        final String sailingPurposeValue = "ALL";
         final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
         final String minimumQualificationValue = "400";
         final String minimumQualificationProperty = "minimumRequiredLevel";
@@ -145,7 +145,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param(unitsImperialProperty, unitsImperialValue)
                         .param(hullTypeProperty, hullTypeValue)
                         .param(descriptionProperty, descriptionValue)
-                        .param(sailingStyleProperty, sailingStyleValue)
+                        .param(sailingPurposeProperty, sailingPurposeValue)
                         .param(minimumQualificationByRankProperty, minimumQualificationValue)
                         .param(dateRelevantToProperty, dateRelevantToValue)
                         .param(financialArrangementProperty, financialArrangementValue)
@@ -160,7 +160,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(boatAttribute, hasProperty(unitsImperialProperty, equalTo(true))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(hullTypeProperty, equalTo(Boat.HullType.valueOf(hullTypeValue)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(descriptionProperty, equalTo(descriptionValue))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(sailingStyleProperty, equalTo(SailingStyle.valueOf(sailingStyleValue)))))
+                .andExpect(model().attribute(boatAttribute, hasProperty(sailingPurposeProperty, equalTo(SailingPurpose.valueOf(sailingPurposeValue)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(minimumQualificationProperty, hasProperty("rank", equalTo(minimumQualificationValueAsInt)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(dateRelevantToProperty, equalTo(LocalDate.of(2014, 9, 26)))))
                 .andExpect(model().attribute(boatAttribute, hasProperty(financialArrangementProperty, hasProperty("name", equalTo(financialArrangementValue)))))
@@ -189,8 +189,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String hullTypeValue = "MONO";
         final String descriptionProperty = "description";
         final String descriptionValue = "descriptionValue";
-        final String sailingStyleProperty = "sailingStyle";
-        final String sailingStyleValue = "ALL";
+        final String sailingPurposeProperty = "sailingPurpose";
+        final String sailingPurposeValue = "ALL";
         final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
         final String minimumQualificationValue = "400";
         final String dateRelevantToProperty = "dateRelevantTo";
@@ -204,7 +204,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param(unitsImperialProperty, unitsImperialValue)
                         .param(hullTypeProperty, hullTypeValue)
                         .param(descriptionProperty, descriptionValue)
-                        .param(sailingStyleProperty, sailingStyleValue)
+                        .param(sailingPurposeProperty, sailingPurposeValue)
                         .param(minimumQualificationByRankProperty, minimumQualificationValue)
                         .param(dateRelevantToProperty, dateRelevantToValue)
                         .param(financialArrangementProperty, financialArrangementValue)
@@ -247,12 +247,12 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(4))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
-                .andExpect(model().attributeExists("sailingStyles"))
+                .andExpect(model().attributeExists("sailingPurposes"))
                 .andExpect(model().attributeExists("hullTypes"))
                 .andExpect(model().attributeExists("financialArrangements"));
 
         verify(mockReferenceDataService).ryaSailCruisingLevels();
-        verify(mockReferenceDataService).sailingStyles();
+        verify(mockReferenceDataService).sailingPurposes();
         verify(mockReferenceDataService).hullTypes();
         verify(mockReferenceDataService).financialArrangements();
     }
@@ -365,12 +365,12 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(4))
                 .andExpect(model().attributeExists("boat"))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
-                .andExpect(model().attributeExists("sailingStyles"))
+                .andExpect(model().attributeExists("sailingPurposes"))
                 .andExpect(model().attributeExists("hullTypes"));
 
         verify(mockUserService).findByUsername(username);
         verify(mockReferenceDataService).ryaSailCruisingLevels();
-        verify(mockReferenceDataService).sailingStyles();
+        verify(mockReferenceDataService).sailingPurposes();
         verify(mockReferenceDataService).hullTypes();
     }
 
@@ -395,8 +395,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String hullTypeValue = "MULTI";
         final String descriptionProperty = "description";
         final String descriptionValue = "descriptionValueEdited";
-        final String sailingStyleProperty = "sailingStyle";
-        final String sailingStyleValue = "RACING";
+        final String sailingPurposeProperty = "sailingPurpose";
+        final String sailingPurposeValue = "RACING";
         final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
         final String minimumQualificationValue = "300";
         final int minimumQualificationValueAsInt = Integer.parseInt(minimumQualificationValue);
@@ -415,7 +415,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param(unitsImperialProperty, unitsImperialValue)
                         .param(hullTypeProperty, hullTypeValue)
                         .param(descriptionProperty, descriptionValue)
-                        .param(sailingStyleProperty, sailingStyleValue)
+                        .param(sailingPurposeProperty, sailingPurposeValue)
                         .param(minimumQualificationByRankProperty, minimumQualificationValue)
                         .param(dateRelevantToProperty, dateRelevantToValue)
                         .param(financialArrangementProperty, financialArrangementValue)
@@ -438,7 +438,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());
         assertEquals(Boat.HullType.valueOf(hullTypeValue), boatThatWasSaved.getHullType());
         assertEquals(descriptionValue, boatThatWasSaved.getDescription());
-        assertEquals(SailingStyle.valueOf(sailingStyleValue), boatThatWasSaved.getSailingStyle());
+        assertEquals(SailingPurpose.valueOf(sailingPurposeValue), boatThatWasSaved.getSailingPurpose());
         assertEquals(minimumQualificationValueAsInt, boatThatWasSaved.getMinimumRequiredLevelByRank());
         assertEquals(LocalDate.of(2015, 9, 26), boatThatWasSaved.getDateRelevantTo());
     }

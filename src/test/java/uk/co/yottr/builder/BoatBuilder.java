@@ -14,7 +14,7 @@ public class BoatBuilder {
     private int length = 36;
     private boolean unitsImperial = true;
     private String makeAndModel = "Halberg Rassy HR36";
-    private SailingStyle sailingStyle = SailingStyle.ALL;
+    private SailingPurpose sailingPurpose = SailingPurpose.ALL;
     private String description = "Default Boat";
     private RyaSailCruisingLevel minimumRequiredLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
     private FinancialArrangement financialArrangement = FinancialArrangement.FREE;
@@ -58,7 +58,7 @@ public class BoatBuilder {
         boat.setLength(length);
         boat.setUnitsImperial(unitsImperial);
         boat.setMakeAndModel(makeAndModel);
-        boat.setSailingStyle(sailingStyle);
+        boat.setSailingPurpose(sailingPurpose);
         boat.setDescription(description);
         boat.setMinimumRequiredLevel(minimumRequiredLevel);
         boat.setFinancialArrangement(financialArrangement);

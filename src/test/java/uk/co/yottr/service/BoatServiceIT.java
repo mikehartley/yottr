@@ -102,7 +102,7 @@ public class BoatServiceIT {
         final boolean unitsImperial = true;
         final String makeAndModel = randomAlphanumeric(15);
         final RyaSailCruisingLevel minLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.COASTAL_SKIPPER);
-        final SailingStyle sailingStyle = SailingStyle.RACING;
+        final SailingPurpose sailingPurpose = SailingPurpose.RACING;
         final LocalDate now = LocalDate.now();
         final LocalDate dateRelevantTo = LocalDate.now();
         final User owner = createUser();
@@ -115,7 +115,7 @@ public class BoatServiceIT {
         boat.setUnitsImperial(unitsImperial);
         boat.setMakeAndModel(makeAndModel);
         boat.setMinimumRequiredLevel(minLevel);
-        boat.setSailingStyle(sailingStyle);
+        boat.setSailingPurpose(sailingPurpose);
         boat.setDateRelevantTo(dateRelevantTo);
         boat.setFinancialArrangement(financialArrangement);
 
@@ -129,7 +129,7 @@ public class BoatServiceIT {
         assertNotNull("reference", savedBoat.getReference());
         assertEquals("date posted", now.atStartOfDay(), savedBoat.getDatePosted().atStartOfDay());
         assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());
-        assertEquals("sailing style", sailingStyle, savedBoat.getSailingStyle());
+        assertEquals("sailing style", sailingPurpose, savedBoat.getSailingPurpose());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
         assertEquals("owner", owner, savedBoat.getOwner());
         assertEquals("financialArrangement", financialArrangement, savedBoat.getFinancialArrangement());

@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ReferenceDataService {
     List<RyaSailCruisingLevel> ryaSailCruisingLevels();
-    List<SailingStyle> sailingStyles();
+    List<SailingPurpose> sailingPurposes();
     List<Boat.HullType> hullTypes();
     List<Country> countries();
     List<FinancialArrangement> financialArrangements();

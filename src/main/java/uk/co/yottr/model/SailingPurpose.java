@@ -5,7 +5,7 @@ package uk.co.yottr.model;
  * All rights reserved.
  */
 
-public enum SailingStyle {
+public enum SailingPurpose {
     CRUISING("Cruising"),
     RACING("Racing"),
     ALL("Both cruising and racing");
@@ -16,7 +16,7 @@ public enum SailingStyle {
         return displayName;
     }
 
-    SailingStyle(String displayName) {
+    SailingPurpose(String displayName) {
         this.displayName = displayName;
     }
 }

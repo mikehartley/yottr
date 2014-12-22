@@ -64,15 +64,15 @@
                 <div class="gap"></div>
 
                 <fieldset>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('sailingStyle')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Sailing Style</label>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('sailingPurpose')}? 'has-error'">
+                        <label for="title" class="col-lg-2 control-label">Sailing Purpose</label>
 
                         <div class="col-lg-10">
-                            <select th:field="*{sailingStyle}">
-                                <option th:value="${''}" th:text="${'Select sailing style:'}">Select sailing style:</option>
-                                <option th:each="sailingStyle : ${sailingStyles}" th:value="${sailingStyle.name()}" th:text="${sailingStyle.getDisplayName()}">Cruising</option>
+                            <select th:field="*{sailingPurpose}">
+                                <option th:value="${''}" th:text="${'Select sailing purpose:'}">Select sailing purpose:</option>
+                                <option th:each="sailingPurpose : ${sailingPurposes}" th:value="${sailingPurpose.name()}" th:text="${sailingPurpose.getDisplayName()}">Cruising</option>
                             </select>
-                            <span class="help-block" th:if="${#fields.hasErrors('sailingStyle')}" th:errors="*{sailingStyle}">Bad Sailing Style</span>
+                            <span class="help-block" th:if="${#fields.hasErrors('sailingPurpose')}" th:errors="*{sailingPurpose}">Bad Sailing Purpose</span>
                         </div>
                     </div>
                     <div class="form-group" th:classappend="${#fields.hasErrors('dateRelevantTo')}? 'has-error'">

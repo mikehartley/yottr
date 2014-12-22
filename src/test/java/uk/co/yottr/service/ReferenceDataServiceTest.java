@@ -38,12 +38,12 @@ public class ReferenceDataServiceTest {
     }
 
     @Test
-    public void testSailingStylesOrdering() throws Exception {
-        final List<SailingStyle> sailingStyles = referenceDataService.sailingStyles();
+    public void testSailingPurposesOrdering() throws Exception {
+        final List<SailingPurpose> sailingPurposes = referenceDataService.sailingPurposes();
 
-        assertEquals(SailingStyle.CRUISING, sailingStyles.get(0));
-        assertEquals(SailingStyle.RACING, sailingStyles.get(1));
-        assertEquals(SailingStyle.ALL, sailingStyles.get(2));
+        assertEquals(SailingPurpose.CRUISING, sailingPurposes.get(0));
+        assertEquals(SailingPurpose.RACING, sailingPurposes.get(1));
+        assertEquals(SailingPurpose.ALL, sailingPurposes.get(2));
     }
     
     @Test

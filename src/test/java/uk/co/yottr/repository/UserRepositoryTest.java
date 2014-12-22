@@ -1,5 +1,6 @@
 package uk.co.yottr.repository;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +28,29 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Before
+    public void clearUsersBeforeRunningTests() {
+        userRepository.deleteAll();
+    }
+
     @Test
     public void paging() {
-        for (int i = 0; i < 12; i++) {
-            userRepository.save(createUser("user" + i));
+        for (int i = 0; i < 10; i++) {
+            final User savedUser = userRepository.save(createUser("user" + i));
         }
 
         final PageRequest pageRequest = new PageRequest(
-                ConstantsForTests.DEFAULT_PAGE_REQUEST_START_PAGE,
-                ConstantsForTests.DEFAULT_PAGE_REQUEST_END_PAGE,
+                ConstantsForTests.DEFAULT_PAGE_REQUEST_PAGE,
+                ConstantsForTests.DEFAULT_PAGE_SIZE,
                 Sort.Direction.ASC,
-                "id");
-        final Page<User> page1 = userRepository.findAll(pageRequest);
-        assertEquals(4, page1.getSize());
+                "username");
+        final Page<User> pagedUsers = userRepository.findAll(pageRequest);
+        assertEquals(4, pagedUsers.getSize());
 
         int i = 0;
-        for (User user : page1) {
-            assertEquals("user" + i++, user.getUsername());
+        for (User user : pagedUsers) {
+            String usernameToFind = "user" + i++;
+            assertEquals("unexpected user in sequence", usernameToFind, user.getUsername());
         }
     }
 

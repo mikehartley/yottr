@@ -132,7 +132,7 @@ public class BoatController {
         final ModelAndView modelAndView = new ModelAndView("editListing");
         modelAndView.addObject("boat", boat);
         modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
-        modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
+        modelAndView.addObject("sailingPurposes", referenceDataService.sailingPurposes());
         modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
 
         return modelAndView;
@@ -154,7 +154,7 @@ public class BoatController {
         boatForUpdate.setDescription(boatFromForm.getDescription());
         boatForUpdate.setDateRelevantTo(boatFromForm.getDateRelevantTo());
         boatForUpdate.setMinimumRequiredLevel(boatFromForm.getMinimumRequiredLevel());
-        boatForUpdate.setSailingStyle(boatFromForm.getSailingStyle());
+        boatForUpdate.setSailingPurpose(boatFromForm.getSailingPurpose());
         boatForUpdate.setSuspended(boatFromForm.isSuspended());
 
         final Boat updatedBoat = boatService.save(boatForUpdate);
@@ -178,7 +178,7 @@ public class BoatController {
 
     private void addReferenceData(ModelAndView modelAndView) {
         modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
-        modelAndView.addObject("sailingStyles", referenceDataService.sailingStyles());
+        modelAndView.addObject("sailingPurposes", referenceDataService.sailingPurposes());
         modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
         modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
     }

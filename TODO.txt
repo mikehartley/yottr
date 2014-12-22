@@ -20,13 +20,14 @@ Tech:
 
     UI acceptance testing using Selenium.
     Swear filter.
+    Check field validations (and verify lengths are suitable for strings).
 
 UI:
     Fix bootstrap column issues (must add to 12) (done: signup, list all boats, list all users)
     Search panel uses a table - convert to bootstrap
 
 User:
-*    Search for listings by reference/date posted/date relevant to/length/qualification/sailing style.
+*    Search for listings by reference/date posted/date relevant to/length/qualification/sailing purpose.
     Saved searches.
     Favourites / watch list.
     Send message to admin (might be covered by having an email account).

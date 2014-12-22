@@ -70,9 +70,9 @@ public class Boat {
     private RyaSailCruisingLevel minimumRequiredLevel;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "sailing_style", nullable = false)
+    @Column(name = "sailing_purpose", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
-    private SailingStyle sailingStyle;
+    private SailingPurpose sailingPurpose;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "financial_arrangement")
@@ -182,12 +182,12 @@ public class Boat {
         // has been messing about with the request parameters
     }
 
-    public SailingStyle getSailingStyle() {
-        return sailingStyle;
+    public SailingPurpose getSailingPurpose() {
+        return sailingPurpose;
     }
 
-    public void setSailingStyle(SailingStyle sailingStyle) {
-        this.sailingStyle = sailingStyle;
+    public void setSailingPurpose(SailingPurpose sailingPurpose) {
+        this.sailingPurpose = sailingPurpose;
     }
 
     public FinancialArrangement getFinancialArrangement() {

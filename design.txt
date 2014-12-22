@@ -28,11 +28,11 @@ DONE:
 Boat reference : (automatic)
 Make and Model
 Description
-Financial arrangements : no contribution required, food only (no boat costs), shared fixed, shared variable, priced (a commercial offering), paid position
+*Financial arrangements : no contribution required, food only (no boat costs), shared fixed, shared variable, priced (a commercial offering), paid position
 Qualifications (or Equivalent) : None - RYA YM Ocean
 Length
 Hull type: mono, multi
-Purpose (rename from SailingStyle) : Delivery, Cruising, Racing, Long term, Professional
+Purpose: Delivery, Cruising, Racing, Long term, Professional
 
 ===========
 

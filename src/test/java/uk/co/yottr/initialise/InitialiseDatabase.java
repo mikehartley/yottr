@@ -147,7 +147,7 @@ public class InitialiseDatabase {
         boat.setUnitsImperial(false);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("You want to sail around the world? You need to look elsewhere, my tub is purely a gin palace.");
-        boat.setSailingStyle(SailingStyle.CRUISING);
+        boat.setSailingPurpose(SailingPurpose.CRUISING);
         boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
         boat.setFinancialArrangement(FinancialArrangement.PAY_THEM_COST);
 

@@ -86,18 +86,18 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Sailing Style</td>
+                            <td>Sailing Purpose</td>
                             <td>
-                                <select><!-- th:field="*{sailingStyle}">-->
+                                <select><!-- th:field="*{sailingPurpose}">-->
                                     <option th:value="${''}" th:text="${'Any'}">Any</option>
-                                    <option th:each="sailingStyle : ${sailingStyles}" th:value="${sailingStyle.name()}" th:text="${sailingStyle.getDisplayName()}">Cruising</option>
+                                    <option th:each="sailingPurpose : ${sailingPurposes}" th:value="${sailingPurpose.name()}" th:text="${sailingPurpose.getDisplayName()}">Cruising</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td>Money</td>
                             <td>
-                                <select><!-- th:field="*{sailingStyle}">-->
+                                <select><!-- th:field="*{financialArrangement}">-->
                                     <option th:value="${''}" th:text="${'Any'}">Any</option>
                                     <option th:each="financialArrangement : ${financialArrangements}"
                                             th:value="${financialArrangement.getName()}"

@@ -30,14 +30,14 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     }
 
     @Override
-    public List<SailingStyle> sailingStyles() {
-        List<SailingStyle> sailingStyles = new ArrayList<>();
+    public List<SailingPurpose> sailingPurposes() {
+        List<SailingPurpose> sailingPurposes = new ArrayList<>();
 
-        sailingStyles.add(SailingStyle.CRUISING);
-        sailingStyles.add(SailingStyle.RACING);
-        sailingStyles.add(SailingStyle.ALL);
+        sailingPurposes.add(SailingPurpose.CRUISING);
+        sailingPurposes.add(SailingPurpose.RACING);
+        sailingPurposes.add(SailingPurpose.ALL);
 
-        return sailingStyles;
+        return sailingPurposes;
     }
 
     @Override

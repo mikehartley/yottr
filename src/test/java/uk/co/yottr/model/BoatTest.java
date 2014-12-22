@@ -86,8 +86,8 @@ public class BoatTest {
     }
 
     @Test
-    public void sailingStyle() {
-        boat.setSailingStyle(null);
+    public void sailingPurpose() {
+        boat.setSailingPurpose(null);
         assertSingleViolation(REQUIRED_ERROR_MSG);
     }
 
@@ -169,7 +169,7 @@ public class BoatTest {
         boat.setLength(10);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("blah");
-        boat.setSailingStyle(SailingStyle.ALL);
+        boat.setSailingPurpose(SailingPurpose.ALL);
         boat.setFinancialArrangement(FinancialArrangement.PAY_ME_COMMERCIAL);
         return boat;
     }
