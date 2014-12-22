@@ -35,7 +35,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 
         sailingPurposes.add(SailingPurpose.CRUISING);
         sailingPurposes.add(SailingPurpose.RACING);
-        sailingPurposes.add(SailingPurpose.ALL);
+        sailingPurposes.add(SailingPurpose.DELIVERY);
+        sailingPurposes.add(SailingPurpose.LONG_TERM);
+        sailingPurposes.add(SailingPurpose.PROFESSIONAL);
 
         return sailingPurposes;
     }

@@ -8,7 +8,9 @@ package uk.co.yottr.model;
 public enum SailingPurpose {
     CRUISING("Cruising"),
     RACING("Racing"),
-    ALL("Both cruising and racing");
+    DELIVERY("Delivery"),
+    LONG_TERM("Long Term"),
+    PROFESSIONAL("Professional");
 
     private final String displayName;
 

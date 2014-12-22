@@ -169,7 +169,7 @@ public class BoatTest {
         boat.setLength(10);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("blah");
-        boat.setSailingPurpose(SailingPurpose.ALL);
+        boat.setSailingPurpose(SailingPurpose.DELIVERY);
         boat.setFinancialArrangement(FinancialArrangement.PAY_ME_COMMERCIAL);
         return boat;
     }

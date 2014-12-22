@@ -14,7 +14,7 @@ public class BoatBuilder {
     private int length = 36;
     private boolean unitsImperial = true;
     private String makeAndModel = "Halberg Rassy HR36";
-    private SailingPurpose sailingPurpose = SailingPurpose.ALL;
+    private SailingPurpose sailingPurpose = SailingPurpose.DELIVERY;
     private String description = "Default Boat";
     private RyaSailCruisingLevel minimumRequiredLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
     private FinancialArrangement financialArrangement = FinancialArrangement.FREE;
