@@ -9,7 +9,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -68,10 +68,11 @@ public class ReferenceDataServiceTest {
     public void testFinancialArrangementsOrdering() throws Exception {
         final List<FinancialArrangement> financialArrangementEnums = referenceDataService.financialArrangements();
 
-        assertEquals(FinancialArrangement.FinancialArrangementEnum.FREE.getDisplayName(), financialArrangementEnums.get(0).getDisplayName());
-        assertEquals(FinancialArrangement.FinancialArrangementEnum.PAY_THEM_COST.getDisplayName(), financialArrangementEnums.get(1).getDisplayName());
-        assertEquals(FinancialArrangement.FinancialArrangementEnum.PAY_THEM_COMMERCIAL.getDisplayName(), financialArrangementEnums.get(2).getDisplayName());
-        assertEquals(FinancialArrangement.FinancialArrangementEnum.PAY_ME_COST.getDisplayName(), financialArrangementEnums.get(3).getDisplayName());
-        assertEquals(FinancialArrangement.FinancialArrangementEnum.PAY_ME_COMMERCIAL.getDisplayName(), financialArrangementEnums.get(4).getDisplayName());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.NO_CONTRIBUTION.getDisplayName(), financialArrangementEnums.get(0).getDisplayName());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.FOOD_ONLY.getDisplayName(), financialArrangementEnums.get(1).getDisplayName());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.SHARED_FIXED.getDisplayName(), financialArrangementEnums.get(2).getDisplayName());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.SHARED_VARIABLE.getDisplayName(), financialArrangementEnums.get(3).getDisplayName());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.COMMERCIAL.getDisplayName(), financialArrangementEnums.get(4).getDisplayName());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.PAID.getDisplayName(), financialArrangementEnums.get(5).getDisplayName());
     }
 }

@@ -31,7 +31,7 @@ import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -118,6 +118,8 @@ public class BoatControllerTest extends AbstractControllerTest {
 
         final String boatAttribute = "boat";
 
+        final String titleProperty = "title";
+        final String titleValue = "titleValue";
         final String makeAndModelProperty = "makeAndModel";
         final String makeAndModelValue = "makeAndModelValue";
         final String lengthProperty = "length";
@@ -129,7 +131,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String descriptionProperty = "description";
         final String descriptionValue = "descriptionValue";
         final String sailingPurposeProperty = "sailingPurpose";
-        final String sailingPurposeValue = "ALL";
+        final String sailingPurposeValue = "CRUISING";
         final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
         final String minimumQualificationValue = "400";
         final String minimumQualificationProperty = "minimumRequiredLevel";
@@ -137,9 +139,10 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2014";
         final String financialArrangementProperty = "financialArrangement";
-        final String financialArrangementValue = FinancialArrangement.FREE.getName();
+        final String financialArrangementValue = FinancialArrangement.NO_CONTRIBUTION.getName();
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param(titleProperty, titleValue)
                         .param(makeAndModelProperty, makeAndModelValue)
                         .param(lengthProperty, lengthValue)
                         .param(unitsImperialProperty, unitsImperialValue)
@@ -179,6 +182,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final User user = aUser().withUsername(username).withMaxListings(0).build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
 
+        final String titleProperty = "title";
+        final String titleValue = "titleValue";
         final String makeAndModelProperty = "makeAndModel";
         final String makeAndModelValue = "makeAndModelValue";
         final String lengthProperty = "length";
@@ -190,15 +195,16 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String descriptionProperty = "description";
         final String descriptionValue = "descriptionValue";
         final String sailingPurposeProperty = "sailingPurpose";
-        final String sailingPurposeValue = "ALL";
+        final String sailingPurposeValue = "CRUISING";
         final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
         final String minimumQualificationValue = "400";
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2014";
         final String financialArrangementProperty = "financialArrangement";
-        final String financialArrangementValue = FinancialArrangement.FREE.getName();
+        final String financialArrangementValue = FinancialArrangement.NO_CONTRIBUTION.getName();
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param(titleProperty, titleValue)
                         .param(makeAndModelProperty, makeAndModelValue)
                         .param(lengthProperty, lengthValue)
                         .param(unitsImperialProperty, unitsImperialValue)
@@ -385,6 +391,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         final Boat originalBoat = user.getBoatListings().get(0);
         final Boat savedBoat = new Boat(user);
 
+        final String titleProperty = "title";
+        final String titleValue = "titleValueEdited";
         final String makeAndModelProperty = "makeAndModel";
         final String makeAndModelValue = "makeAndModelValueEdited";
         final String lengthProperty = "length";
@@ -403,13 +411,14 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2015";
         final String financialArrangementProperty = "financialArrangement";
-        final String financialArrangementValue = FinancialArrangement.FREE.getName();
+        final String financialArrangementValue = FinancialArrangement.NO_CONTRIBUTION.getName();
 
         when(mockBoatService.save(any(Boat.class))).thenReturn(savedBoat);
 
         final String boatAttribute = "boat";
 
         mockMvc.perform(post("/s/listings/" + originalBoat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param(titleProperty, titleValue)
                         .param(makeAndModelProperty, makeAndModelValue)
                         .param(lengthProperty, lengthValue)
                         .param(unitsImperialProperty, unitsImperialValue)
@@ -432,6 +441,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         verify(mockUserService).findByUsername(username);
 
         final Boat boatThatWasSaved = boatArgumentCaptor.getValue();
+        assertEquals(titleValue, boatThatWasSaved.getTitle());
         assertEquals(makeAndModelValue, boatThatWasSaved.getMakeAndModel());
         assertEquals(Integer.valueOf(lengthValue), boatThatWasSaved.getLength());
         assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());

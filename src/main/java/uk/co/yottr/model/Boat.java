@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -30,6 +30,11 @@ public class Boat {
 
     @Column(name = "reference", nullable = false, unique = true)
     private String reference;
+
+    @Column(name = "title", nullable = false)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    @Size(min=2, max=64)
+    private String title;
 
     @Column(name = "makeAndModel", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
@@ -106,6 +111,14 @@ public class Boat {
 
     public String getReference() {
         return reference;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getMakeAndModel() {

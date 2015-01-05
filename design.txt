@@ -1,6 +1,6 @@
 ADVERT
 ------
-Title
+*Title
 Picture(s)
 When [from-to]
     From: must be before To if To is not null. may be null
@@ -28,7 +28,13 @@ DONE:
 Boat reference : (automatic)
 Make and Model
 Description
-*Financial arrangements : no contribution required, food only (no boat costs), shared fixed, shared variable, priced (a commercial offering), paid position
+Financial arrangements :
+    no contribution required,
+    food only (no boat costs),
+    shared fixed,
+    shared variable,
+    priced (a commercial offering),
+    paid position
 Qualifications (or Equivalent) : None - RYA YM Ocean
 Length
 Hull type: mono, multi

@@ -26,7 +26,7 @@ import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -96,6 +96,7 @@ public class BoatServiceIT {
     @Test
     public void allFieldsPersist() throws Exception {
 
+        final String title = randomAlphanumeric(50);
         final String description = randomAlphanumeric(50);
         final Boat.HullType hullType = Boat.HullType.MONO;
         final Integer length = new Random().nextInt(99) + 3;
@@ -106,9 +107,10 @@ public class BoatServiceIT {
         final LocalDate now = LocalDate.now();
         final LocalDate dateRelevantTo = LocalDate.now();
         final User owner = createUser();
-        final FinancialArrangement financialArrangement = FinancialArrangement.PAY_ME_COMMERCIAL;
+        final FinancialArrangement financialArrangement = FinancialArrangement.COMMERCIAL;
 
         Boat boat = new Boat(owner);
+        boat.setTitle(title);
         boat.setDescription(description);
         boat.setHullType(hullType);
         boat.setLength(length);
@@ -121,6 +123,7 @@ public class BoatServiceIT {
 
         final Boat savedBoat = boatService.save(boat);
 
+        assertEquals("title", title, savedBoat.getTitle());
         assertEquals("description", description, savedBoat.getDescription());
         assertEquals("hullType", hullType, savedBoat.getHullType());
         assertEquals("length", length, savedBoat.getLength());

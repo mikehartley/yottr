@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -142,6 +142,7 @@ public class InitialiseDatabase {
     private void addBoat(String makeAndModel, User owner) {
         Boat boat = new Boat(userRepository.findByUsername(owner.getUsername()));
 
+        boat.setTitle("A Super " + makeAndModel);
         boat.setMakeAndModel(makeAndModel);
         boat.setLength(50);
         boat.setUnitsImperial(false);
@@ -149,7 +150,7 @@ public class InitialiseDatabase {
         boat.setDescription("You want to sail around the world? You need to look elsewhere, my tub is purely a gin palace.");
         boat.setSailingPurpose(SailingPurpose.CRUISING);
         boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
-        boat.setFinancialArrangement(FinancialArrangement.PAY_THEM_COST);
+        boat.setFinancialArrangement(FinancialArrangement.FOOD_ONLY);
 
         final int rank = RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank();
         final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(rank);

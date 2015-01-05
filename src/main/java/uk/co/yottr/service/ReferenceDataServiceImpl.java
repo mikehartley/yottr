@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -66,11 +66,12 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     public List<FinancialArrangement> financialArrangements() {
         List<FinancialArrangement> financialArrangementEnums = new ArrayList<>();
 
-        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.FREE));
-        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_THEM_COST));
-        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_THEM_COMMERCIAL));
-        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_ME_COST));
-        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAY_ME_COMMERCIAL));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.NO_CONTRIBUTION));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.FOOD_ONLY));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.SHARED_FIXED));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.SHARED_VARIABLE));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.COMMERCIAL));
+        financialArrangementEnums.add(new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAID));
 
         return financialArrangementEnums;
     }

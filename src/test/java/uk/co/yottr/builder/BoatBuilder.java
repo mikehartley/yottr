@@ -3,13 +3,14 @@ package uk.co.yottr.builder;
 import uk.co.yottr.model.*;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
 public class BoatBuilder {
 
     private User owner;
+    private String title = "Great Title";
     private Boat.HullType hullType = Boat.HullType.MONO;
     private int length = 36;
     private boolean unitsImperial = true;
@@ -17,7 +18,7 @@ public class BoatBuilder {
     private SailingPurpose sailingPurpose = SailingPurpose.DELIVERY;
     private String description = "Default Boat";
     private RyaSailCruisingLevel minimumRequiredLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
-    private FinancialArrangement financialArrangement = FinancialArrangement.FREE;
+    private FinancialArrangement financialArrangement = FinancialArrangement.NO_CONTRIBUTION;
     private boolean suspended;
 
     private BoatBuilder() {
@@ -54,6 +55,7 @@ public class BoatBuilder {
         }
 
         final Boat boat = new Boat(owner);
+        boat.setTitle(title);
         boat.setHullType(hullType);
         boat.setLength(length);
         boat.setUnitsImperial(unitsImperial);

@@ -23,7 +23,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -147,6 +147,7 @@ public class BoatController {
         }
 
         final Boat boatForUpdate = findBoat(boatReference, principal);
+        boatForUpdate.setTitle(boatFromForm.getTitle());
         boatForUpdate.setMakeAndModel(boatFromForm.getMakeAndModel());
         boatForUpdate.setLength(boatFromForm.getLength());
         boatForUpdate.setUnitsImperial(boatFromForm.isUnitsImperial());

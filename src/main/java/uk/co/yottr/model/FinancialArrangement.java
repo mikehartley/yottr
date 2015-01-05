@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -15,11 +15,12 @@ import javax.persistence.Table;
 public class FinancialArrangement {
 
     public enum FinancialArrangementEnum {
-        FREE("Free"),
-        PAY_THEM_COST("I Pay Them At Cost"),
-        PAY_THEM_COMMERCIAL("I Pay Them Commercial Rates"),
-        PAY_ME_COST("They Pay Me At Cost"),
-        PAY_ME_COMMERCIAL("They Pay Me Commercial Rates");
+        NO_CONTRIBUTION("No Contribution Required"),
+        FOOD_ONLY("Food Only (No Boat Costs)"),
+        SHARED_FIXED("Shared Fixed"),
+        SHARED_VARIABLE("Shared Variable"),
+        COMMERCIAL("Commercial"),
+        PAID("Paid Position");
 
         private String displayName;
 
@@ -32,11 +33,12 @@ public class FinancialArrangement {
         }
     }
 
-    public static FinancialArrangement FREE =  new FinancialArrangement(FinancialArrangementEnum.FREE);
-    public static FinancialArrangement PAY_THEM_COST =  new FinancialArrangement(FinancialArrangementEnum.PAY_THEM_COST);
-    public static FinancialArrangement PAY_THEM_COMMERCIAL =  new FinancialArrangement(FinancialArrangementEnum.PAY_THEM_COMMERCIAL);
-    public static FinancialArrangement PAY_ME_COST =  new FinancialArrangement(FinancialArrangementEnum.PAY_ME_COST);
-    public static FinancialArrangement PAY_ME_COMMERCIAL =  new FinancialArrangement(FinancialArrangementEnum.PAY_ME_COMMERCIAL);
+    public static FinancialArrangement NO_CONTRIBUTION =  new FinancialArrangement(FinancialArrangementEnum.NO_CONTRIBUTION);
+    public static FinancialArrangement FOOD_ONLY =  new FinancialArrangement(FinancialArrangementEnum.FOOD_ONLY);
+    public static FinancialArrangement SHARED_FIXED =  new FinancialArrangement(FinancialArrangementEnum.SHARED_FIXED);
+    public static FinancialArrangement SHARED_VARIABLE =  new FinancialArrangement(FinancialArrangementEnum.SHARED_VARIABLE);
+    public static FinancialArrangement COMMERCIAL =  new FinancialArrangement(FinancialArrangementEnum.COMMERCIAL);
+    public static FinancialArrangement PAID =  new FinancialArrangement(FinancialArrangementEnum.PAID);
 
     @Id
     @Column(name = "name")

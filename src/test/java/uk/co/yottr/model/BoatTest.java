@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -39,6 +39,23 @@ public class BoatTest {
     public void allValid() {
         final Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
         assertEquals("not expecting any violations", 0, violations.size());
+    }
+
+    @Test
+    public void title() {
+        final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 2, 64);
+
+        boat.setTitle(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
+
+        boat.setTitle("");
+        assertSingleViolation(sizeErrorMessage);
+
+        boat.setTitle("1");
+        assertSingleViolation(sizeErrorMessage);
+
+        boat.setTitle("12345678901234567890123456789012345678901234567890123456789012345");
+        assertSingleViolation(sizeErrorMessage);
     }
 
     @Test
@@ -165,12 +182,13 @@ public class BoatTest {
 
     private Boat createValidBoat(User user) {
         Boat boat = new Boat(user);
+        boat.setTitle("title");
         boat.setMakeAndModel("blah");
         boat.setLength(10);
         boat.setHullType(Boat.HullType.MONO);
         boat.setDescription("blah");
         boat.setSailingPurpose(SailingPurpose.DELIVERY);
-        boat.setFinancialArrangement(FinancialArrangement.PAY_ME_COMMERCIAL);
+        boat.setFinancialArrangement(FinancialArrangement.COMMERCIAL);
         return boat;
     }
 }
