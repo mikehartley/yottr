@@ -1,13 +1,10 @@
 ADVERT
 ------
-*Title
 Picture(s)
 When [from-to]
     From: must be before To if To is not null. may be null
     To: must be after To, or may be null which means open ended
-Frequency : weekdays, weekends, holidays, long-term, trip (one off)
-First posted : (automatic)
-Last updated : (automatic)
+*Frequency : weekdays, weekends, holidays, long-term, trip (one off)
 Propulsion (vessel type): : Sailing Yacht, Motor Yacht
 Money Amount : if financial arrangements is not 'no contrib' then must be >0 otherwise 0. Variable still needs an estimate but this can be made clear.
 Money Amount Period : Per - day, week, month, year, trip, course
@@ -25,6 +22,9 @@ Smoking : No, Yes outside, Yes inside/outside
 -----
 DONE:
 -----
+Title
+First posted : (automatic)
+Last updated : (automatic)
 Boat reference : (automatic)
 Make and Model
 Description

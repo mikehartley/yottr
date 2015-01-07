@@ -11,7 +11,7 @@ import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -20,17 +20,22 @@ public class BoatService {
 
     private BoatRepository boatRepository;
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
+    private TemporalProvider temporalProvider;
 
     @Autowired
-    public BoatService(BoatRepository boatRepository, RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
+    public BoatService(BoatRepository boatRepository,
+                       RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository,
+                       TemporalProvider temporalProvider) {
         this.boatRepository = boatRepository;
         this.ryaSailCruisingLevelRepository = ryaSailCruisingLevelRepository;
+        this.temporalProvider = temporalProvider;
     }
 
     @Transactional
     public Boat save(Boat boat) {
         final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(boat.getMinimumRequiredLevelByRank());
         boat.setMinimumRequiredLevel(level); // this needs to be non-transient, hence the look-up
+        boat.setLastUpdated(temporalProvider.today());
         return boatRepository.save(boat);
     }
 

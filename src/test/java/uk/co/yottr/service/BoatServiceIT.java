@@ -130,7 +130,7 @@ public class BoatServiceIT {
         assertEquals("unitsImperial", unitsImperial, savedBoat.isUnitsImperial());
         assertEquals("makeAndModel", makeAndModel, savedBoat.getMakeAndModel());
         assertNotNull("reference", savedBoat.getReference());
-        assertEquals("date posted", now.atStartOfDay(), savedBoat.getDatePosted().atStartOfDay());
+        assertEquals("date posted", now.atStartOfDay(), savedBoat.getFirstPosted().atStartOfDay());
         assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());
         assertEquals("sailing style", sailingPurpose, savedBoat.getSailingPurpose());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());

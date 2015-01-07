@@ -7,6 +7,7 @@ import org.junit.Test;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -39,6 +40,25 @@ public class BoatTest {
     public void allValid() {
         final Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
         assertEquals("not expecting any violations", 0, violations.size());
+    }
+
+    @Test
+    public void reference() {
+        final Boat boat1 = new Boat();
+        final Boat boat2 = new Boat();
+
+        assertTrue("reference should be automatically populated and a decent size", boat1.getReference().length() > 5);
+        assertNotEquals("two consecutive references should not be the same", boat1.getReference(), boat2.getReference());
+    }
+
+    @Test
+    public void firstPosted() {
+        assertEquals("first posted should be today", LocalDate.now(), boat.getFirstPosted());
+    }
+
+    @Test
+    public void lastUpdated() {
+        assertEquals("last updated should initially be same as first posted", boat.getFirstPosted(), boat.getLastUpdated());
     }
 
     @Test

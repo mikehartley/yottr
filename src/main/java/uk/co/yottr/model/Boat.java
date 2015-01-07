@@ -62,8 +62,11 @@ public class Boat {
     @NotEmpty(message = REQUIRED_ERROR_MSG)
     private String description;
 
-    @Column(name = "date_posted", nullable = false)
-    private LocalDate datePosted;
+    @Column(name = "first_posted", nullable = false)
+    private LocalDate firstPosted;
+
+    @Column(name = "last_updated", nullable = false)
+    private LocalDate lastUpdated;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Column(name = "date_relevant_to")
@@ -96,7 +99,8 @@ public class Boat {
      */
     Boat() {
         this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
-        this.datePosted = LocalDate.now();
+        this.firstPosted = LocalDate.now();
+        this.lastUpdated = LocalDate.now();
         this.minimumRequiredLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.NONE);
     }
 
@@ -161,8 +165,16 @@ public class Boat {
         this.description = description;
     }
 
-    public LocalDate getDatePosted() {
-        return datePosted;
+    public LocalDate getFirstPosted() {
+        return firstPosted;
+    }
+
+    public LocalDate getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDate lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     public LocalDate getDateRelevantTo() {

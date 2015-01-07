@@ -3,6 +3,7 @@ package uk.co.yottr.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
@@ -16,14 +17,16 @@ import uk.co.yottr.model.User;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
@@ -39,28 +42,41 @@ public class BoatServiceTest {
     @Mock
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
 
+    @Mock
+    private TemporalProvider temporalProvider;
+
     private User owner;
 
     @Before
     public void init() {
         reset(boatRepository);
         reset(ryaSailCruisingLevelRepository);
+        reset(temporalProvider);
 
-        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository);
+        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository, temporalProvider);
 
         owner = aUser().build();
     }
 
     @Test
     public void testSave() throws Exception {
-        final RyaSailCruisingLevel cruisingLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
-        Boat boat = BoatBuilder.aBoat().withOwner(owner).withMinimumRequiredLevel(cruisingLevel).build();
-        when(ryaSailCruisingLevelRepository.findByRank(cruisingLevel.getRank())).thenReturn(cruisingLevel);
+        final RyaSailCruisingLevel coastalSkipperLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
+        final LocalDate firstDay2015 = LocalDate.ofYearDay(2015, 1);
+        Boat boat = BoatBuilder.aBoat().withOwner(owner)
+                .withMinimumRequiredLevel(coastalSkipperLevel)
+                .build();
+        ArgumentCaptor<Boat> boatCaptor = ArgumentCaptor.forClass(Boat.class);
+        when(ryaSailCruisingLevelRepository.findByRank(coastalSkipperLevel.getRank())).thenReturn(coastalSkipperLevel);
+        when(temporalProvider.today()).thenReturn(firstDay2015);
 
         boatService.save(boat);
 
-        verify(ryaSailCruisingLevelRepository).findByRank(cruisingLevel.getRank());
-        verify(boatRepository).save(boat);
+        verify(ryaSailCruisingLevelRepository).findByRank(coastalSkipperLevel.getRank());
+        verify(boatRepository).save(boatCaptor.capture());
+
+        final Boat boatThatWasSaved = boatCaptor.getValue();
+        assertEquals(coastalSkipperLevel, boatThatWasSaved.getMinimumRequiredLevel());
+        assertEquals(firstDay2015, boatThatWasSaved.getLastUpdated());
 
         verifyNoMoreInteractions(boatRepository);
         verifyNoMoreInteractions(ryaSailCruisingLevelRepository);

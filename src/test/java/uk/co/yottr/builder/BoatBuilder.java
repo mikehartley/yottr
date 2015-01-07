@@ -2,6 +2,8 @@ package uk.co.yottr.builder;
 
 import uk.co.yottr.model.*;
 
+import java.time.LocalDate;
+
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
@@ -20,6 +22,7 @@ public class BoatBuilder {
     private RyaSailCruisingLevel minimumRequiredLevel = RyaSailCruisingLevel.COASTAL_SKIPPER;
     private FinancialArrangement financialArrangement = FinancialArrangement.NO_CONTRIBUTION;
     private boolean suspended;
+    private LocalDate lastUpdated;
 
     private BoatBuilder() {
     }
@@ -48,6 +51,11 @@ public class BoatBuilder {
         return this;
     }
 
+    public BoatBuilder withLastUpdated(LocalDate lastUpdated) {
+        this.lastUpdated = lastUpdated;
+        return this;
+    }
+
     public Boat build() {
 
         if (owner == null) {
@@ -65,6 +73,7 @@ public class BoatBuilder {
         boat.setMinimumRequiredLevel(minimumRequiredLevel);
         boat.setFinancialArrangement(financialArrangement);
         boat.setSuspended(suspended);
+        boat.setLastUpdated(lastUpdated);
 
         return boat;
     }
