@@ -156,6 +156,21 @@ public class BoatTest {
     }
 
     @Test
+    public void numberOfCrewWanted() {
+        assertNull("number of crew wanted should initially be null", boat.getNumberOfCrewWanted());
+
+        Integer number = 5;
+        boat.setNumberOfCrewWanted(number);
+        assertEquals("number of crew wanted", number, boat.getNumberOfCrewWanted());
+
+        boat.setNumberOfCrewWanted(0);
+        assertSingleViolation("must be greater than or equal to 1");
+
+        boat.setNumberOfCrewWanted(100);
+        assertSingleViolation("must be less than or equal to 99");
+    }
+
+    @Test
     public void unitsDefaultToImperial() {
         assertTrue(new Boat().isUnitsImperial());
     }

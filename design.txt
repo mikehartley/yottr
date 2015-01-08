@@ -16,7 +16,6 @@ Where from : this is important! for now either free text, or list of marinas
     List of countries, then location.
 Where to: only mandatory if frequency=trip
 Travel expenses: paid by crew, paid by owner, negotiable
-Number of crew wanted : min (must be > 0), max (optional, <99)
 Looking for (role required) : crew, mate, skipper, doesn't matter
 Smoking : No, Yes outside, Yes inside/outside
 -----
@@ -39,6 +38,7 @@ Qualifications (or Equivalent) : None - RYA YM Ocean
 Length
 Hull type: mono, multi
 Purpose: Delivery, Cruising, Racing, Long term, Professional
+Number of crew wanted : min (must be > 0), max (optional, <99)
 
 ===========
 

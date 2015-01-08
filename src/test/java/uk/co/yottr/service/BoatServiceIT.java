@@ -108,6 +108,7 @@ public class BoatServiceIT {
         final LocalDate dateRelevantTo = LocalDate.now();
         final User owner = createUser();
         final FinancialArrangement financialArrangement = FinancialArrangement.COMMERCIAL;
+        final Integer numberOfCrewWanted = 5;
 
         Boat boat = new Boat(owner);
         boat.setTitle(title);
@@ -120,6 +121,7 @@ public class BoatServiceIT {
         boat.setSailingPurpose(sailingPurpose);
         boat.setDateRelevantTo(dateRelevantTo);
         boat.setFinancialArrangement(financialArrangement);
+        boat.setNumberOfCrewWanted(numberOfCrewWanted);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -130,12 +132,14 @@ public class BoatServiceIT {
         assertEquals("unitsImperial", unitsImperial, savedBoat.isUnitsImperial());
         assertEquals("makeAndModel", makeAndModel, savedBoat.getMakeAndModel());
         assertNotNull("reference", savedBoat.getReference());
-        assertEquals("date posted", now.atStartOfDay(), savedBoat.getFirstPosted().atStartOfDay());
+        assertEquals("first posted", now, savedBoat.getFirstPosted());
+        assertEquals("last updated", now, savedBoat.getLastUpdated());
         assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());
         assertEquals("sailing style", sailingPurpose, savedBoat.getSailingPurpose());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
         assertEquals("owner", owner, savedBoat.getOwner());
         assertEquals("financialArrangement", financialArrangement, savedBoat.getFinancialArrangement());
+        assertEquals("number of crew wanted", numberOfCrewWanted, savedBoat.getNumberOfCrewWanted());
     }
 
     @Test

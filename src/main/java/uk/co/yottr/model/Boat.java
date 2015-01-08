@@ -87,6 +87,11 @@ public class Boat {
     @NotNull(message = REQUIRED_ERROR_MSG)
     private FinancialArrangement financialArrangement;
 
+    @Column(name = "number_wanted")
+    @Min(1)
+    @Max(99)
+    private Integer numberOfCrewWanted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -221,6 +226,14 @@ public class Boat {
 
     public void setFinancialArrangement(FinancialArrangement financialArrangement) {
         this.financialArrangement = financialArrangement;
+    }
+
+    public Integer getNumberOfCrewWanted() {
+        return numberOfCrewWanted;
+    }
+
+    public void setNumberOfCrewWanted(Integer numberOfCrewWanted) {
+        this.numberOfCrewWanted = numberOfCrewWanted;
     }
 
     public boolean isSuspended() {
