@@ -12,10 +12,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.FinancialArrangementRepository;
+import uk.co.yottr.repository.FrequencyRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.testconfig.IntegrationTestConfig;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -46,6 +49,9 @@ public class BoatServiceIT {
     @Autowired
     private FinancialArrangementRepository financialArrangementRepository;
 
+    @Autowired
+    private FrequencyRepository frequencyRepository;
+
     private User owner;
 
     @Before
@@ -53,6 +59,7 @@ public class BoatServiceIT {
 
         InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
         InitialiseDatabase.initialise(financialArrangementRepository);
+        InitialiseDatabase.initialise(frequencyRepository);
 
         owner = userService.save(aUser().build(), false);
     }
@@ -109,6 +116,7 @@ public class BoatServiceIT {
         final User owner = createUser();
         final FinancialArrangement financialArrangement = FinancialArrangement.COMMERCIAL;
         final Integer numberOfCrewWanted = 5;
+        final Collection<Frequency> frequencies = Arrays.asList(Frequency.HOLIDAYS);
 
         Boat boat = new Boat(owner);
         boat.setTitle(title);
@@ -122,6 +130,7 @@ public class BoatServiceIT {
         boat.setDateRelevantTo(dateRelevantTo);
         boat.setFinancialArrangement(financialArrangement);
         boat.setNumberOfCrewWanted(numberOfCrewWanted);
+        boat.setFrequency(frequencies);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -140,6 +149,7 @@ public class BoatServiceIT {
         assertEquals("owner", owner, savedBoat.getOwner());
         assertEquals("financialArrangement", financialArrangement, savedBoat.getFinancialArrangement());
         assertEquals("number of crew wanted", numberOfCrewWanted, savedBoat.getNumberOfCrewWanted());
+        assertEquals("frequency", frequencies, savedBoat.getFrequency());
     }
 
     @Test

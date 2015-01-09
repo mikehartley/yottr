@@ -9,7 +9,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Random;
 
 /*
@@ -50,6 +52,11 @@ public class Boat {
     @Column(name = "units_imperial", nullable = false)
     private boolean isUnitsImperial = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "smoking", nullable = false)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private Smoking smoking = Smoking.NO;
+
     public enum HullType {
         MONO, MULTI;
     }
@@ -81,6 +88,12 @@ public class Boat {
     @Column(name = "sailing_purpose", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
     private SailingPurpose sailingPurpose;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Column(name = "frequency", nullable = false)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    @Size(min = 1, message = "must have at least one")
+    private Collection<Frequency> frequency = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "financial_arrangement")
@@ -220,6 +233,14 @@ public class Boat {
         this.sailingPurpose = sailingPurpose;
     }
 
+    public Collection<Frequency> getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(Collection<Frequency> frequency) {
+        this.frequency = frequency;
+    }
+
     public FinancialArrangement getFinancialArrangement() {
         return financialArrangement;
     }
@@ -251,5 +272,13 @@ public class Boat {
     public void setOwner(User owner) {
         this.owner = owner;
         owner.getBoatListings().add(this);
+    }
+
+    public Smoking getSmoking() {
+        return smoking;
+    }
+
+    public void setSmoking(Smoking smoking) {
+        this.smoking = smoking;
     }
 }

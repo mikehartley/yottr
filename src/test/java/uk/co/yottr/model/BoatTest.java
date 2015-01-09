@@ -8,6 +8,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -171,6 +174,24 @@ public class BoatTest {
     }
 
     @Test
+    public void frequency() {
+        boat.setFrequency(wrapInCollection());
+
+        assertSingleViolation("must have at least one");
+    }
+
+    @Test
+    public void noSmokingCantBeNull() {
+        boat.setSmoking(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
+    }
+
+    @Test
+    public void noSmokingByDefault() {
+        assertEquals(Smoking.NO, boat.getSmoking());
+    }
+
+    @Test
     public void unitsDefaultToImperial() {
         assertTrue(new Boat().isUnitsImperial());
     }
@@ -224,6 +245,13 @@ public class BoatTest {
         boat.setDescription("blah");
         boat.setSailingPurpose(SailingPurpose.DELIVERY);
         boat.setFinancialArrangement(FinancialArrangement.COMMERCIAL);
+        boat.setFrequency(wrapInCollection(Frequency.TRIP));
         return boat;
+    }
+
+    private Collection<Frequency> wrapInCollection(Frequency... frequency) {
+        Collection<Frequency> frequencies = new ArrayList<>();
+        frequencies.addAll(Arrays.asList(frequency));
+        return frequencies;
     }
 }

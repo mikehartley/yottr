@@ -15,10 +15,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import uk.co.yottr.config.AppConfig;
 import uk.co.yottr.model.*;
-import uk.co.yottr.repository.BoatRepository;
-import uk.co.yottr.repository.FinancialArrangementRepository;
-import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
-import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.repository.*;
 import uk.co.yottr.security.Role;
 
 import java.time.LocalDate;
@@ -57,11 +54,16 @@ public class InitialiseDatabase {
     @Autowired
     private FinancialArrangementRepository financialArrangementRepository;
 
+    @Autowired
+    private FrequencyRepository frequencyRepository;
+
     @Before
     public void ensureRepositoryHasBeenInjected() {
         Assert.assertNotNull("check spring configuration : userRepository was not injected", userRepository);
         Assert.assertNotNull("check spring configuration : boatRepository was not injected", boatRepository);
         Assert.assertNotNull("check spring configuration : ryaSailCruisingLevelRepository was not injected", ryaSailCruisingLevelRepository);
+        Assert.assertNotNull("check spring configuration : financialArrangementRepository was not injected", financialArrangementRepository);
+        Assert.assertNotNull("check spring configuration : frequencyRepository was not injected", frequencyRepository);
     }
 
     @Test
@@ -70,6 +72,7 @@ public class InitialiseDatabase {
 
         initialise(ryaSailCruisingLevelRepository);
         initialise(financialArrangementRepository);
+        initialise(frequencyRepository);
 
         final User adminUser = setupUserWithRoles("mike", Role.ADMIN, Role.FREE, Role.CREW);
         updateListingsLimit(adminUser, 50);
@@ -116,6 +119,15 @@ public class InitialiseDatabase {
         }
     }
 
+    public static void initialise(FrequencyRepository frequencyRepository) {
+        if (frequencyRepository.findAll().iterator().hasNext()) return;
+
+        final List<Frequency.FrequencyEnum> frequencies = Arrays.asList(Frequency.FrequencyEnum.values());
+        for (Frequency.FrequencyEnum frequency : frequencies) {
+            frequencyRepository.save(new Frequency(frequency));
+        }
+    }
+
     private User setupUserWithRoles(String username, Role... roles) {
         User user = new User();
 
@@ -151,6 +163,7 @@ public class InitialiseDatabase {
         boat.setSailingPurpose(SailingPurpose.CRUISING);
         boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
         boat.setFinancialArrangement(FinancialArrangement.FOOD_ONLY);
+        boat.setFrequency(Arrays.asList(Frequency.HOLIDAYS, Frequency.WEEKENDS));
 
         final int rank = RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank();
         final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(rank);
