@@ -57,6 +57,11 @@ public class Boat {
     @NotNull(message = REQUIRED_ERROR_MSG)
     private Smoking smoking = Smoking.NO;
 
+    @Column(name = "year_built", nullable = false)
+    @NotNull
+    @Min(1900)
+    private Integer yearBuilt;
+
     public enum HullType {
         MONO, MULTI;
     }
@@ -280,5 +285,13 @@ public class Boat {
 
     public void setSmoking(Smoking smoking) {
         this.smoking = smoking;
+    }
+
+    public void setYearBuilt(Integer yearBuilt) {
+        this.yearBuilt = yearBuilt;
+    }
+
+    public Integer getYearBuilt() {
+        return yearBuilt;
     }
 }

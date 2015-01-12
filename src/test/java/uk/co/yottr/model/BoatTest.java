@@ -202,6 +202,22 @@ public class BoatTest {
     }
 
     @Test
+    public void yearBuiltCantBeNull() {
+        boat.setYearBuilt(null);
+    }
+
+    @Test
+    public void yearBuiltMustBeBetweenLimits() {
+        int inFiveYearsTime = LocalDate.now().getYear() + 5;
+
+        boat.setYearBuilt(1899);
+        assertSingleViolation("must be greater than or equal to 1900");
+
+        boat.setYearBuilt(2021);
+        assertSingleViolation("must be less than...");
+    }
+
+    @Test
     public void suspended() {
         assertFalse(boat.isSuspended());
 
@@ -246,6 +262,7 @@ public class BoatTest {
         boat.setSailingPurpose(SailingPurpose.DELIVERY);
         boat.setFinancialArrangement(FinancialArrangement.COMMERCIAL);
         boat.setFrequency(wrapInCollection(Frequency.TRIP));
+        boat.setYearBuilt(2001);
         return boat;
     }
 

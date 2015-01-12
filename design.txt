@@ -16,6 +16,7 @@ Where from : this is important! for now either free text, or list of marinas
 Where to: only mandatory if frequency=trip
 Travel expenses: paid by crew, paid by owner, negotiable
 Looking for (role required) : crew, mate, skipper, doesn't matter
+
 -----
 DONE:
 -----
