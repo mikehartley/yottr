@@ -3,7 +3,7 @@ package uk.co.yottr.model;
 import javax.persistence.*;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

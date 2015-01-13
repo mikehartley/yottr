@@ -4,7 +4,6 @@ Picture(s)
 When [from-to]
     From: must be before To if To is not null. may be null
     To: must be after To, or may be null which means open ended
-Propulsion (vessel type): : Sailing Yacht, Motor Yacht
 Money Amount : if financial arrangements is not 'no contrib' then must be >0 otherwise 0. Variable still needs an estimate but this can be made clear.
 Money Amount Period : Per - day, week, month, year, trip, course
 Commercial offering : bareboat charter, skippered charter, skippered trip, tuition (if FinArr=Commercial)
@@ -26,6 +25,7 @@ Last updated : (automatic)
 Boat reference : (automatic)
 Make and Model
 Description
+Vessel Type: : Sail, Power
 Financial arrangements :
     no contribution required,
     food only (no boat costs),

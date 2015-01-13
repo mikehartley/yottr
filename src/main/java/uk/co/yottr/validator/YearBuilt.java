@@ -5,17 +5,17 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
 @Documented
-@Constraint(validatedBy = YearValidator.class)
+@Constraint(validatedBy = YearBuiltValidator.class)
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Year {
+public @interface YearBuilt {
  
-    String message() default "{Year}";
+    String message() default "{validation.year.built}";
      
     Class<?>[] groups() default {};
      

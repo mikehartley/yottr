@@ -6,7 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

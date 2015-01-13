@@ -5,14 +5,14 @@ package uk.co.yottr.model;
  * All rights reserved.
  */
 
-public enum Country {
+public enum VesselType {
 
-    UK("UK"),
-    OTHER("Other");
+    SAIL("Sail"),
+    POWER("Power");
 
     private String displayName;
 
-    private Country(String displayName) {
+    private VesselType(String displayName) {
         this.displayName = displayName;
     }
 

@@ -3,6 +3,8 @@ package uk.co.yottr.builder;
 import uk.co.yottr.model.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -23,6 +25,13 @@ public class BoatBuilder {
     private FinancialArrangement financialArrangement = FinancialArrangement.NO_CONTRIBUTION;
     private boolean suspended;
     private LocalDate lastUpdated;
+    private List<Frequency> frequencies = new ArrayList<>();
+    private Integer yearBuilt = 2015;
+    private VesselType vesselType = VesselType.SAIL;
+
+    {
+        frequencies.add(Frequency.HOLIDAYS);
+    }
 
     private BoatBuilder() {
     }
@@ -74,6 +83,9 @@ public class BoatBuilder {
         boat.setFinancialArrangement(financialArrangement);
         boat.setSuspended(suspended);
         boat.setLastUpdated(lastUpdated);
+        boat.setFrequency(frequencies);
+        boat.setYearBuilt(yearBuilt);
+        boat.setVesselType(vesselType);
 
         return boat;
     }

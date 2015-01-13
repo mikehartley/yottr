@@ -117,6 +117,8 @@ public class BoatServiceIT {
         final FinancialArrangement financialArrangement = FinancialArrangement.COMMERCIAL;
         final Integer numberOfCrewWanted = 5;
         final Collection<Frequency> frequencies = Arrays.asList(Frequency.HOLIDAYS);
+        final Integer yearBuilt = 2015;
+        final VesselType vesselType = VesselType.SAIL;
 
         Boat boat = new Boat(owner);
         boat.setTitle(title);
@@ -131,6 +133,8 @@ public class BoatServiceIT {
         boat.setFinancialArrangement(financialArrangement);
         boat.setNumberOfCrewWanted(numberOfCrewWanted);
         boat.setFrequency(frequencies);
+        boat.setYearBuilt(yearBuilt);
+        boat.setVesselType(vesselType);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -150,6 +154,8 @@ public class BoatServiceIT {
         assertEquals("financialArrangement", financialArrangement, savedBoat.getFinancialArrangement());
         assertEquals("number of crew wanted", numberOfCrewWanted, savedBoat.getNumberOfCrewWanted());
         assertEquals("frequency", frequencies, savedBoat.getFrequency());
+        assertEquals("yearBuilt", yearBuilt, savedBoat.getYearBuilt());
+        assertEquals("vesselType", vesselType, savedBoat.getVesselType());
     }
 
     @Test

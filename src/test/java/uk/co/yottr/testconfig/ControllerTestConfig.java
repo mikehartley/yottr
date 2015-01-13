@@ -23,7 +23,7 @@ import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

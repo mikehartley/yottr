@@ -204,17 +204,25 @@ public class BoatTest {
     @Test
     public void yearBuiltCantBeNull() {
         boat.setYearBuilt(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
     }
 
     @Test
     public void yearBuiltMustBeBetweenLimits() {
-        int inFiveYearsTime = LocalDate.now().getYear() + 5;
+        int thisYear = LocalDate.now().getYear();
+        final String expectedErrorMessage = "must be between 1900 and " + (thisYear + 2);
 
         boat.setYearBuilt(1899);
-        assertSingleViolation("must be greater than or equal to 1900");
+        assertSingleViolation(expectedErrorMessage);
 
-        boat.setYearBuilt(2021);
-        assertSingleViolation("must be less than...");
+        boat.setYearBuilt(thisYear + 3);
+        assertSingleViolation(expectedErrorMessage);
+    }
+
+    @Test
+    public void vesselTypeCantBeNull() {
+        boat.setVesselType(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
     }
 
     @Test
@@ -247,9 +255,9 @@ public class BoatTest {
 
     private void assertSingleViolation(String expectedErrorMessage) {
         Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals(violations.toString(), 1, violations.size());
+        assertEquals("Expected exactly one violation but got: " + violations.toString(), 1, violations.size());
         final ConstraintViolation<Boat> violation = violations.iterator().next();
-        assertEquals(violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
+        assertEquals("Expected error message for: " + violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
     }
 
     private Boat createValidBoat(User user) {
@@ -263,6 +271,7 @@ public class BoatTest {
         boat.setFinancialArrangement(FinancialArrangement.COMMERCIAL);
         boat.setFrequency(wrapInCollection(Frequency.TRIP));
         boat.setYearBuilt(2001);
+        boat.setVesselType(VesselType.SAIL);
         return boat;
     }
 

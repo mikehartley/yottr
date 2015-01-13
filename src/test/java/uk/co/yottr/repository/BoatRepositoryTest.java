@@ -21,7 +21,7 @@ import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

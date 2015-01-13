@@ -9,11 +9,10 @@ import static org.junit.Assert.assertEquals;
  * All rights reserved.
  */
 
-public class CountryTest {
-
+public class VesselTypeTest {
     @Test
     public void testGetDisplayName() throws Exception {
-        assertEquals("UK", Country.UK.getDisplayName());
-        assertEquals("Other", Country.OTHER.getDisplayName());
+        assertEquals("Sail", VesselType.SAIL.getDisplayName());
+        assertEquals("Power", VesselType.POWER.getDisplayName());
     }
 }

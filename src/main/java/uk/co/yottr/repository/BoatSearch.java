@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import uk.co.yottr.model.Boat;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

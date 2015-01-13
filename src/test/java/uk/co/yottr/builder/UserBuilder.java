@@ -8,7 +8,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

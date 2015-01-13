@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

@@ -4,7 +4,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import uk.co.yottr.config.AppConfig;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

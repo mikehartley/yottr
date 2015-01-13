@@ -3,7 +3,7 @@ package uk.co.yottr.controller;
 import org.springframework.data.domain.Page;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

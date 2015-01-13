@@ -58,8 +58,8 @@ public class Boat {
     private Smoking smoking = Smoking.NO;
 
     @Column(name = "year_built", nullable = false)
-    @NotNull
-    @Min(1900)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+//    @YearBuilt TODO reinstate when custom messages are figured out
     private Integer yearBuilt;
 
     public enum HullType {
@@ -69,6 +69,11 @@ public class Boat {
     @Column(name = "hull_type", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
     private HullType hullType = HullType.MONO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "vessel_type", nullable = false)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private VesselType vesselType;
 
     @Column(name = "description", nullable = false)
     @NotEmpty(message = REQUIRED_ERROR_MSG)
@@ -178,6 +183,14 @@ public class Boat {
 
     public void setHullType(HullType hullType) {
         this.hullType = hullType;
+    }
+
+    public VesselType getVesselType() {
+        return vesselType;
+    }
+
+    public void setVesselType(VesselType vesselType) {
+        this.vesselType = vesselType;
     }
 
     public String getDescription() {

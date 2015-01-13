@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 

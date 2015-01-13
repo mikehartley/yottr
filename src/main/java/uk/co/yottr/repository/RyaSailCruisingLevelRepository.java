@@ -4,7 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 
 /*
- * Copyright (c) 2014. Mike Hartley Solutions Ltd
+ * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
