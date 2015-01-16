@@ -28,6 +28,7 @@ public class BoatBuilder {
     private List<Frequency> frequencies = new ArrayList<>();
     private Integer yearBuilt = 2015;
     private VesselType vesselType = VesselType.SAIL;
+    private RoleRequired roleRequired = RoleRequired.MATE;
 
     {
         frequencies.add(Frequency.HOLIDAYS);
@@ -86,6 +87,7 @@ public class BoatBuilder {
         boat.setFrequency(frequencies);
         boat.setYearBuilt(yearBuilt);
         boat.setVesselType(vesselType);
+        boat.setRoleRequired(roleRequired);
 
         return boat;
     }

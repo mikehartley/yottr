@@ -235,6 +235,12 @@ public class BoatTest {
     }
 
     @Test
+    public void roleRequiredCantBeNull() {
+        boat.setRoleRequired(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
+    }
+
+    @Test
     public void ownerSetWithConstructor() {
         User owner1 = aUser().withUsername("u1").build();
         Boat ownersBoat = new Boat(owner1);
@@ -272,6 +278,7 @@ public class BoatTest {
         boat.setFrequency(wrapInCollection(Frequency.TRIP));
         boat.setYearBuilt(2001);
         boat.setVesselType(VesselType.SAIL);
+        boat.setRoleRequired(RoleRequired.SKIPPER);
         return boat;
     }
 

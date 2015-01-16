@@ -14,7 +14,7 @@ public class YearBuiltValidator implements ConstraintValidator<YearBuilt, Intege
     public static final int EARLIEST_EXPECTED_YEAR = 1900;
 
     @Override
-	public void initialize(YearBuilt paramA) {
+	public void initialize(YearBuilt constraintAnnotation) {
 	}
 
 	@Override
@@ -30,6 +30,7 @@ public class YearBuiltValidator implements ConstraintValidator<YearBuilt, Intege
 		if (!isValid)
 		{
 			ctx.disableDefaultConstraintViolation();
+			ctx.buildConstraintViolationWithTemplate("{validation.year.built.2}").addPropertyNode("msg").addConstraintViolation();
 		}
 
 		return isValid;

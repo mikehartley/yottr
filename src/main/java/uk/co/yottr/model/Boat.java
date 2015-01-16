@@ -2,6 +2,7 @@ package uk.co.yottr.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
+import uk.co.yottr.validator.YearBuilt;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -59,7 +60,7 @@ public class Boat {
 
     @Column(name = "year_built", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
-//    @YearBuilt TODO reinstate when custom messages are figured out
+    @YearBuilt //TODO reinstate when custom messages are figured out
     private Integer yearBuilt;
 
     public enum HullType {
@@ -93,6 +94,11 @@ public class Boat {
     @JoinColumn(name = "min_required_level")
     @NotNull(message = REQUIRED_ERROR_MSG)
     private RyaSailCruisingLevel minimumRequiredLevel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_required", nullable = false)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private RoleRequired roleRequired;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sailing_purpose", nullable = false)
@@ -241,6 +247,14 @@ public class Boat {
         }
         // if there's no match then nothing gets set, but this would only happen if someone
         // has been messing about with the request parameters
+    }
+
+    public RoleRequired getRoleRequired() {
+        return roleRequired;
+    }
+
+    public void setRoleRequired(RoleRequired roleRequired) {
+        this.roleRequired = roleRequired;
     }
 
     public SailingPurpose getSailingPurpose() {

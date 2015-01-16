@@ -14,7 +14,6 @@ Where from : this is important! for now either free text, or list of marinas
     List of countries, then location.
 Where to: only mandatory if frequency=trip
 Travel expenses: paid by crew, paid by owner, negotiable
-Looking for (role required) : crew, mate, skipper, doesn't matter
 
 -----
 DONE:
@@ -40,6 +39,7 @@ Purpose: Delivery, Cruising, Racing, Long term, Professional
 Number of crew wanted : min (must be > 0), max (optional, <99)
 Frequency : weekdays, weekends, holidays, long-term, trip (one off)
 Smoking : No, Yes outside, Yes inside/outside
+Looking for (role required) : crew, mate, skipper, doesn't matter
 
 ===========
 

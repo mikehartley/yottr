@@ -119,6 +119,7 @@ public class BoatServiceIT {
         final Collection<Frequency> frequencies = Arrays.asList(Frequency.HOLIDAYS);
         final Integer yearBuilt = 2015;
         final VesselType vesselType = VesselType.SAIL;
+        final RoleRequired roleRequired = RoleRequired.SKIPPER;
 
         Boat boat = new Boat(owner);
         boat.setTitle(title);
@@ -135,6 +136,7 @@ public class BoatServiceIT {
         boat.setFrequency(frequencies);
         boat.setYearBuilt(yearBuilt);
         boat.setVesselType(vesselType);
+        boat.setRoleRequired(roleRequired);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -156,6 +158,7 @@ public class BoatServiceIT {
         assertEquals("frequency", frequencies, savedBoat.getFrequency());
         assertEquals("yearBuilt", yearBuilt, savedBoat.getYearBuilt());
         assertEquals("vesselType", vesselType, savedBoat.getVesselType());
+        assertEquals("roleRequired", roleRequired, savedBoat.getRoleRequired());
     }
 
     @Test
