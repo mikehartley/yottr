@@ -11,14 +11,13 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = YearBuiltValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface YearBuilt {
- 
-    String message() default "{validation.year.built.1}";
-     
-    Class<?>[] groups() default {};
-     
-    Class<? extends Payload>[] payload() default {};
 
+    String message() default "{validation.year.built.1}";
+
+    // required but not used
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
 }

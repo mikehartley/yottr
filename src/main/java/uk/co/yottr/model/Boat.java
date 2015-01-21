@@ -25,6 +25,7 @@ import java.util.Random;
 public class Boat {
 
     private static final String REQUIRED_ERROR_MSG = "required";
+    public static final String DATE_PATTERN = "dd/MM/yyyy";
 
     @Id
     @GeneratedValue
@@ -60,11 +61,11 @@ public class Boat {
 
     @Column(name = "year_built", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
-    @YearBuilt //TODO reinstate when custom messages are figured out
+    @YearBuilt
     private Integer yearBuilt;
 
     public enum HullType {
-        MONO, MULTI;
+        MONO, MULTI
     }
     @Enumerated(EnumType.STRING)
     @Column(name = "hull_type", nullable = false)
@@ -86,9 +87,17 @@ public class Boat {
     @Column(name = "last_updated", nullable = false)
     private LocalDate lastUpdated;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = DATE_PATTERN)
     @Column(name = "date_relevant_to")
     private LocalDate dateRelevantTo;
+
+    @DateTimeFormat(pattern = DATE_PATTERN)
+    @Column(name = "when_from")
+    private LocalDate whenFrom; //TODO validation - cross field
+
+    @DateTimeFormat(pattern = DATE_PATTERN)
+    @Column(name = "when_to")
+    private LocalDate whenTo; //TODO validation - cross field
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "min_required_level")
@@ -115,6 +124,11 @@ public class Boat {
     @JoinColumn(name = "financial_arrangement")
     @NotNull(message = REQUIRED_ERROR_MSG)
     private FinancialArrangement financialArrangement;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "travel_expenses", nullable = false)
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private TravelExpenses travelExpenses = TravelExpenses.PAID_BY_CREW;
 
     @Column(name = "number_wanted")
     @Min(1)
@@ -227,6 +241,22 @@ public class Boat {
         this.dateRelevantTo = dateRelevantTo;
     }
 
+    public LocalDate getWhenFrom() {
+        return whenFrom;
+    }
+
+    public void setWhenFrom(LocalDate whenFrom) {
+        this.whenFrom = whenFrom;
+    }
+
+    public LocalDate getWhenTo() {
+        return whenTo;
+    }
+
+    public void setWhenTo(LocalDate whenTo) {
+        this.whenTo = whenTo;
+    }
+
     public RyaSailCruisingLevel getMinimumRequiredLevel() {
         return minimumRequiredLevel;
     }
@@ -279,6 +309,14 @@ public class Boat {
 
     public void setFinancialArrangement(FinancialArrangement financialArrangement) {
         this.financialArrangement = financialArrangement;
+    }
+
+    public TravelExpenses getTravelExpenses() {
+        return travelExpenses;
+    }
+
+    public void setTravelExpenses(TravelExpenses travelExpenses) {
+        this.travelExpenses = travelExpenses;
     }
 
     public Integer getNumberOfCrewWanted() {

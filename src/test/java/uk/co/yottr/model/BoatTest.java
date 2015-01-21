@@ -138,6 +138,17 @@ public class BoatTest {
     }
 
     @Test
+    public void travelExpensesNotNull() {
+        boat.setTravelExpenses(null);
+        assertSingleViolation(REQUIRED_ERROR_MSG);
+    }
+
+    @Test
+    public void travelExpensesDefault() {
+        assertEquals(TravelExpenses.PAID_BY_CREW, boat.getTravelExpenses());
+    }
+
+    @Test
     public void canSetAndGetMinQualificationByRank() {
         boat.setMinimumRequiredLevel(RyaSailCruisingLevel.NONE);
 
@@ -238,6 +249,18 @@ public class BoatTest {
     public void roleRequiredCantBeNull() {
         boat.setRoleRequired(null);
         assertSingleViolation(REQUIRED_ERROR_MSG);
+    }
+
+    @Test
+    public void getAndSetWhenFields() {
+        final LocalDate whenFrom = LocalDate.of(2001, 1, 1);
+        final LocalDate whenTo = LocalDate.of(2002, 2, 2);
+
+        boat.setWhenFrom(whenFrom);
+        boat.setWhenTo(whenTo);
+
+        assertEquals(whenFrom, boat.getWhenFrom());
+        assertEquals(whenTo, boat.getWhenTo());
     }
 
     @Test

@@ -112,7 +112,9 @@ public class BoatServiceIT {
         final RyaSailCruisingLevel minLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.COASTAL_SKIPPER);
         final SailingPurpose sailingPurpose = SailingPurpose.RACING;
         final LocalDate now = LocalDate.now();
-        final LocalDate dateRelevantTo = LocalDate.now();
+        final LocalDate whenFrom = LocalDate.of(2009, 8, 8);
+        final LocalDate whenTo = LocalDate.of(2010, 9, 9);
+        final LocalDate dateRelevantTo = LocalDate.of(2010, 10, 10);
         final User owner = createUser();
         final FinancialArrangement financialArrangement = FinancialArrangement.COMMERCIAL;
         final Integer numberOfCrewWanted = 5;
@@ -120,6 +122,7 @@ public class BoatServiceIT {
         final Integer yearBuilt = 2015;
         final VesselType vesselType = VesselType.SAIL;
         final RoleRequired roleRequired = RoleRequired.SKIPPER;
+        final TravelExpenses travelExpenses = TravelExpenses.NEGOTIABLE;
 
         Boat boat = new Boat(owner);
         boat.setTitle(title);
@@ -130,6 +133,8 @@ public class BoatServiceIT {
         boat.setMakeAndModel(makeAndModel);
         boat.setMinimumRequiredLevel(minLevel);
         boat.setSailingPurpose(sailingPurpose);
+        boat.setWhenFrom(whenFrom);
+        boat.setWhenTo(whenTo);
         boat.setDateRelevantTo(dateRelevantTo);
         boat.setFinancialArrangement(financialArrangement);
         boat.setNumberOfCrewWanted(numberOfCrewWanted);
@@ -137,6 +142,7 @@ public class BoatServiceIT {
         boat.setYearBuilt(yearBuilt);
         boat.setVesselType(vesselType);
         boat.setRoleRequired(roleRequired);
+        boat.setTravelExpenses(travelExpenses);
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -151,6 +157,8 @@ public class BoatServiceIT {
         assertEquals("last updated", now, savedBoat.getLastUpdated());
         assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());
         assertEquals("sailing style", sailingPurpose, savedBoat.getSailingPurpose());
+        assertEquals("when from", whenFrom, savedBoat.getWhenFrom());
+        assertEquals("when to", whenTo, savedBoat.getWhenTo());
         assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
         assertEquals("owner", owner, savedBoat.getOwner());
         assertEquals("financialArrangement", financialArrangement, savedBoat.getFinancialArrangement());
@@ -159,6 +167,7 @@ public class BoatServiceIT {
         assertEquals("yearBuilt", yearBuilt, savedBoat.getYearBuilt());
         assertEquals("vesselType", vesselType, savedBoat.getVesselType());
         assertEquals("roleRequired", roleRequired, savedBoat.getRoleRequired());
+        assertEquals("travelExpenses", travelExpenses, savedBoat.getTravelExpenses());
     }
 
     @Test

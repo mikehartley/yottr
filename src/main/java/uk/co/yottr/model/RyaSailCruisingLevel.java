@@ -23,7 +23,7 @@ public class RyaSailCruisingLevel {
         public final int rank;
         public final String displayName;
 
-        Level(int rank, String displayName) {
+        private Level(int rank, String displayName) {
             this.rank = rank;
             this.displayName = displayName;
         }

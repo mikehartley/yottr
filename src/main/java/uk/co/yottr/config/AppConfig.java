@@ -32,7 +32,7 @@ import uk.co.yottr.conversion.DateFormatter;
 @Configuration
 @EnableWebMvc
 @EnableSpringDataWebSupport
-@ComponentScan(value = { "uk.co.yottr.model", "uk.co.yottr.controller", "uk.co.yottr.service" })
+@ComponentScan(value = { "uk.co.yottr.model", "uk.co.yottr.controller", "uk.co.yottr.service", "uk.co.yottr.validator" })
 @Import({ SecurityConfig.class, PersistenceConfig.class })
 public class AppConfig extends WebMvcConfigurerAdapter {
 
@@ -104,4 +104,9 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         resolver.setCacheable(false);
         return resolver;
     }
+
+//    @Bean TODO figure out how to wire up a custom message interpolator!
+//    public MessageInterpolator messageInterpolator() {
+//        return new CustomMessageInterpolator(MessageSourceResourceBundleLocator )
+//    }
 }
