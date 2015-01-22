@@ -16,6 +16,6 @@ public class SailingPurposeTest {
         assertEquals("Racing", SailingPurpose.RACING.getDisplayName());
         assertEquals("Long Term", SailingPurpose.LONG_TERM.getDisplayName());
         assertEquals("Delivery", SailingPurpose.DELIVERY.getDisplayName());
-        assertEquals("Professional", SailingPurpose.PROFESSIONAL.getDisplayName());
+        assertEquals("Course", SailingPurpose.COURSE.getDisplayName());
     }
 }

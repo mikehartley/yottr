@@ -45,7 +45,7 @@ public class ReferenceDataServiceTest {
         assertEquals(SailingPurpose.RACING, sailingPurposes.get(1));
         assertEquals(SailingPurpose.DELIVERY, sailingPurposes.get(2));
         assertEquals(SailingPurpose.LONG_TERM, sailingPurposes.get(3));
-        assertEquals(SailingPurpose.PROFESSIONAL, sailingPurposes.get(4));
+        assertEquals(SailingPurpose.COURSE, sailingPurposes.get(4));
     }
     
     @Test

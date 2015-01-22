@@ -1,16 +1,17 @@
 ADVERT
 ------
 Picture(s)
-Money Amount : if financial arrangements is not 'no contrib' then must be >0 otherwise 0. Variable still needs an estimate but this can be made clear.
+Money Amount : if financial arrangements is not 'no contrib' then must be
+               >0 otherwise 0. Variable still needs an estimate but this
+               can be made clear.
 Money Amount Period : Per - day, week, month, year, trip, course
-Commercial offering : bareboat charter, skippered charter, skippered trip, tuition (if FinArr=Commercial)
-Whole boat : yes, no (if FinArr=Commercial)
-Tuition level : SY, CC, DS, CS wk, YMC, YMOff (if Purpose=Tuition)
+Commercial offering : bareboat charter, skippered charter, skippered trip,
+                      tuition (if FinArr=Commercial)
 *Year built
-Where from : this is important! for now either free text, or list of marinas
-    List of countries, then location.
+Where from : this is important! for now either free text, or list of
+             marinas.
+             List of countries, then location.
 Where to: only mandatory if frequency=trip
-Travel expenses: paid by crew, paid by owner, negotiable
 
 -------------------------------
 CROSS-FIELD VALIDATION REQUIRED
@@ -18,6 +19,7 @@ CROSS-FIELD VALIDATION REQUIRED
 When [from-to]
     From: must be before To if To is not null. may be null
     To: must be after To, or may be null which means open ended
+Course level : SY, CC, DS, CS wk, YMC, YMOff (if Purpose=Course)
 
 -----
 DONE:
@@ -36,6 +38,7 @@ Financial arrangements :
     shared variable,
     priced (a commercial offering),
     paid position
+Travel expenses: paid by crew, paid by owner, negotiable
 Qualifications (or Equivalent) : None - RYA YM Ocean
 Length
 Hull type: mono, multi
@@ -45,11 +48,30 @@ Frequency : weekdays, weekends, holidays, long-term, trip (one off)
 Smoking : No, Yes outside, Yes inside/outside
 Looking for (role required) : crew, mate, skipper, doesn't matter
 
-===========
+==========================================================================
 
-Locations is the most tricky. For now I'm thinking a list of counties then free text which I can come
-along to later and clean up and add lat/long. Could have list of marinas as planned. Ultimately it
-should be looked up via a service using AJAX.
+Locations is the most tricky. For now I'm thinking a list of counties
+then free text which I can come along to later and clean up and add
+lat/long. Could have list of marinas as planned. Ultimately it should
+be looked up via a service using AJAX.
 
-===========
+==========================================================================
 
+State Relationships
+-------------------
+Financial Arr:       No Contrib, Food Only, Shared Fixed, Shared Variable,
+                     Commercial, Paid
+Purpose:             Cruising, Racing, Delivery, Long Term, Course
+Commercial offering: Bareboat Charter, Skippered Charter,
+                     Skippered Trip, Tuition
+Course Level:        SY, CC, ...
+
+Financial Arr:      Purpose     Commercial Offering     Course Level
+    No contrib      [*]         .                       .
+    Food only       [*]         .                       .
+    Shared fixed    [*]         .                       .
+    Shared variable [*]         .                       .
+    Paid            [*]         .                       .
+    Commercial      [*]         [FA=Commercial]         [CO=Tuition]
+
+==========================================================================

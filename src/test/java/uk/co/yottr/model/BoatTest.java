@@ -138,6 +138,15 @@ public class BoatTest {
     }
 
     @Test
+    public void courseLevel() {
+        assertNull("course level should initially be null", boat.getCourseLevel());
+
+        final CourseLevel courseLevel = CourseLevel.DAY_SKIPPER;
+        boat.setCourseLevel(courseLevel);
+        assertEquals("course level didn't get set", courseLevel, boat.getCourseLevel());
+    }
+
+    @Test
     public void travelExpensesNotNull() {
         boat.setTravelExpenses(null);
         assertSingleViolation(REQUIRED_ERROR_MSG);

@@ -5,7 +5,7 @@ package uk.co.yottr.model;
  * All rights reserved.
  */
 
-public enum VesselType {
+public enum VesselType implements DisplayableName {
 
     SAIL("Sail"),
     POWER("Power");
@@ -16,6 +16,7 @@ public enum VesselType {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }

@@ -5,7 +5,7 @@ package uk.co.yottr.model;
  * All rights reserved.
  */
 
-public enum Smoking {
+public enum Smoking implements DisplayableName {
     NO("No"),
     YES_OUTSIDE("Yes - outside only"),
     YES_ANYWHERE("Yes - inside and outside");
@@ -16,6 +16,7 @@ public enum Smoking {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }

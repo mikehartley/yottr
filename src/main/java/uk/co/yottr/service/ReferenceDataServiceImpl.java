@@ -37,7 +37,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         sailingPurposes.add(SailingPurpose.RACING);
         sailingPurposes.add(SailingPurpose.DELIVERY);
         sailingPurposes.add(SailingPurpose.LONG_TERM);
-        sailingPurposes.add(SailingPurpose.PROFESSIONAL);
+        sailingPurposes.add(SailingPurpose.COURSE);
 
         return sailingPurposes;
     }
@@ -75,6 +75,8 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 
         return financialArrangementEnums;
     }
+
+
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {
         @Override

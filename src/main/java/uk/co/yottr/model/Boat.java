@@ -126,6 +126,11 @@ public class Boat {
     private FinancialArrangement financialArrangement;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "course_level")
+    //TODO validation - cross field
+    private CourseLevel courseLevel;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "travel_expenses", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
     private TravelExpenses travelExpenses = TravelExpenses.PAID_BY_CREW;
@@ -309,6 +314,14 @@ public class Boat {
 
     public void setFinancialArrangement(FinancialArrangement financialArrangement) {
         this.financialArrangement = financialArrangement;
+    }
+
+    public CourseLevel getCourseLevel() {
+        return courseLevel;
+    }
+
+    public void setCourseLevel(CourseLevel courseLevel) {
+        this.courseLevel = courseLevel;
     }
 
     public TravelExpenses getTravelExpenses() {

@@ -8,7 +8,7 @@ package uk.co.yottr.model;
 /**
  * Defines the purpose of the sailing.
  */
-public enum SailingPurpose {
+public enum SailingPurpose implements DisplayableName {
     /**Cruising*/
     CRUISING("Cruising"),
     /**Racing*/
@@ -17,8 +17,8 @@ public enum SailingPurpose {
     DELIVERY("Delivery"),
     /**An extended period of sailing such as an ocean crossing, or expedition.*/
     LONG_TERM("Long Term"),
-    /**Where the owner wants to pay someone to come on board in a professional capacity..*/
-    PROFESSIONAL("Professional");
+    /**Sailing course - RYA probably.*/
+    COURSE("Course");
 
     private final String displayName;
 
@@ -30,6 +30,7 @@ public enum SailingPurpose {
      * A displayable name for the enum value.
      * @return a human readable string.
      */
+    @Override
     public String getDisplayName() {
         return displayName;
     }

@@ -5,7 +5,7 @@ package uk.co.yottr.model;
  * All rights reserved.
  */
 
-public enum TravelExpenses {
+public enum TravelExpenses implements DisplayableName {
     PAID_BY_CREW("Paid by crew"),
     PAID_BY_OWNER("Paid by owner"),
     NEGOTIABLE("Negotiable");
@@ -16,6 +16,7 @@ public enum TravelExpenses {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }

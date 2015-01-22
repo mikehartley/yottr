@@ -5,7 +5,7 @@ package uk.co.yottr.model;
  * All rights reserved.
  */
 
-public enum Country {
+public enum Country implements DisplayableName {
 
     UK("UK"),
     OTHER("Other");
@@ -16,6 +16,7 @@ public enum Country {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }

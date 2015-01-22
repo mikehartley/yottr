@@ -5,7 +5,7 @@ package uk.co.yottr.model;
  * All rights reserved.
  */
 
-public enum RoleRequired {
+public enum RoleRequired implements DisplayableName {
 
     CREW("Crew"),
     MATE("Mate"),
@@ -18,6 +18,7 @@ public enum RoleRequired {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
