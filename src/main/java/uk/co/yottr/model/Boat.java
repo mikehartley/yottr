@@ -147,8 +147,7 @@ public class Boat {
     private boolean suspended;
 
     /**
-     * For Hibernate, and for Spring MVC to bind forms to. It must be public: with only one public
-     * constructor, Spring binds through that one instead, and Boat(User) fails with no owner.
+     * For Hibernate.
      */
     public Boat() {
         this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import uk.co.yottr.form.MyDetailsForm;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.ReferenceDataService;
@@ -133,11 +134,14 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().hasErrors())
                 .andExpect(view().name("signup"))
-                .andExpect(model().size(1))
+                .andExpect(model().size(2))
                 .andExpect(model().attributeExists(userAttribute))
-                .andExpect(model().attribute(userAttribute, hasProperty(usernameProperty, nullValue())));
+                .andExpect(model().attribute(userAttribute, hasProperty(usernameProperty, nullValue())))
+                .andExpect(model().attributeExists("countries"));
 
         verify(mockUserService, never()).save(any(User.class), eq(true));
+        // the form is shown again, so it needs the countries again
+        verify(mockReferenceDataService).countries();
     }
 
     @Test
@@ -147,14 +151,21 @@ public class UserControllerTest extends AbstractControllerTest {
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
-        when(mockUserService.findByUsername(username)).thenReturn(new User());
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
 
         mockMvc.perform(get("/s/myDetails").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
                 .andExpect(view().name("myDetails"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(2))
-                .andExpect(model().attributeExists("user"))
+                .andExpect(model().size(5))
+                .andExpect(model().attribute("user", allOf(
+                        instanceOf(MyDetailsForm.class),
+                        hasProperty("firstName", equalTo(user.getFirstName())),
+                        hasProperty("password", nullValue()))))
+                .andExpect(model().attribute("username", equalTo(username)))
+                .andExpect(model().attribute("listingCount", equalTo(1)))
+                .andExpect(model().attribute("maxListings", equalTo(user.getMaxListings())))
                 .andExpect(model().attributeExists("countries"));
 
         verify(mockUserService).findByUsername(username);

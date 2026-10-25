@@ -2,7 +2,6 @@ package uk.co.yottr.model;
 
 import org.springframework.stereotype.Component;
 import uk.co.yottr.security.Role;
-import uk.co.yottr.validator.UsernameAvailable;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -32,7 +31,6 @@ public class User {
     @Column(name = "username", unique = true, nullable = false, length = 50)
     @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 2, max = 50)
-    @UsernameAvailable
     private String username;
 
     @Column(name = "password", nullable = false, length = 60)

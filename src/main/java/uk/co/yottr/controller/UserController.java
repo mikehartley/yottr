@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import uk.co.yottr.form.MyDetailsForm;
+import uk.co.yottr.form.SignupForm;
 import uk.co.yottr.model.User;
 import uk.co.yottr.security.Role;
 import uk.co.yottr.service.ReferenceDataService;
@@ -36,24 +39,28 @@ public class UserController {
         this.referenceDataService = referenceDataService;
     }
 
+    // The forms bind to SignupForm and MyDetailsForm, never to User, so a request can't set the id, roles,
+    // listing limit or enabled flag. Binding sign-up to User let a request with an id overwrite that account.
+
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public ModelAndView signup() {
 
         ModelAndView modelAndView = new ModelAndView("signup");
-        modelAndView.addObject("user", new User());
+        modelAndView.addObject("user", new SignupForm());
         modelAndView.addObject("countries", referenceDataService.countries());
 
         return modelAndView;
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String signupAction(@Valid User user, BindingResult bindingResult, Model model) {
+    public String signupAction(@Valid @ModelAttribute("user") SignupForm signupForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
+            model.addAttribute("countries", referenceDataService.countries());
             return "signup";
         }
 
-        model.addAttribute("user", user);
+        final User user = signupForm.toUser();
         user.addRole(Role.FREE);
         user.setEnabled(true);
 
@@ -75,51 +82,43 @@ public class UserController {
             return new ModelAndView("index");
         }
 
-        currentUser.setPassword(null);
-
-        ModelAndView modelAndView = new ModelAndView("myDetails");
-        modelAndView.addObject("user", currentUser);
-        modelAndView.addObject("countries", referenceDataService.countries());
-
-        return modelAndView;
+        return modelAndViewForMyDetails(MyDetailsForm.from(currentUser), currentUser);
     }
 
     @RequestMapping(value = "/s/myDetails", method = RequestMethod.POST)
-    public String myDetailsAction(@Valid User userFromForm, BindingResult bindingResult, Principal principal) {
+    public ModelAndView myDetailsAction(@Valid @ModelAttribute("user") MyDetailsForm myDetailsForm, BindingResult bindingResult,
+                                        Principal principal) {
 
         final User userForUpdate = userService.findByUsername(principal.getName());
 
-        if (bindingResult.getErrorCount() > 1) { // will always be username error
-
-            if (bindingResult.getErrorCount() == 2 && bindingResult.hasFieldErrors("password") && nullOrEmpty(userFromForm.getPassword())) {
-                LOG.info("password is in error because it is empty, but this just actually means keep existing password");
-            }
-            else {
-                LOG.info("Errors from myDetails: " + bindingResult.getAllErrors().toString());
-                return "myDetails";
-            }
+        if (bindingResult.hasErrors()) {
+            LOG.info("Errors from myDetails: " + bindingResult.getAllErrors().toString());
+            return modelAndViewForMyDetails(myDetailsForm, userForUpdate);
         }
 
-        userForUpdate.setTitle(userFromForm.getTitle());
-        userForUpdate.setFirstName(userFromForm.getFirstName());
-        userForUpdate.setLastName(userFromForm.getLastName());
-        userForUpdate.setEmail(userFromForm.getEmail());
-        userForUpdate.setMobile(userFromForm.getMobile());
-        userForUpdate.setCountry(userFromForm.getCountry());
-        userForUpdate.setPostcode(userFromForm.getPostcode());
-        userForUpdate.setAboutMe(userFromForm.getAboutMe());
+        myDetailsForm.applyTo(userForUpdate);
 
-        if (nullOrEmpty(userFromForm.getPassword())) {
-            userService.save(userForUpdate, false);
+        if (myDetailsForm.isChangingPassword()) {
+            userForUpdate.setPassword(myDetailsForm.getPassword());
+            userService.save(userForUpdate, true);
         }
         else {
-            userForUpdate.setPassword(userFromForm.getPassword());
-            userService.save(userForUpdate, true);
+            userService.save(userForUpdate, false);
         }
 
         LOG.info("Updated user: " + userForUpdate);
 
-        return "redirect:myDetails?updated";
+        return new ModelAndView("redirect:myDetails?updated");
+    }
+
+    private ModelAndView modelAndViewForMyDetails(MyDetailsForm myDetailsForm, User user) {
+        ModelAndView modelAndView = new ModelAndView("myDetails");
+        modelAndView.addObject("user", myDetailsForm);
+        modelAndView.addObject("username", user.getUsername());
+        modelAndView.addObject("listingCount", user.getBoatListings().size());
+        modelAndView.addObject("maxListings", user.getMaxListings());
+        modelAndView.addObject("countries", referenceDataService.countries());
+        return modelAndView;
     }
 
     @RequestMapping(value = "/s/deleteMe", method = RequestMethod.GET)
@@ -137,10 +136,6 @@ public class UserController {
 
         userService.delete(currentUser);
         return logoutUrl;
-    }
-
-    private boolean nullOrEmpty(String string) {
-        return string == null || "".equals(string);
     }
 }
 

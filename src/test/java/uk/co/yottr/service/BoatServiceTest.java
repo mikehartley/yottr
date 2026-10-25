@@ -12,17 +12,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import uk.co.yottr.builder.BoatBuilder;
-import uk.co.yottr.model.Boat;
-import uk.co.yottr.model.RyaSailCruisingLevel;
-import uk.co.yottr.model.User;
+import uk.co.yottr.form.ListingForm;
+import uk.co.yottr.model.*;
 import uk.co.yottr.repository.BoatRepository;
+import uk.co.yottr.repository.FinancialArrangementRepository;
+import uk.co.yottr.repository.FrequencyRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
@@ -44,6 +49,12 @@ public class BoatServiceTest {
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
 
     @Mock
+    private FrequencyRepository frequencyRepository;
+
+    @Mock
+    private FinancialArrangementRepository financialArrangementRepository;
+
+    @Mock
     private TemporalProvider temporalProvider;
 
     private User owner;
@@ -54,9 +65,79 @@ public class BoatServiceTest {
         reset(ryaSailCruisingLevelRepository);
         reset(temporalProvider);
 
-        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository, temporalProvider);
+        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository, frequencyRepository,
+                financialArrangementRepository, temporalProvider);
 
         owner = aUser().build();
+    }
+
+    private ListingForm aListingForm() {
+        final ListingForm form = new ListingForm();
+        form.setTitle("Crew wanted");
+        form.setMakeAndModel("Sigma 33");
+        form.setLength(33);
+        form.setUnitsImperial(false);
+        form.setHullType(Boat.HullType.MULTI);
+        form.setVesselType(VesselType.SAIL);
+        form.setYearBuilt(1987);
+        form.setDescription("Relaxed weekend cruising.");
+        form.setSailingPurpose(SailingPurpose.RACING);
+        form.setRoleRequired(RoleRequired.MATE);
+        form.setFrequency(List.of(Frequency.FrequencyEnum.WEEKENDS, Frequency.FrequencyEnum.TRIP));
+        form.setDateRelevantTo(LocalDate.of(2027, 6, 14));
+        form.setMinimumRequiredLevelByRank(RyaSailCruisingLevel.DAY_SKIPPER.getRank());
+        form.setFinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAID);
+        return form;
+    }
+
+    private void givenStoredReferenceData() {
+        when(ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.DAY_SKIPPER.getRank())).thenReturn(RyaSailCruisingLevel.DAY_SKIPPER);
+        when(frequencyRepository.findAllById(List.of("WEEKENDS", "TRIP"))).thenReturn(List.of(Frequency.WEEKENDS, Frequency.TRIP));
+        when(financialArrangementRepository.findById("PAID")).thenReturn(Optional.of(FinancialArrangement.PAID));
+        when(boatRepository.save(any(Boat.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    }
+
+    private void assertMatchesTheForm(Boat boat) {
+        assertEquals("Crew wanted", boat.getTitle());
+        assertEquals("Sigma 33", boat.getMakeAndModel());
+        assertEquals(Integer.valueOf(33), boat.getLength());
+        assertEquals(false, boat.isUnitsImperial());
+        assertEquals(Boat.HullType.MULTI, boat.getHullType());
+        assertEquals(VesselType.SAIL, boat.getVesselType());
+        assertEquals(Integer.valueOf(1987), boat.getYearBuilt());
+        assertEquals("Relaxed weekend cruising.", boat.getDescription());
+        assertEquals(SailingPurpose.RACING, boat.getSailingPurpose());
+        assertEquals(RoleRequired.MATE, boat.getRoleRequired());
+        assertEquals(List.of(Frequency.WEEKENDS, Frequency.TRIP), boat.getFrequency());
+        assertEquals(LocalDate.of(2027, 6, 14), boat.getDateRelevantTo());
+        assertSame(RyaSailCruisingLevel.DAY_SKIPPER, boat.getMinimumRequiredLevel());
+        assertSame(FinancialArrangement.PAID, boat.getFinancialArrangement());
+    }
+
+    @Test
+    public void createUsesTheStoredReferenceData() {
+        givenStoredReferenceData();
+
+        final Boat created = boatService.create(owner, aListingForm());
+
+        assertMatchesTheForm(created);
+        assertSame(owner, created.getOwner());
+        assertTrue(owner.getBoatListings().contains(created), "the owner's listings include the new one");
+    }
+
+    @Test
+    public void updateChangesOnlyTheFieldsOnTheForm() {
+        givenStoredReferenceData();
+        final Boat boat = BoatBuilder.aBoat().withOwner(owner).withSuspended(true).build();
+        final String reference = boat.getReference();
+
+        final Boat updated = boatService.update(boat, aListingForm());
+
+        assertSame(boat, updated);
+        assertMatchesTheForm(updated);
+        assertEquals(reference, updated.getReference(), "reference");
+        assertSame(owner, updated.getOwner(), "owner");
+        assertTrue(updated.isSuspended(), "editing must not change whether the listing is suspended");
     }
 
     @Test

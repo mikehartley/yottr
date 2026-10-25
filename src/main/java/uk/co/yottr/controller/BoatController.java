@@ -7,14 +7,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.exception.ResourceNotFoundException;
+import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
-import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
@@ -50,14 +51,17 @@ public class BoatController {
 
         ModelAndView modelAndView = new ModelAndView("newListing");
 
-        modelAndView.addObject("boat", new Boat(user));
+        modelAndView.addObject("boat", new ListingForm());
         addModelAttributesForNewListing(modelAndView, user);
 
         return modelAndView;
 	}
 
+    // The listing forms bind to ListingForm, never to Boat, so a request can only set the fields on the form.
+
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.POST)
-	public ModelAndView newListingAction(@Valid Boat boat, BindingResult bindingResult, Principal principal) throws IllegalOperationException {
+	public ModelAndView newListingAction(@Valid @ModelAttribute("boat") ListingForm listingForm, BindingResult bindingResult,
+                                         Principal principal) throws IllegalOperationException {
         final User user = userService.findByUsername(principal.getName());
 
         if (bindingResult.hasErrors()) {
@@ -71,8 +75,7 @@ public class BoatController {
 
         checkIsWithinListingLimit(user);
 
-        boat.setOwner(user);
-        boatService.save(boat);
+        final Boat boat = boatService.create(user, listingForm);
 
         modelAndView.addObject("boat", boat);
 
@@ -131,7 +134,7 @@ public class BoatController {
         final Boat boat = findBoat(boatReference, principal);
 
         final ModelAndView modelAndView = new ModelAndView("editListing");
-        modelAndView.addObject("boat", boat);
+        modelAndView.addObject("boat", ListingForm.from(boat));
         modelAndView.addObject("boatReference", boatReference);
         addListingFormReferenceData(modelAndView);
 
@@ -139,11 +142,10 @@ public class BoatController {
     }
 
     @RequestMapping(value = "/s/listings/{boatReference}/edit", method = RequestMethod.POST)
-    public ModelAndView editListingAction(@Valid Boat boatFromForm, BindingResult bindingResult,
+    public ModelAndView editListingAction(@Valid @ModelAttribute("boat") ListingForm listingForm, BindingResult bindingResult,
                                           @PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
-            // the bound boat has a newly generated reference, so the form posts back using the one from the path
             final ModelAndView modelAndView = new ModelAndView("editListing");
             modelAndView.addObject("boatReference", boatReference);
             addListingFormReferenceData(modelAndView);
@@ -152,27 +154,8 @@ public class BoatController {
 
         final Boat boatForUpdate = findBoat(boatReference, principal);
 
-        // The form only carries the level's rank. Look up the stored level first: boatForUpdate is managed by
-        // Hibernate and gets flushed before the next query, so it must never refer to an unsaved level.
-        final RyaSailCruisingLevel minimumRequiredLevel = boatService.findLevelByRank(boatFromForm.getMinimumRequiredLevelByRank());
-
         // suspended is not on the form; it is changed with /suspended/flip
-        boatForUpdate.setTitle(boatFromForm.getTitle());
-        boatForUpdate.setMakeAndModel(boatFromForm.getMakeAndModel());
-        boatForUpdate.setLength(boatFromForm.getLength());
-        boatForUpdate.setUnitsImperial(boatFromForm.isUnitsImperial());
-        boatForUpdate.setHullType(boatFromForm.getHullType());
-        boatForUpdate.setVesselType(boatFromForm.getVesselType());
-        boatForUpdate.setYearBuilt(boatFromForm.getYearBuilt());
-        boatForUpdate.setDescription(boatFromForm.getDescription());
-        boatForUpdate.setDateRelevantTo(boatFromForm.getDateRelevantTo());
-        boatForUpdate.setMinimumRequiredLevel(minimumRequiredLevel);
-        boatForUpdate.setRoleRequired(boatFromForm.getRoleRequired());
-        boatForUpdate.setSailingPurpose(boatFromForm.getSailingPurpose());
-        boatForUpdate.setFrequency(boatFromForm.getFrequency());
-        boatForUpdate.setFinancialArrangement(boatFromForm.getFinancialArrangement());
-
-        final Boat updatedBoat = boatService.save(boatForUpdate);
+        final Boat updatedBoat = boatService.update(boatForUpdate, listingForm);
 
         final ModelAndView modelAndView = new ModelAndView("redirect:/s/listings/mine?updated");
         modelAndView.addObject("boat", updatedBoat);

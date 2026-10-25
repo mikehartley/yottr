@@ -7,11 +7,11 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
 import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.RoleRequired;
-import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingPurpose;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.VesselType;
@@ -25,9 +25,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -133,6 +133,9 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockUserService.findByUsername(username)).thenReturn(user);
 
         final String boatAttribute = "boat";
+        // owned by another user: built for this user, it would count towards their listing limit before the request
+        final Boat createdBoat = aBoat().withOwner(aUser().build()).build();
+        when(mockBoatService.create(eq(user), any(ListingForm.class))).thenReturn(createdBoat);
 
         final String titleProperty = "title";
         final String titleValue = "titleValue";
@@ -150,7 +153,6 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String sailingPurposeValue = "CRUISING";
         final String minimumQualificationByRankProperty = "minimumRequiredLevelByRank";
         final String minimumQualificationValue = "400";
-        final String minimumQualificationProperty = "minimumRequiredLevel";
         final int minimumQualificationValueAsInt = Integer.parseInt(minimumQualificationValue);
         final String dateRelevantToProperty = "dateRelevantTo";
         final String dateRelevantToValue= "26/09/2014";
@@ -177,20 +179,27 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("newListingSuccess"))
                 .andExpect(model().size(1))
-                .andExpect(model().attributeExists(boatAttribute))
-                .andExpect(model().attribute(boatAttribute, hasProperty(makeAndModelProperty, equalTo(makeAndModelValue))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(lengthProperty, equalTo(Integer.parseInt(lengthValue)))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(unitsImperialProperty, equalTo(true))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(hullTypeProperty, equalTo(Boat.HullType.valueOf(hullTypeValue)))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(descriptionProperty, equalTo(descriptionValue))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(sailingPurposeProperty, equalTo(SailingPurpose.valueOf(sailingPurposeValue)))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(minimumQualificationProperty, hasProperty("rank", equalTo(minimumQualificationValueAsInt)))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(dateRelevantToProperty, equalTo(LocalDate.of(2014, 9, 26)))))
-                .andExpect(model().attribute(boatAttribute, hasProperty(financialArrangementProperty, hasProperty("name", equalTo(financialArrangementValue)))))
-        ;
+                .andExpect(model().attribute(boatAttribute, is(createdBoat)));
 
         verify(mockUserService).findByUsername(username);
-        verify(mockBoatService).save(any(Boat.class));
+        final ArgumentCaptor<ListingForm> formCaptor = ArgumentCaptor.forClass(ListingForm.class);
+        verify(mockBoatService).create(eq(user), formCaptor.capture());
+
+        final ListingForm form = formCaptor.getValue();
+        assertThat(form, hasProperty(titleProperty, equalTo(titleValue)));
+        assertThat(form, hasProperty(makeAndModelProperty, equalTo(makeAndModelValue)));
+        assertThat(form, hasProperty(lengthProperty, equalTo(Integer.parseInt(lengthValue))));
+        assertThat(form, hasProperty(unitsImperialProperty, equalTo(true)));
+        assertThat(form, hasProperty(hullTypeProperty, equalTo(Boat.HullType.valueOf(hullTypeValue))));
+        assertThat(form, hasProperty(descriptionProperty, equalTo(descriptionValue)));
+        assertThat(form, hasProperty(sailingPurposeProperty, equalTo(SailingPurpose.valueOf(sailingPurposeValue))));
+        assertThat(form, hasProperty(minimumQualificationByRankProperty, equalTo(minimumQualificationValueAsInt)));
+        assertThat(form, hasProperty(dateRelevantToProperty, equalTo(LocalDate.of(2014, 9, 26))));
+        assertThat(form, hasProperty(financialArrangementProperty, equalTo(FinancialArrangement.FinancialArrangementEnum.NO_CONTRIBUTION)));
+        assertThat(form, hasProperty("vesselType", equalTo(VesselType.SAIL)));
+        assertThat(form, hasProperty("yearBuilt", equalTo(1995)));
+        assertThat(form, hasProperty("roleRequired", equalTo(RoleRequired.CREW)));
+        assertThat(form, hasProperty("frequency", equalTo(List.of(Frequency.FrequencyEnum.WEEKENDS))));
     }
 
     @Test
@@ -393,7 +402,10 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("editListing"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(9))
-                .andExpect(model().attribute("boat", is(boat)))
+                .andExpect(model().attribute("boat", allOf(
+                        instanceOf(ListingForm.class),
+                        hasProperty("title", equalTo(boat.getTitle())),
+                        hasProperty("makeAndModel", equalTo(boat.getMakeAndModel())))))
                 .andExpect(model().attribute("boatReference", equalTo(boat.getReference())))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
                 .andExpect(model().attributeExists("sailingPurposes"))
@@ -466,8 +478,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String financialArrangementProperty = "financialArrangement";
         final String financialArrangementValue = FinancialArrangement.NO_CONTRIBUTION.getName();
 
-        when(mockBoatService.save(any(Boat.class))).thenReturn(savedBoat);
-        when(mockBoatService.findLevelByRank(minimumQualificationValueAsInt)).thenReturn(RyaSailCruisingLevel.DAY_SKIPPER);
+        when(mockBoatService.update(eq(originalBoat), any(ListingForm.class))).thenReturn(savedBoat);
 
         final String boatAttribute = "boat";
 
@@ -494,27 +505,80 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists(boatAttribute))
                 .andExpect(model().attribute(boatAttribute, is(savedBoat)));
 
-        ArgumentCaptor<Boat> boatArgumentCaptor = ArgumentCaptor.forClass(Boat.class);
-        verify(mockBoatService).findLevelByRank(minimumQualificationValueAsInt);
-        verify(mockBoatService).save(boatArgumentCaptor.capture());
+        // the service applies the form to the listing it was given; BoatServiceTest checks what it changes
+        ArgumentCaptor<ListingForm> formCaptor = ArgumentCaptor.forClass(ListingForm.class);
+        verify(mockBoatService).update(eq(originalBoat), formCaptor.capture());
         verify(mockUserService).findByUsername(username);
 
-        final Boat boatThatWasSaved = boatArgumentCaptor.getValue();
-        assertEquals(titleValue, boatThatWasSaved.getTitle());
-        assertEquals(makeAndModelValue, boatThatWasSaved.getMakeAndModel());
-        assertEquals(Integer.valueOf(lengthValue), boatThatWasSaved.getLength());
-        assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());
-        assertEquals(Boolean.valueOf(unitsImperialValue), boatThatWasSaved.isUnitsImperial());
-        assertEquals(Boat.HullType.valueOf(hullTypeValue), boatThatWasSaved.getHullType());
-        assertEquals(descriptionValue, boatThatWasSaved.getDescription());
-        assertEquals(SailingPurpose.valueOf(sailingPurposeValue), boatThatWasSaved.getSailingPurpose());
-        assertEquals(minimumQualificationValueAsInt, boatThatWasSaved.getMinimumRequiredLevelByRank());
-        assertEquals(LocalDate.of(2015, 9, 26), boatThatWasSaved.getDateRelevantTo());
-        assertEquals(VesselType.SAIL, boatThatWasSaved.getVesselType());
-        assertEquals(Integer.valueOf(1995), boatThatWasSaved.getYearBuilt());
-        assertEquals(RoleRequired.CREW, boatThatWasSaved.getRoleRequired());
-        assertEquals(List.of("WEEKENDS"), boatThatWasSaved.getFrequency().stream().map(Frequency::getName).toList());
-        assertEquals(financialArrangementValue, boatThatWasSaved.getFinancialArrangement().getName());
-        assertTrue(boatThatWasSaved.isSuspended(), "editing must not change whether the listing is suspended");
+        final ListingForm form = formCaptor.getValue();
+        assertEquals(titleValue, form.getTitle());
+        assertEquals(makeAndModelValue, form.getMakeAndModel());
+        assertEquals(Integer.valueOf(lengthValue), form.getLength());
+        assertEquals(Boolean.valueOf(unitsImperialValue), form.isUnitsImperial());
+        assertEquals(Boat.HullType.valueOf(hullTypeValue), form.getHullType());
+        assertEquals(descriptionValue, form.getDescription());
+        assertEquals(SailingPurpose.valueOf(sailingPurposeValue), form.getSailingPurpose());
+        assertEquals(minimumQualificationValueAsInt, form.getMinimumRequiredLevelByRank());
+        assertEquals(LocalDate.of(2015, 9, 26), form.getDateRelevantTo());
+        assertEquals(VesselType.SAIL, form.getVesselType());
+        assertEquals(Integer.valueOf(1995), form.getYearBuilt());
+        assertEquals(RoleRequired.CREW, form.getRoleRequired());
+        assertEquals(List.of(Frequency.FrequencyEnum.WEEKENDS), form.getFrequency());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.valueOf(financialArrangementValue), form.getFinancialArrangement());
+    }
+
+    @Test
+    public void testListingFormIgnoresFieldsThatAreNotOnIt() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+        final Boat originalBoat = user.getBoatListings().get(0);
+        when(mockBoatService.update(eq(originalBoat), any(ListingForm.class))).thenReturn(originalBoat);
+
+        mockMvc.perform(post("/s/listings/" + originalBoat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param("title", "titleValue")
+                        .param("makeAndModel", "makeAndModelValue")
+                        .param("length", "33")
+                        .param("hullType", "MONO")
+                        .param("description", "descriptionValue")
+                        .param("sailingPurpose", "RACING")
+                        .param("financialArrangement", "PAID")
+                        .param("vesselType", "SAIL")
+                        .param("yearBuilt", "1995")
+                        .param("roleRequired", "CREW")
+                        .param("frequency", "WEEKENDS")
+                        // not on the form
+                        .param("suspended", "false")
+                        .param("owner.username", "someone-else")
+                        .param("reference", "another-reference"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(model().hasNoErrors());
+
+        verify(mockBoatService).update(eq(originalBoat), any(ListingForm.class));
+        verify(mockUserService).findByUsername(username);
+        assertEquals(user, originalBoat.getOwner());
+    }
+
+    @Test
+    public void testNewListingActionRejectsAnUnknownLevel() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+
+        mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param("minimumRequiredLevelByRank", "150"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("newListing"))
+                .andExpect(model().attributeHasFieldErrors("boat", "minimumRequiredLevelKnown"));
+
+        verify(mockUserService).findByUsername(username);
+        verifyListingFormReferenceDataFetched();
+        verify(mockBoatService, never()).create(any(), any());
     }
 }

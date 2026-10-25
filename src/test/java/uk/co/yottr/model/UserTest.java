@@ -70,20 +70,6 @@ public class UserTest {
     }
 
     @Test
-    public void whenUsernameIsTaken() {
-        final String username = "usr";
-        when(mockUserRepository.findByUsername(username)).thenReturn(new User());
-
-        user.setUsername(username);
-
-        final Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals(1, violations.size(), "should be one violation");
-
-        final ConstraintViolation<User> violation = violations.iterator().next();
-        assertEquals("Username not available", violation.getMessage(), "unexpected error message");
-    }
-
-    @Test
     public void password() {
         final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 8, 60);
 
