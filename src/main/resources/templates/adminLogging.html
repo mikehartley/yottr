@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2015. Mike Hartley Solutions Ltd
+  ~ All rights reserved.
+  -->
+
+<html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="index-content" class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Log Levels</h2>
+            <p>Changes take effect at once and last until the application restarts.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <h4>Set a log level</h4>
+            <form method="post" th:action="@{/admin/logging}" id="set-level-form" class="form-inline">
+                <input type="text" name="name" id="logger-name" class="form-control" placeholder="Logger, e.g. uk.co.yottr"
+                       th:value="${filter}" required="required"/>
+                <select name="level" id="logger-level" class="form-control">
+                    <option value="">Inherit (remove its own level)</option>
+                    <option th:each="level : ${levels}" th:value="${level}" th:text="${level}">DEBUG</option>
+                </select>
+                <button type="submit" id="set-level-button" class="btn btn-primary btn-sm">Set</button>
+            </form>
+        </div>
+        <div class="col-sm-6">
+            <h4>Find loggers</h4>
+            <form method="get" th:action="@{/admin/logging}" id="filter-form" class="form-inline">
+                <input type="text" name="filter" id="filter" class="form-control" placeholder="Part of a logger name"
+                       th:value="${filter}"/>
+                <button type="submit" class="btn btn-default btn-sm">Find</button>
+                <a th:href="@{/admin/logging}" class="btn btn-link btn-sm">Show loggers with their own level</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <p th:if="${filter.isEmpty()}">Loggers with a level of their own:</p>
+            <p th:unless="${filter.isEmpty()}">Loggers whose name contains "<span th:text="${filter}">uk.co.yottr</span>":</p>
+
+            <table class="table table-condensed" id="loggers">
+                <thead>
+                <tr>
+                    <th>Logger</th>
+                    <th>Own level</th>
+                    <th>Effective level</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="logger : ${loggers}" th:id="${'logger-' + logger.name}">
+                    <td class="logger-name" th:text="${logger.name}">uk.co.yottr</td>
+                    <td class="configured-level" th:text="${logger.configuredLevel} ?: '-'">INFO</td>
+                    <td class="effective-level" th:text="${logger.effectiveLevel}">INFO</td>
+                </tr>
+                </tbody>
+            </table>
+            <p th:if="${loggers.isEmpty()}">No loggers match.</p>
+            <p th:if="${moreLoggers}">Only the first 200 are shown; narrow the search to see the rest.</p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

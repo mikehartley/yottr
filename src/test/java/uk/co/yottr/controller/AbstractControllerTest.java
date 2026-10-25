@@ -1,6 +1,7 @@
 package uk.co.yottr.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -37,4 +38,7 @@ public abstract class AbstractControllerTest {
 
     @MockitoBean
     ReferenceDataService mockReferenceDataService;
+
+    @MockitoBean
+    LoggersEndpoint mockLoggersEndpoint;
 }

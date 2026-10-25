@@ -32,6 +32,10 @@ public class SecurityConfig {
                 .requestMatchers("/s/**").hasAuthority("FREE")
                 .requestMatchers("/resources/**").permitAll()
                 .requestMatchers("/", "/signup*", "/denied*").permitAll()
+                // for Prometheus; in production these belong on a management port that isn't public
+                .requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()
+                .requestMatchers("/actuator/loggers", "/actuator/loggers/**").hasAuthority("ADMIN")
+                .requestMatchers("/actuator/**").denyAll()
 //                .anyRequest().authenticated()
                 .anyRequest().permitAll())
             .formLogin(form -> form
