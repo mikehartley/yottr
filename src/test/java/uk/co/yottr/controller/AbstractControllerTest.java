@@ -1,33 +1,40 @@
 package uk.co.yottr.controller;
 
-import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import uk.co.yottr.testconfig.ControllerTestConfig;
+import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.ReferenceDataService;
+import uk.co.yottr.service.UserService;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ControllerTestConfig.class})
-@WebAppConfiguration
+/**
+ * Controllers with mocked services and no security filters, as the old ControllerTestConfig set up.
+ */
+@WebMvcTest
+@AutoConfigureMockMvc(addFilters = false)
 public abstract class AbstractControllerTest {
 
+    @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    WebApplicationContext webApplicationContext;
+    // needed by UsernameAvailableValidator
+    @MockitoBean
+    UserRepository mockUserRepository;
 
-    @Before
-    public void instantiateMockMvc() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
+    @MockitoBean
+    BoatService mockBoatService;
+
+    @MockitoBean
+    UserService mockUserService;
+
+    @MockitoBean
+    ReferenceDataService mockReferenceDataService;
 }

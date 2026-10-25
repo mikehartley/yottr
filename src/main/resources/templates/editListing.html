@@ -4,7 +4,7 @@
   ~ All rights reserved.
   -->
 
-<html layout:decorator="mainTemplate"
+<html layout:decorate="~{mainTemplate}"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
@@ -50,7 +50,7 @@
                         <label for="title" class="col-lg-2 control-label">Description</label>
 
                         <div class="col-lg-10">
-                            <textarea cols="40" rows="4" class="form-control" id="description" placeholder="Description" th:field="*{description}"/>
+                            <textarea cols="40" rows="4" class="form-control" id="description" placeholder="Description" th:field="*{description}"></textarea>
                             <span class="help-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Bad description</span>
                         </div>
                     </div>

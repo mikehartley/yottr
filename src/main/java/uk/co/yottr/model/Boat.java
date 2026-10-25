@@ -1,14 +1,14 @@
 package uk.co.yottr.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.co.yottr.validator.YearBuilt;
 
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +99,7 @@ public class Boat {
     @Column(name = "when_to")
     private LocalDate whenTo; //TODO validation - cross field
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "min_required_level")
     @NotNull(message = REQUIRED_ERROR_MSG)
     private RyaSailCruisingLevel minimumRequiredLevel;
@@ -115,12 +115,11 @@ public class Boat {
     private SailingPurpose sailingPurpose;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @Column(name = "frequency", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 1, message = "must have at least one")
     private Collection<Frequency> frequency = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "financial_arrangement")
     @NotNull(message = REQUIRED_ERROR_MSG)
     private FinancialArrangement financialArrangement;
@@ -148,9 +147,10 @@ public class Boat {
     private boolean suspended;
 
     /**
-     * For Hibernate.
+     * For Hibernate, and for Spring MVC to bind forms to. It must be public: with only one public
+     * constructor, Spring binds through that one instead, and Boat(User) fails with no owner.
      */
-    Boat() {
+    public Boat() {
         this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
         this.firstPosted = LocalDate.now();
         this.lastUpdated = LocalDate.now();

@@ -1,11 +1,11 @@
 package uk.co.yottr.controller;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import uk.co.yottr.model.Boat;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +27,7 @@ public class PageWrapperTest {
     private static int RANGE_RADIUS = 3;
     private static int RANGE = RANGE_RADIUS * 2;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mockPage = mock(Page.class);
         wrapper = new PageWrapper<>(mockPage);
@@ -52,8 +52,8 @@ public class PageWrapperTest {
         when(mockPage.getNumber()).thenReturn(currentPage);
         when(mockPage.getTotalPages()).thenReturn(totalPages);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 
     @Test
@@ -69,8 +69,8 @@ public class PageWrapperTest {
         PageWrapper<Boat> wrapper = new PageWrapper<>(mockPage);
         when(mockPage.getTotalPages()).thenReturn(totalPages);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 
     @Test
@@ -85,8 +85,8 @@ public class PageWrapperTest {
         when(mockPage.getNumber()).thenReturn(currentPage);
         when(mockPage.getTotalPages()).thenReturn(totalPages);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 
     @Test
@@ -102,8 +102,8 @@ public class PageWrapperTest {
         when(mockPage.getTotalPages()).thenReturn(totalPages);
         PageWrapper<Boat> wrapper = new PageWrapper<>(mockPage);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 
     @Test
@@ -118,8 +118,8 @@ public class PageWrapperTest {
         when(mockPage.getNumber()).thenReturn(currentPage);
         when(mockPage.getTotalPages()).thenReturn(totalPages);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 
     @Test
@@ -134,8 +134,8 @@ public class PageWrapperTest {
         when(mockPage.getNumber()).thenReturn(currentPage);
         when(mockPage.getTotalPages()).thenReturn(totalPages);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 
     @Test
@@ -150,8 +150,8 @@ public class PageWrapperTest {
         when(mockPage.getNumber()).thenReturn(currentPage);
         when(mockPage.getTotalPages()).thenReturn(totalPages);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 
     @Test
@@ -166,7 +166,7 @@ public class PageWrapperTest {
         when(mockPage.getNumber()).thenReturn(currentPage);
         when(mockPage.getTotalPages()).thenReturn(totalPages);
 
-        assertEquals("lower limit", expectedLowerLimit, wrapper.getRangeStart());
-        assertEquals("upper limit", expectedUpperLimit, wrapper.getRangeEnd());
+        assertEquals(expectedLowerLimit, wrapper.getRangeStart(), "lower limit");
+        assertEquals(expectedUpperLimit, wrapper.getRangeEnd(), "upper limit");
     }
 }

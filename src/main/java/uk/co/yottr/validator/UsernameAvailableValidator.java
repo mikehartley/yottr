@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd

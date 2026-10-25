@@ -1,14 +1,14 @@
 package uk.co.yottr.acceptance;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -21,19 +21,19 @@ public class SignInSignOutIT {
 
     final String urlBase = Constants.URL_BASE;
 
-    @Before
+    @BeforeEach
     public void beforeEveryTest() {
         driver = new FirefoxDriver();
     }
 
-    @After
+    @AfterEach
     public void afterEveryTest() {
         driver.quit();
     }
 
     @Test
     public void errorMessageAfterFailedLoginAttempt() {
-        driver.navigate().to(urlBase + "/yottr");
+        driver.navigate().to(urlBase + "/");
 
         final WebElement usernameField = driver.findElement(By.id("username"));
         final WebElement passwordField = driver.findElement(By.id("password"));
@@ -51,7 +51,7 @@ public class SignInSignOutIT {
 
     @Test
     public void signInSignOut() {
-        driver.navigate().to(urlBase + "/yottr");
+        driver.navigate().to(urlBase + "/");
 
         final WebElement usernameField = driver.findElement(By.id("username"));
         final WebElement passwordField = driver.findElement(By.id("password"));

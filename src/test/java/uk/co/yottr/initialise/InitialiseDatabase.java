@@ -1,19 +1,13 @@
 package uk.co.yottr.initialise;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import uk.co.yottr.config.AppConfig;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.*;
 import uk.co.yottr.security.Role;
@@ -30,14 +24,15 @@ import java.util.List;
 /**
  * This initialises the database and shouldn't be run as part of the normal set of tests,
  * and so should be left in a disabled state unless required.
+ *
+ * It writes to the local database from compose.yaml. To run it:
+ *   mvn test -Dtest=InitialiseDatabase -Dyottr.initialise=true
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=AppConfig.class)
-@WebAppConfiguration
+@SpringBootTest(properties = "spring.docker.compose.skip.in-tests=false")
 public class InitialiseDatabase {
 
-    private static final boolean ENABLED = false; // this should be left as false unless you're initialising the database
+    private static final boolean ENABLED = Boolean.getBoolean("yottr.initialise"); // this should be left as false unless you're initialising the database
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -57,13 +52,13 @@ public class InitialiseDatabase {
     @Autowired
     private FrequencyRepository frequencyRepository;
 
-    @Before
+    @BeforeEach
     public void ensureRepositoryHasBeenInjected() {
-        Assert.assertNotNull("check spring configuration : userRepository was not injected", userRepository);
-        Assert.assertNotNull("check spring configuration : boatRepository was not injected", boatRepository);
-        Assert.assertNotNull("check spring configuration : ryaSailCruisingLevelRepository was not injected", ryaSailCruisingLevelRepository);
-        Assert.assertNotNull("check spring configuration : financialArrangementRepository was not injected", financialArrangementRepository);
-        Assert.assertNotNull("check spring configuration : frequencyRepository was not injected", frequencyRepository);
+        Assertions.assertNotNull(userRepository, "check spring configuration : userRepository was not injected");
+        Assertions.assertNotNull(boatRepository, "check spring configuration : boatRepository was not injected");
+        Assertions.assertNotNull(ryaSailCruisingLevelRepository, "check spring configuration : ryaSailCruisingLevelRepository was not injected");
+        Assertions.assertNotNull(financialArrangementRepository, "check spring configuration : financialArrangementRepository was not injected");
+        Assertions.assertNotNull(frequencyRepository, "check spring configuration : frequencyRepository was not injected");
     }
 
     @Test
@@ -89,15 +84,12 @@ public class InitialiseDatabase {
 
     private void addBoatsWithOwner(User owner, int numberOfBoats) {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
+        transactionTemplate.executeWithoutResult(status -> {
 
-                for (int i = 0; i < numberOfBoats; i++) {
-                    addBoat(owner.getUsername() + "'s Rust Bucket " + i, owner);
-                }
-
+            for (int i = 0; i < numberOfBoats; i++) {
+                addBoat(owner.getUsername() + "'s Rust Bucket " + i, owner);
             }
+
         });
     }
 

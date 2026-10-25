@@ -1,22 +1,22 @@
 package uk.co.yottr.model;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.testconfig.UnitConfig;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -25,10 +25,8 @@ import static org.mockito.Mockito.when;
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UnitConfig.class})
-@TransactionConfiguration(defaultRollback = false)
-@Transactional
 public class UserTest {
 
     @Autowired
@@ -42,7 +40,7 @@ public class UserTest {
     @Autowired
     private UserRepository mockUserRepository;
 
-    @Before
+    @BeforeEach
     public void beforeEachTest() {
         reset(mockUserRepository);
         user = createUser();
@@ -51,7 +49,7 @@ public class UserTest {
     @Test
     public void allValid() {
         final Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals("not expecting any violations", 0, violations.size());
+        assertEquals(0, violations.size(), "not expecting any violations");
     }
 
     @Test
@@ -79,10 +77,10 @@ public class UserTest {
         user.setUsername(username);
 
         final Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals("should be one violation", 1, violations.size());
+        assertEquals(1, violations.size(), "should be one violation");
 
         final ConstraintViolation<User> violation = violations.iterator().next();
-        assertEquals("unexpected error message", "Username not available", violation.getMessage());
+        assertEquals("Username not available", violation.getMessage(), "unexpected error message");
     }
 
     @Test
@@ -187,7 +185,7 @@ public class UserTest {
         user.setMaxListings(2);
         new Boat(user);
 
-        assertTrue("user should be allowed more listings", user.isAllowedMoreListings());
+        assertTrue(user.isAllowedMoreListings(), "user should be allowed more listings");
     }
 
     @Test
@@ -195,14 +193,14 @@ public class UserTest {
         user.setMaxListings(1);
         new Boat(user);
 
-        assertFalse("user should not be allowed more listings", user.isAllowedMoreListings());
+        assertFalse(user.isAllowedMoreListings(), "user should not be allowed more listings");
     }
 
     private void assertSingleViolation(String expectedErrorMessage) {
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals(violations.toString(), 1, violations.size());
+        assertEquals(1, violations.size(), violations.toString());
         final ConstraintViolation<User> violation = violations.iterator().next();
-        assertEquals(violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
+        assertEquals(expectedErrorMessage, violation.getMessage(), violation.getPropertyPath().toString());
     }
 
     private User createUser() {

@@ -1,22 +1,21 @@
 package uk.co.yottr.repository;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.UserService;
-import uk.co.yottr.testconfig.IntegrationTestConfig;
+import uk.co.yottr.testconfig.TestcontainersConfig;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
@@ -25,8 +24,8 @@ import static uk.co.yottr.builder.UserBuilder.aUser;
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=IntegrationTestConfig.class)
+@SpringBootTest
+@Import(TestcontainersConfig.class)
 public class BoatRepositoryTest {
 
     @Autowired
@@ -46,7 +45,7 @@ public class BoatRepositoryTest {
 
     private User owner;
 
-    @Before
+    @BeforeEach
     public void initialiseReferenceData() {
 
         InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
@@ -55,9 +54,9 @@ public class BoatRepositoryTest {
         owner = userService.save(aUser().build(), false);
     }
 
-    @After
+    @AfterEach
     public void clearData() {
-        for (Boat boat : boatRepository.findAll(new PageRequest(0, 9999))) {
+        for (Boat boat : boatRepository.findAll(PageRequest.of(0, 9999))) {
             boatRepository.delete(boat);
         }
     }
@@ -67,7 +66,7 @@ public class BoatRepositoryTest {
         Boat boat = aBoat().withOwner(owner).build();
         boatService.save(boat);
 
-        final Page<Boat> foundBoatPages = boatRepository.find(boat.getReference(), new PageRequest(0, 10));
+        final Page<Boat> foundBoatPages = boatRepository.find(boat.getReference(), PageRequest.of(0, 10));
         assertEquals(1, foundBoatPages.getTotalElements());
 
         final Boat boatFromFind = foundBoatPages.getContent().get(0);

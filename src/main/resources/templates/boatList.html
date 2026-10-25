@@ -4,7 +4,7 @@
   ~ All rights reserved.
   -->
 
-<html layout:decorator="mainTemplate"
+<html layout:decorate="~{mainTemplate}"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
@@ -34,7 +34,7 @@
                 <hr/>
             </div>
 
-            <div th:replace="pagination :: control(url='/s/listings/all')">
+            <div th:replace="~{pagination :: control(url='/s/listings/all')}">
                 Pagination control goes here.
             </div>
 

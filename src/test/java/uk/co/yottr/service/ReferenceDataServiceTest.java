@@ -1,12 +1,12 @@
 package uk.co.yottr.service;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.co.yottr.model.*;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -17,7 +17,7 @@ public class ReferenceDataServiceTest {
 
     private ReferenceDataService referenceDataService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         referenceDataService = new ReferenceDataServiceImpl();
     }
@@ -34,7 +34,7 @@ public class ReferenceDataServiceTest {
         assertEquals(RyaSailCruisingLevel.YACHTMASTER_COASTAL.getDisplayName(), cruisingLevels.get(5).getDisplayName());
         assertEquals(RyaSailCruisingLevel.YACHTMASTER_OFFSHORE.getDisplayName(), cruisingLevels.get(6).getDisplayName());
         assertEquals(RyaSailCruisingLevel.YACHTMASTER_OCEAN.getDisplayName(), cruisingLevels.get(7).getDisplayName());
-        assertEquals("list size", 8, cruisingLevels.size());
+        assertEquals(8, cruisingLevels.size(), "list size");
     }
 
     @Test

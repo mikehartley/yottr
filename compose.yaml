@@ -1,0 +1,15 @@
+# Local development database. Started automatically by spring-boot-docker-compose when the app runs.
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: yottr
+      POSTGRES_USER: yottr
+      POSTGRES_PASSWORD: yottr
+    ports:
+      - "5432"
+    volumes:
+      - yottr-data:/var/lib/postgresql
+
+volumes:
+  yottr-data:

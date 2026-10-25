@@ -3,6 +3,7 @@ package uk.co.yottr.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import uk.co.yottr.model.Boat;
@@ -12,7 +13,7 @@ import uk.co.yottr.model.Boat;
  * All rights reserved.
  */
 
-public interface BoatRepository extends PagingAndSortingRepository<Boat, Long> {
+public interface BoatRepository extends PagingAndSortingRepository<Boat, Long>, CrudRepository<Boat, Long> {
     Boat findByReference(String reference);
     Page<Boat> findBySuspended(boolean suspended, Pageable pageable);
 

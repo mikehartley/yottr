@@ -1,6 +1,5 @@
 package uk.co.yottr.conversion;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.Formatter;
 
@@ -17,11 +16,10 @@ import java.util.Locale;
 
 public class DateFormatter implements Formatter<Date> {
 
-    @Autowired
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
-    public DateFormatter() {
-        super();
+    public DateFormatter(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
     public Date parse(final String text, final Locale locale) throws ParseException {

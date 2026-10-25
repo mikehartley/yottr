@@ -4,7 +4,7 @@
   ~ All rights reserved.
   -->
 
-<html layout:decorator="mainTemplate"
+<html layout:decorate="~{mainTemplate}"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
@@ -76,8 +76,8 @@
 
                     <div class="col-sm-8">
                         <select th:field="*{country}">
-                            <option th:value="${''}" th:text="${'Please choose:'}"/>
-                            <option th:each="country : ${countries}" th:value="${country}" th:text="${country.getDisplayName()}"/>
+                            <option th:value="${''}" th:text="${'Please choose:'}"></option>
+                            <option th:each="country : ${countries}" th:value="${country}" th:text="${country.getDisplayName()}"></option>
                         </select>
                         <span class="help-block" th:if="${#fields.hasErrors('country')}" th:errors="*{country}">Bad Country</span>
                     </div>

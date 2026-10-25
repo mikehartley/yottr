@@ -19,7 +19,7 @@ import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.security.Principal;
 
 /*

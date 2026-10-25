@@ -1,9 +1,11 @@
 package uk.co.yottr.service;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +18,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 /*
@@ -25,7 +28,8 @@ import static org.mockito.Mockito.when;
  * All rights reserved.
  */
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class UserDetailsAdaptorServiceTest {
 
     @Mock
@@ -51,12 +55,12 @@ public class UserDetailsAdaptorServiceTest {
         final UserDetailsAdaptorService userDetailsAdaptorService = new UserDetailsAdaptorService(userRepository);
         final UserDetails springUserDetails = userDetailsAdaptorService.loadUserByUsername(username);
 
-        assertEquals("username", username, springUserDetails.getUsername());
-        assertEquals("password", password, springUserDetails.getPassword());
-        assertEquals("isEnabled", enabled, springUserDetails.isEnabled());
-        assertTrue("isAccountNonExpired should always be true", springUserDetails.isAccountNonExpired());
-        assertTrue("isCredentialsNonExpired should always be true", springUserDetails.isCredentialsNonExpired());
-        assertTrue("isAccountNonLocked should always be true", springUserDetails.isAccountNonLocked());
+        assertEquals(username, springUserDetails.getUsername(), "username");
+        assertEquals(password, springUserDetails.getPassword(), "password");
+        assertEquals(enabled, springUserDetails.isEnabled(), "isEnabled");
+        assertTrue(springUserDetails.isAccountNonExpired(), "isAccountNonExpired should always be true");
+        assertTrue(springUserDetails.isCredentialsNonExpired(), "isCredentialsNonExpired should always be true");
+        assertTrue(springUserDetails.isAccountNonLocked(), "isAccountNonLocked should always be true");
 
         final List<GrantedAuthority> grantedAuthoritiesAsList = new ArrayList<>(springUserDetails.getAuthorities());
         Collections.sort(grantedAuthoritiesAsList, new Comparator<GrantedAuthority>() {
@@ -65,14 +69,16 @@ public class UserDetailsAdaptorServiceTest {
                 return grantedAuthority1.getAuthority().compareTo(grantedAuthority2.getAuthority());
             }
         });
-        assertEquals("authorities size", 2, grantedAuthoritiesAsList.size());
-        assertEquals("first authority", firstRole.name(), grantedAuthoritiesAsList.get(0).getAuthority());
-        assertEquals("second authority", secondRole.name(), grantedAuthoritiesAsList.get(1).getAuthority());
+        assertEquals(2, grantedAuthoritiesAsList.size(), "authorities size");
+        assertEquals(firstRole.name(), grantedAuthoritiesAsList.get(0).getAuthority(), "first authority");
+        assertEquals(secondRole.name(), grantedAuthoritiesAsList.get(1).getAuthority(), "second authority");
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test
     public void whenUserNotFound() throws Exception {
-        final UserDetailsAdaptorService userDetailsAdaptorService = new UserDetailsAdaptorService(userRepository);
-        userDetailsAdaptorService.loadUserByUsername("zippy");
+        assertThrows(UsernameNotFoundException.class, () -> {
+            final UserDetailsAdaptorService userDetailsAdaptorService = new UserDetailsAdaptorService(userRepository);
+            userDetailsAdaptorService.loadUserByUsername("zippy");
+        });
     }
 }

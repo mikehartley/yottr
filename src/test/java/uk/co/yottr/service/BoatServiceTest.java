@@ -1,15 +1,16 @@
 package uk.co.yottr.service;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ContextConfiguration;
 import uk.co.yottr.builder.BoatBuilder;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.RyaSailCruisingLevel;
@@ -20,8 +21,8 @@ import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
@@ -30,8 +31,8 @@ import static uk.co.yottr.builder.UserBuilder.aUser;
  * All rights reserved.
  */
 
-@RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class BoatServiceTest {
 
     private BoatService boatService;
@@ -47,7 +48,7 @@ public class BoatServiceTest {
 
     private User owner;
 
-    @Before
+    @BeforeEach
     public void init() {
         reset(boatRepository);
         reset(ryaSailCruisingLevelRepository);
@@ -89,7 +90,7 @@ public class BoatServiceTest {
         when(boatRepository.findAll(pageable)).thenReturn(page);
 
         final Page<Boat> pageFromService = boatService.findAll(pageable);
-        assertSame("page from service", page, pageFromService);
+        assertSame(page, pageFromService, "page from service");
     }
 
     @Test
@@ -109,7 +110,7 @@ public class BoatServiceTest {
 
         final Boat boatFromService = boatService.findByReference(reference);
 
-        assertSame("boat from service", boat, boatFromService);
+        assertSame(boat, boatFromService, "boat from service");
     }
 
     @Test
@@ -122,6 +123,6 @@ public class BoatServiceTest {
 
         final Page<Boat> resultFromService = boatService.findAllExcludingSuspended(pageable);
 
-        assertSame("result from service", page, resultFromService);
+        assertSame(page, resultFromService, "result from service");
     }
 }

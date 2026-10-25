@@ -1,8 +1,8 @@
 package uk.co.yottr.controller;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
@@ -12,7 +12,7 @@ import uk.co.yottr.testconfig.ConstantsForTests;
 
 import java.util.ArrayList;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -27,12 +27,12 @@ public class AdminControllerTest extends AbstractControllerTest {
     @Autowired
     private UserService mockUserService;
 
-    @Before
+    @BeforeEach
     public void resetMocks() {
         reset(mockUserService);
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() {
         verifyNoMoreInteractions(mockUserService);
     }

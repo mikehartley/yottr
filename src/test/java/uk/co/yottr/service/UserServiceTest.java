@@ -1,13 +1,14 @@
 package uk.co.yottr.service;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.testconfig.ConstantsForTests;
@@ -15,9 +16,13 @@ import uk.co.yottr.testconfig.ConstantsForTests;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /*
@@ -25,8 +30,8 @@ import static org.mockito.Mockito.*;
  * All rights reserved.
  */
 
-@RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @Mock
@@ -37,7 +42,7 @@ public class UserServiceTest {
 
     private UserService userService;
 
-    @Before
+    @BeforeEach
     public void init() {
         userService = new UserService(mockUserRepository, passwordEncoder);
     }
@@ -105,7 +110,7 @@ public class UserServiceTest {
 
         userService.delete(id);
 
-        verify(mockUserRepository).delete(id);
+        verify(mockUserRepository).deleteById(id);
         verifyNoMoreInteractions(mockUserRepository);
     }
 
@@ -118,7 +123,7 @@ public class UserServiceTest {
 
         final User foundUser = userService.findByUsername(username);
 
-        assertEquals("user", user, foundUser);
+        assertEquals(user, foundUser, "user");
         verify(mockUserRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository);
     }
@@ -131,7 +136,7 @@ public class UserServiceTest {
 
         final User foundUser = userService.findByUsername(username);
 
-        assertNull("user should not have been found", foundUser);
+        assertNull(foundUser, "user should not have been found");
         verify(mockUserRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository);
     }
@@ -141,12 +146,12 @@ public class UserServiceTest {
         Long id = 5L;
         User user = createUser("u1");
         user.setId(id);
-        when(mockUserRepository.findOne(id)).thenReturn(user);
+        when(mockUserRepository.findById(id)).thenReturn(Optional.of(user));
 
         final User foundUser = userService.findById(id);
 
-        assertEquals("user", user, foundUser);
-        verify(mockUserRepository).findOne(id);
+        assertEquals(user, foundUser, "user");
+        verify(mockUserRepository).findById(id);
         verifyNoMoreInteractions(mockUserRepository);
     }
 
@@ -155,12 +160,12 @@ public class UserServiceTest {
         Long id = 5L;
         User user = createUser("u1");
         user.setId(id);
-        when(mockUserRepository.exists(id)).thenReturn(true);
+        when(mockUserRepository.existsById(id)).thenReturn(true);
 
         final boolean userExists = userService.userExists(id);
 
-        assertTrue("user should exist", userExists);
-        verify(mockUserRepository).exists(id);
+        assertTrue(userExists, "user should exist");
+        verify(mockUserRepository).existsById(id);
         verifyNoMoreInteractions(mockUserRepository);
     }
 

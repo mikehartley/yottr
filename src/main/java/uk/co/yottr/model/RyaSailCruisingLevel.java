@@ -1,6 +1,6 @@
 package uk.co.yottr.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd

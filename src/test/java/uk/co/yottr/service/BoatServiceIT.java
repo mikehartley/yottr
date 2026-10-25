@@ -1,20 +1,19 @@
 package uk.co.yottr.service;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.FrequencyRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
-import uk.co.yottr.testconfig.IntegrationTestConfig;
+import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
@@ -33,8 +32,8 @@ import static uk.co.yottr.builder.UserBuilder.aUser;
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=IntegrationTestConfig.class)
+@SpringBootTest
+@Import(TestcontainersConfig.class)
 public class BoatServiceIT {
 
     @Autowired
@@ -54,7 +53,7 @@ public class BoatServiceIT {
 
     private User owner;
 
-    @Before
+    @BeforeEach
     public void initialiseReferenceData() {
 
         InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
@@ -64,9 +63,9 @@ public class BoatServiceIT {
         owner = userService.save(aUser().build(), false);
     }
 
-    @After
+    @AfterEach
     public void clearData() {
-        for (Boat boat : boatService.findAll(new PageRequest(0, 9999))) {
+        for (Boat boat : boatService.findAll(PageRequest.of(0, 9999))) {
             boatService.delete(boat);
         }
     }
@@ -81,12 +80,12 @@ public class BoatServiceIT {
         final Boat savedBoat = boatService.save(boat);
 
         final Boat foundByReference = boatService.findByReference(boat.getReference());
-        assertNotNull("could not find boat by reference", foundByReference);
-        assertEquals("description", uniqueDescription, foundByReference.getDescription());
+        assertNotNull(foundByReference, "could not find boat by reference");
+        assertEquals(uniqueDescription, foundByReference.getDescription(), "description");
 
         boatService.delete(savedBoat);
 
-        assertNull("boat was not deleted", boatService.findByReference(boat.getReference()));
+        assertNull(boatService.findByReference(boat.getReference()), "boat was not deleted");
     }
 
     @Test
@@ -94,10 +93,10 @@ public class BoatServiceIT {
         final Boat liveBoat = boatService.save(aBoat().withSuspended(false).withOwner(owner).build());
         boatService.save(aBoat().withSuspended(true).withOwner(owner).build());
 
-        final Page<Boat> resultFromService = boatService.findAllExcludingSuspended(new PageRequest(0, 10));
+        final Page<Boat> resultFromService = boatService.findAllExcludingSuspended(PageRequest.of(0, 10));
 
-        assertEquals("total elements in result", 1, resultFromService.getTotalElements());
-        assertEquals("element in result", liveBoat.getReference(), resultFromService.iterator().next().getReference());
+        assertEquals(1, resultFromService.getTotalElements(), "total elements in result");
+        assertEquals(liveBoat.getReference(), resultFromService.iterator().next().getReference(), "element in result");
     }
 
     @Test
@@ -146,35 +145,35 @@ public class BoatServiceIT {
 
         final Boat savedBoat = boatService.save(boat);
 
-        assertEquals("title", title, savedBoat.getTitle());
-        assertEquals("description", description, savedBoat.getDescription());
-        assertEquals("hullType", hullType, savedBoat.getHullType());
-        assertEquals("length", length, savedBoat.getLength());
-        assertEquals("unitsImperial", unitsImperial, savedBoat.isUnitsImperial());
-        assertEquals("makeAndModel", makeAndModel, savedBoat.getMakeAndModel());
-        assertNotNull("reference", savedBoat.getReference());
-        assertEquals("first posted", now, savedBoat.getFirstPosted());
-        assertEquals("last updated", now, savedBoat.getLastUpdated());
-        assertEquals("minimum level", minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank());
-        assertEquals("sailing style", sailingPurpose, savedBoat.getSailingPurpose());
-        assertEquals("when from", whenFrom, savedBoat.getWhenFrom());
-        assertEquals("when to", whenTo, savedBoat.getWhenTo());
-        assertEquals("date relevant to", dateRelevantTo, savedBoat.getDateRelevantTo());
-        assertEquals("owner", owner, savedBoat.getOwner());
-        assertEquals("financialArrangement", financialArrangement, savedBoat.getFinancialArrangement());
-        assertEquals("number of crew wanted", numberOfCrewWanted, savedBoat.getNumberOfCrewWanted());
-        assertEquals("frequency", frequencies, savedBoat.getFrequency());
-        assertEquals("yearBuilt", yearBuilt, savedBoat.getYearBuilt());
-        assertEquals("vesselType", vesselType, savedBoat.getVesselType());
-        assertEquals("roleRequired", roleRequired, savedBoat.getRoleRequired());
-        assertEquals("travelExpenses", travelExpenses, savedBoat.getTravelExpenses());
+        assertEquals(title, savedBoat.getTitle(), "title");
+        assertEquals(description, savedBoat.getDescription(), "description");
+        assertEquals(hullType, savedBoat.getHullType(), "hullType");
+        assertEquals(length, savedBoat.getLength(), "length");
+        assertEquals(unitsImperial, savedBoat.isUnitsImperial(), "unitsImperial");
+        assertEquals(makeAndModel, savedBoat.getMakeAndModel(), "makeAndModel");
+        assertNotNull(savedBoat.getReference(), "reference");
+        assertEquals(now, savedBoat.getFirstPosted(), "first posted");
+        assertEquals(now, savedBoat.getLastUpdated(), "last updated");
+        assertEquals(minLevel.getRank(), savedBoat.getMinimumRequiredLevel().getRank(), "minimum level");
+        assertEquals(sailingPurpose, savedBoat.getSailingPurpose(), "sailing style");
+        assertEquals(whenFrom, savedBoat.getWhenFrom(), "when from");
+        assertEquals(whenTo, savedBoat.getWhenTo(), "when to");
+        assertEquals(dateRelevantTo, savedBoat.getDateRelevantTo(), "date relevant to");
+        assertEquals(owner, savedBoat.getOwner(), "owner");
+        assertEquals(financialArrangement, savedBoat.getFinancialArrangement(), "financialArrangement");
+        assertEquals(numberOfCrewWanted, savedBoat.getNumberOfCrewWanted(), "number of crew wanted");
+        assertEquals(frequencies, savedBoat.getFrequency(), "frequency");
+        assertEquals(yearBuilt, savedBoat.getYearBuilt(), "yearBuilt");
+        assertEquals(vesselType, savedBoat.getVesselType(), "vesselType");
+        assertEquals(roleRequired, savedBoat.getRoleRequired(), "roleRequired");
+        assertEquals(travelExpenses, savedBoat.getTravelExpenses(), "travelExpenses");
     }
 
     @Test
     public void canSaveTwoBoats() {
         boatService.save(aBoat().withOwner(owner).withDescription("1").build());
         boatService.save(aBoat().withOwner(owner).withDescription("2").build());
-        final Iterator<Boat> boatIterator = boatService.findAll(new PageRequest(0, 10)).iterator();
+        final Iterator<Boat> boatIterator = boatService.findAll(PageRequest.of(0, 10)).iterator();
         assertEquals("1", boatIterator.next().getDescription());
         assertEquals("2", boatIterator.next().getDescription());
         assertFalse(boatIterator.hasNext());

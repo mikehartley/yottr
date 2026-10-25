@@ -1,13 +1,12 @@
 package uk.co.yottr.validator;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.validation.ConstraintValidatorContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -20,16 +19,16 @@ public class YearBuiltValidatorTest {
     private ConstraintValidatorContext nullContext = null;
     private int thisYear = LocalDate.now().getYear();
 
-    @Before
+    @BeforeEach
     public void setup() {
         yearBuiltValidator = new YearBuiltValidator();
     }
 
     @Test
     public void testIsValid() throws Exception {
-        assertFalse("should not be valid", yearBuiltValidator.isValid(1899, nullContext));
-        assertTrue("should be valid", yearBuiltValidator.isValid(1900, nullContext));
-        assertTrue("should be valid", yearBuiltValidator.isValid(thisYear + 2, nullContext));
-        assertFalse("should not be valid", yearBuiltValidator.isValid(thisYear + 3, nullContext));
+        assertFalse(yearBuiltValidator.isValid(1899, nullContext), "should not be valid");
+        assertTrue(yearBuiltValidator.isValid(1900, nullContext), "should be valid");
+        assertTrue(yearBuiltValidator.isValid(thisYear + 2, nullContext), "should be valid");
+        assertFalse(yearBuiltValidator.isValid(thisYear + 3, nullContext), "should not be valid");
     }
 }

@@ -1,15 +1,12 @@
 package uk.co.yottr.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -17,40 +14,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 
 @Configuration
-@EnableWebMvcSecurity
+@EnableWebSecurity
 @Import(PasswordEncoderConfig.class)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-    @Autowired
-    @Qualifier("jpaUserDetailsService")
-    private UserDetailsService userDetailsService;
+    // The UserDetailsService ("jpaUserDetailsService") and PasswordEncoder beans are picked up automatically.
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    /*
+     * Authorities are the bare role names (ADMIN, FREE), as Spring Security 3 expected, so these use
+     * hasAuthority: since Spring Security 4, hasRole looks for a ROLE_ prefix.
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        http.authorizeRequests()
-                .antMatchers("/admin/**").access("hasRole('ADMIN')")
-                .antMatchers("/s/**").access("hasRole('FREE')")
-                .antMatchers("/resources/**").permitAll()
-                .antMatchers("/", "/signup*", "/denied*").permitAll()
+        http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/s/**").hasAuthority("FREE")
+                .requestMatchers("/resources/**").permitAll()
+                .requestMatchers("/", "/signup*", "/denied*").permitAll()
 //                .anyRequest().authenticated()
-                .and()
-            .formLogin()
+                .anyRequest().permitAll())
+            .formLogin(form -> form
                 .loginPage("/index")
-                .permitAll()
-                .and()
-            .logout()
-                .permitAll()
-                .and()
-            .csrf().disable();
+                .permitAll())
+            .logout(logout -> logout
+                .permitAll())
+            .csrf(AbstractHttpConfigurer::disable);
 //                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout").logoutUrl("/logout")
 ////            .and()
 ////                .csrf()
@@ -58,5 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .sessionManagement().maximumSessions(1).expiredUrl("/login").and().invalidSessionUrl("/login")
 //            .and()
 //                .exceptionHandling().accessDeniedPage("/denied");
+
+        return http.build();
     }
 }

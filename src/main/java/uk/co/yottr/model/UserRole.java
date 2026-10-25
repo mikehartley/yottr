@@ -2,9 +2,9 @@ package uk.co.yottr.model;
 
 import uk.co.yottr.security.Role;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd

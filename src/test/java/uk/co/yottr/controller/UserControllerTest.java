@@ -1,8 +1,9 @@
 package uk.co.yottr.controller;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.Country;
@@ -12,8 +13,9 @@ import uk.co.yottr.service.UserService;
 
 import java.security.Principal;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,13 +35,13 @@ public class UserControllerTest extends AbstractControllerTest {
     @Autowired
     private ReferenceDataService mockReferenceDataService;
 
-    @Before
+    @BeforeEach
     public void resetMockUserService() {
         reset(mockUserService);
         reset(mockReferenceDataService);
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() {
         verifyNoMoreInteractions(mockUserService);
         verifyNoMoreInteractions(mockReferenceDataService);
@@ -184,8 +186,6 @@ public class UserControllerTest extends AbstractControllerTest {
 
         when(mockUserService.findByUsername(username)).thenReturn(aUser().withUsername(username).build());
 
-        final String userAttribute = "user";
-
         final String passwordProperty = "password";
         final String passwordValue = "passwordValue";
 
@@ -224,21 +224,23 @@ public class UserControllerTest extends AbstractControllerTest {
                 .param(postcodeProperty, postcodeValue)
                 .param(aboutMeProperty, aboutMeValue))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:myDetails?updated"))
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists(userAttribute))
-                .andExpect(model().attribute(userAttribute, hasProperty(passwordProperty, equalTo(passwordValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(titleProperty, equalTo(titleValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(firstNameProperty, equalTo(firstNameValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(lastNameProperty, equalTo(lastNameValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(emailProperty, equalTo(emailValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(mobileProperty, equalTo(mobileValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(countryProperty, equalTo(Country.valueOf(countryValue)))))
-                .andExpect(model().attribute(userAttribute, hasProperty(postcodeProperty, equalTo(postcodeValue))))
-                .andExpect(model().attribute(userAttribute, hasProperty(aboutMeProperty, equalTo(aboutMeValue))));
+                .andExpect(view().name("redirect:myDetails?updated"));
 
-        verify(mockUserService).save(any(User.class), eq(true));
+        // Since Spring 6 the model is dropped on a redirect, so check the user that was saved instead.
+        final ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(mockUserService).save(userCaptor.capture(), eq(true));
         verify(mockUserService).findByUsername(username);
+
+        final User savedUser = userCaptor.getValue();
+        assertThat(savedUser, hasProperty(passwordProperty, equalTo(passwordValue)));
+        assertThat(savedUser, hasProperty(titleProperty, equalTo(titleValue)));
+        assertThat(savedUser, hasProperty(firstNameProperty, equalTo(firstNameValue)));
+        assertThat(savedUser, hasProperty(lastNameProperty, equalTo(lastNameValue)));
+        assertThat(savedUser, hasProperty(emailProperty, equalTo(emailValue)));
+        assertThat(savedUser, hasProperty(mobileProperty, equalTo(mobileValue)));
+        assertThat(savedUser, hasProperty(countryProperty, equalTo(Country.valueOf(countryValue))));
+        assertThat(savedUser, hasProperty(postcodeProperty, equalTo(postcodeValue)));
+        assertThat(savedUser, hasProperty(aboutMeProperty, equalTo(aboutMeValue)));
     }
 
     @Test

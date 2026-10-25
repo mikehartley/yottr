@@ -1,25 +1,24 @@
 package uk.co.yottr.service;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
-import uk.co.yottr.testconfig.IntegrationTestConfig;
+import uk.co.yottr.testconfig.TestcontainersConfig;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=IntegrationTestConfig.class)
+@SpringBootTest
+@Import(TestcontainersConfig.class)
 public class ReferenceDataServiceIT {
 
     @Autowired
@@ -28,7 +27,7 @@ public class ReferenceDataServiceIT {
     @Autowired
     private FinancialArrangementRepository financialArrangementRepository;
 
-    @Before
+    @BeforeEach
     public void deleteAllBeforeEachTest() {
         ryaSailCruisingLevelRepository.deleteAll();
         financialArrangementRepository.deleteAll();

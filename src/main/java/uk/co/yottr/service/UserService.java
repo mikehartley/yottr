@@ -57,7 +57,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User findById(Long id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Transactional
@@ -67,11 +67,11 @@ public class UserService {
 
     @Transactional
     public void delete(Long id) {
-        userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     public boolean userExists(Long id) {
-        return userRepository.exists(id);
+        return userRepository.existsById(id);
     }
 }

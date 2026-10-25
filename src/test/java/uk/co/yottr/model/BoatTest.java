@@ -1,19 +1,18 @@
 package uk.co.yottr.model;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
@@ -29,12 +28,12 @@ public class BoatTest {
 
     private Boat boat;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    @Before
+    @BeforeEach
     public void beforeEachTest() {
         boat = createValidBoat(aUser().build());
     }
@@ -42,7 +41,7 @@ public class BoatTest {
     @Test
     public void allValid() {
         final Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals("not expecting any violations", 0, violations.size());
+        assertEquals(0, violations.size(), "not expecting any violations");
     }
 
     @Test
@@ -50,18 +49,18 @@ public class BoatTest {
         final Boat boat1 = new Boat();
         final Boat boat2 = new Boat();
 
-        assertTrue("reference should be automatically populated and a decent size", boat1.getReference().length() > 5);
-        assertNotEquals("two consecutive references should not be the same", boat1.getReference(), boat2.getReference());
+        assertTrue(boat1.getReference().length() > 5, "reference should be automatically populated and a decent size");
+        assertNotEquals(boat1.getReference(), boat2.getReference(), "two consecutive references should not be the same");
     }
 
     @Test
     public void firstPosted() {
-        assertEquals("first posted should be today", LocalDate.now(), boat.getFirstPosted());
+        assertEquals(LocalDate.now(), boat.getFirstPosted(), "first posted should be today");
     }
 
     @Test
     public void lastUpdated() {
-        assertEquals("last updated should initially be same as first posted", boat.getFirstPosted(), boat.getLastUpdated());
+        assertEquals(boat.getFirstPosted(), boat.getLastUpdated(), "last updated should initially be same as first posted");
     }
 
     @Test
@@ -139,11 +138,11 @@ public class BoatTest {
 
     @Test
     public void courseLevel() {
-        assertNull("course level should initially be null", boat.getCourseLevel());
+        assertNull(boat.getCourseLevel(), "course level should initially be null");
 
         final CourseLevel courseLevel = CourseLevel.DAY_SKIPPER;
         boat.setCourseLevel(courseLevel);
-        assertEquals("course level didn't get set", courseLevel, boat.getCourseLevel());
+        assertEquals(courseLevel, boat.getCourseLevel(), "course level didn't get set");
     }
 
     @Test
@@ -180,11 +179,11 @@ public class BoatTest {
 
     @Test
     public void numberOfCrewWanted() {
-        assertNull("number of crew wanted should initially be null", boat.getNumberOfCrewWanted());
+        assertNull(boat.getNumberOfCrewWanted(), "number of crew wanted should initially be null");
 
         Integer number = 5;
         boat.setNumberOfCrewWanted(number);
-        assertEquals("number of crew wanted", number, boat.getNumberOfCrewWanted());
+        assertEquals(number, boat.getNumberOfCrewWanted(), "number of crew wanted");
 
         boat.setNumberOfCrewWanted(0);
         assertSingleViolation("must be greater than or equal to 1");
@@ -277,8 +276,8 @@ public class BoatTest {
         User owner1 = aUser().withUsername("u1").build();
         Boat ownersBoat = new Boat(owner1);
 
-        assertEquals("owner that was set via boat constructor", owner1, ownersBoat.getOwner());
-        assertSame("back reference to boat from owner", owner1.getBoatListings().get(0), ownersBoat);
+        assertEquals(owner1, ownersBoat.getOwner(), "owner that was set via boat constructor");
+        assertSame(owner1.getBoatListings().get(0), ownersBoat, "back reference to boat from owner");
     }
 
     @Test
@@ -287,15 +286,15 @@ public class BoatTest {
         Boat ownersBoat = new Boat();
         ownersBoat.setOwner(owner1);
 
-        assertEquals("owner that was set via setter", owner1, ownersBoat.getOwner());
-        assertSame("back reference to boat from owner", owner1.getBoatListings().get(0), ownersBoat);
+        assertEquals(owner1, ownersBoat.getOwner(), "owner that was set via setter");
+        assertSame(owner1.getBoatListings().get(0), ownersBoat, "back reference to boat from owner");
     }
 
     private void assertSingleViolation(String expectedErrorMessage) {
         Set<ConstraintViolation<Boat>> violations = validator.validate(boat);
-        assertEquals("Expected exactly one violation but got: " + violations.toString(), 1, violations.size());
+        assertEquals(1, violations.size(), "Expected exactly one violation but got: " + violations.toString());
         final ConstraintViolation<Boat> violation = violations.iterator().next();
-        assertEquals("Expected error message for: " + violation.getPropertyPath().toString(), expectedErrorMessage, violation.getMessage());
+        assertEquals(expectedErrorMessage, violation.getMessage(), "Expected error message for: " + violation.getPropertyPath().toString());
     }
 
     private Boat createValidBoat(User user) {

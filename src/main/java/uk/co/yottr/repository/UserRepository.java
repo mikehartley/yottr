@@ -1,5 +1,6 @@
 package uk.co.yottr.repository;
 
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import uk.co.yottr.model.User;
 
@@ -8,6 +9,6 @@ import uk.co.yottr.model.User;
  * All rights reserved.
  */
 
-public interface UserRepository extends PagingAndSortingRepository<User, Long> {
+public interface UserRepository extends PagingAndSortingRepository<User, Long>, CrudRepository<User, Long> {
     User findByUsername(String username);
 }

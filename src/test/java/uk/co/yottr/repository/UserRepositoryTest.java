@@ -1,34 +1,33 @@
 package uk.co.yottr.repository;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 import uk.co.yottr.testconfig.ConstantsForTests;
-import uk.co.yottr.testconfig.IntegrationTestConfig;
+import uk.co.yottr.testconfig.TestcontainersConfig;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=IntegrationTestConfig.class)
+@SpringBootTest
+@Import(TestcontainersConfig.class)
 public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Before
+    @BeforeEach
     public void clearUsersBeforeRunningTests() {
         userRepository.deleteAll();
     }
@@ -39,7 +38,7 @@ public class UserRepositoryTest {
             final User savedUser = userRepository.save(createUser("user" + i));
         }
 
-        final PageRequest pageRequest = new PageRequest(
+        final PageRequest pageRequest = PageRequest.of(
                 ConstantsForTests.DEFAULT_PAGE_REQUEST_PAGE,
                 ConstantsForTests.DEFAULT_PAGE_SIZE,
                 Sort.Direction.ASC,
@@ -50,7 +49,7 @@ public class UserRepositoryTest {
         int i = 0;
         for (User user : pagedUsers) {
             String usernameToFind = "user" + i++;
-            assertEquals("unexpected user in sequence", usernameToFind, user.getUsername());
+            assertEquals(usernameToFind, user.getUsername(), "unexpected user in sequence");
         }
     }
 

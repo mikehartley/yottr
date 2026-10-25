@@ -1,22 +1,24 @@
 package uk.co.yottr.service;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
 import uk.co.yottr.security.Role;
-import uk.co.yottr.testconfig.IntegrationTestConfig;
+import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /*
@@ -24,8 +26,8 @@ import static uk.co.yottr.builder.UserBuilder.aUser;
  * All rights reserved.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=IntegrationTestConfig.class)
+@SpringBootTest
+@Import(TestcontainersConfig.class)
 public class UserServiceIT {
 
     @Autowired
@@ -45,17 +47,17 @@ public class UserServiceIT {
 
         final User foundUser = userService.findByUsername(username);
 
-        assertEquals("findByUsername user.getId()", savedUser.getId(), foundUser.getId());
+        assertEquals(savedUser.getId(), foundUser.getId(), "findByUsername user.getId()");
 
         userService.delete(savedUser);
 
-        assertNull("find by username should not contain the deleted user", userService.findByUsername(username));
+        assertNull(userService.findByUsername(username), "find by username should not contain the deleted user");
     }
 
     @Test
     public void whenUsernameNotFound() throws Exception {
         final User result = userService.findByUsername("garbage");
-        Assert.assertNull("result of not found should be null", result);
+        Assertions.assertNull(result, "result of not found should be null");
     }
 
     @Test
@@ -67,10 +69,10 @@ public class UserServiceIT {
 
         final User savedUser = userService.save(user, true);
 
-        assertFalse("roles should not be empty", savedUser.getUserRoles().isEmpty());
+        assertFalse(savedUser.getUserRoles().isEmpty(), "roles should not be empty");
 
         final UserRole savedRole = savedUser.getUserRoles().iterator().next();
-        assertEquals("role from saved role", expectedRole, savedRole.getRole());
+        assertEquals(expectedRole, savedRole.getRole(), "role from saved role");
     }
 
     @Test
@@ -82,7 +84,7 @@ public class UserServiceIT {
 
         final User foundUser = userService.findById(savedUser.getId());
 
-        assertEquals("username", username, foundUser.getUsername());
+        assertEquals(username, foundUser.getUsername(), "username");
     }
 
     @Test
@@ -91,12 +93,12 @@ public class UserServiceIT {
         final User savedUser = userService.save(aUser().withUsername(randomAlphanumeric(10)).build(), true);
 
         final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
-        assertTrue("user should exist before delete", userExistsBeforeDelete);
+        assertTrue(userExistsBeforeDelete, "user should exist before delete");
 
         userService.delete(savedUser.getId());
 
         final boolean userExistsAfterDelete = userService.userExists(savedUser.getId());
-        assertFalse("user should not exist after delete", userExistsAfterDelete);
+        assertFalse(userExistsAfterDelete, "user should not exist after delete");
     }
 
     @Test
@@ -105,12 +107,12 @@ public class UserServiceIT {
         final User savedUser = userService.save(aUser().withUsername(randomAlphanumeric(10)).build(), true);
 
         final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
-        assertTrue("user should exist before delete", userExistsBeforeDelete);
+        assertTrue(userExistsBeforeDelete, "user should exist before delete");
 
         userService.delete(savedUser);
 
         final boolean userExistsAfterDelete = userService.userExists(savedUser.getId());
-        assertFalse("user should not exist after delete", userExistsAfterDelete);
+        assertFalse(userExistsAfterDelete, "user should not exist after delete");
     }
 
     @Test
@@ -142,16 +144,16 @@ public class UserServiceIT {
 
         final User savedUser = userService.save(user, true);
 
-        assertEquals("username", username, savedUser.getUsername());
-        assertTrue("password matches", passwordEncoder.matches(password, savedUser.getPassword()));
-        assertEquals("title", title, savedUser.getTitle());
-        assertEquals("firstName", firstName, savedUser.getFirstName());
-        assertEquals("lastName", lastName, savedUser.getLastName());
-        assertEquals("email", email, savedUser.getEmail());
-        assertEquals("mobile", mobile, savedUser.getMobile());
-        assertEquals("country", country, savedUser.getCountry());
-        assertEquals("postcode", postcode, savedUser.getPostcode());
-        assertEquals("aboutMe", aboutMe, savedUser.getAboutMe());
-        assertEquals("enabled", enabled, savedUser.isEnabled());
+        assertEquals(username, savedUser.getUsername(), "username");
+        assertTrue(passwordEncoder.matches(password, savedUser.getPassword()), "password matches");
+        assertEquals(title, savedUser.getTitle(), "title");
+        assertEquals(firstName, savedUser.getFirstName(), "firstName");
+        assertEquals(lastName, savedUser.getLastName(), "lastName");
+        assertEquals(email, savedUser.getEmail(), "email");
+        assertEquals(mobile, savedUser.getMobile(), "mobile");
+        assertEquals(country, savedUser.getCountry(), "country");
+        assertEquals(postcode, savedUser.getPostcode(), "postcode");
+        assertEquals(aboutMe, savedUser.getAboutMe(), "aboutMe");
+        assertEquals(enabled, savedUser.isEnabled(), "enabled");
     }
 }

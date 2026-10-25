@@ -1,8 +1,8 @@
 package uk.co.yottr.controller;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -21,8 +21,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,14 +46,14 @@ public class BoatControllerTest extends AbstractControllerTest {
     @Autowired
     private ReferenceDataService mockReferenceDataService;
 
-    @Before
+    @BeforeEach
     public void resetMocks() {
         reset(mockBoatService);
         reset(mockUserService);
         reset(mockReferenceDataService);
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() {
         verifyNoMoreInteractions(mockBoatService);
         verifyNoMoreInteractions(mockUserService);
