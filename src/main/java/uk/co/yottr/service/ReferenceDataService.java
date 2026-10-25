@@ -15,4 +15,7 @@ public interface ReferenceDataService {
     List<Boat.HullType> hullTypes();
     List<Country> countries();
     List<FinancialArrangement> financialArrangements();
+    List<VesselType> vesselTypes();
+    List<RoleRequired> rolesRequired();
+    List<Frequency> frequencies();
 }

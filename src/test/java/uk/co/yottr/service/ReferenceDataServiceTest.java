@@ -75,4 +75,36 @@ public class ReferenceDataServiceTest {
         assertEquals(FinancialArrangement.FinancialArrangementEnum.COMMERCIAL.getDisplayName(), financialArrangementEnums.get(4).getDisplayName());
         assertEquals(FinancialArrangement.FinancialArrangementEnum.PAID.getDisplayName(), financialArrangementEnums.get(5).getDisplayName());
     }
+
+    @Test
+    public void testVesselTypesOrdering() throws Exception {
+        final List<VesselType> vesselTypes = referenceDataService.vesselTypes();
+
+        assertEquals(VesselType.SAIL, vesselTypes.get(0));
+        assertEquals(VesselType.POWER, vesselTypes.get(1));
+        assertEquals(2, vesselTypes.size(), "list size");
+    }
+
+    @Test
+    public void testRolesRequiredOrdering() throws Exception {
+        final List<RoleRequired> rolesRequired = referenceDataService.rolesRequired();
+
+        assertEquals(RoleRequired.CREW, rolesRequired.get(0));
+        assertEquals(RoleRequired.MATE, rolesRequired.get(1));
+        assertEquals(RoleRequired.SKIPPER, rolesRequired.get(2));
+        assertEquals(RoleRequired.DOESNT_MATTER, rolesRequired.get(3));
+        assertEquals(4, rolesRequired.size(), "list size");
+    }
+
+    @Test
+    public void testFrequenciesOrdering() throws Exception {
+        final List<Frequency> frequencies = referenceDataService.frequencies();
+
+        assertEquals(Frequency.FrequencyEnum.WEEKDAYS.name(), frequencies.get(0).getName());
+        assertEquals(Frequency.FrequencyEnum.WEEKENDS.name(), frequencies.get(1).getName());
+        assertEquals(Frequency.FrequencyEnum.HOLIDAYS.name(), frequencies.get(2).getName());
+        assertEquals(Frequency.FrequencyEnum.LONG_TERM.name(), frequencies.get(3).getName());
+        assertEquals(Frequency.FrequencyEnum.TRIP.name(), frequencies.get(4).getName());
+        assertEquals(5, frequencies.size(), "list size");
+    }
 }

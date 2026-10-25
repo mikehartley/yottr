@@ -9,8 +9,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
+import uk.co.yottr.model.Frequency;
+import uk.co.yottr.model.RoleRequired;
+import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingPurpose;
 import uk.co.yottr.model.User;
+import uk.co.yottr.model.VesselType;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
@@ -19,9 +23,11 @@ import uk.co.yottr.testconfig.ConstantsForTests;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -73,19 +79,29 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("newListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(6))
+                .andExpect(model().size(9))
                 .andExpect(model().attributeExists("boat"))
                 .andExpect(model().attributeExists("allowedMoreListings"))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
                 .andExpect(model().attributeExists("sailingPurposes"))
                 .andExpect(model().attributeExists("hullTypes"))
-                .andExpect(model().attributeExists("financialArrangements"));
+                .andExpect(model().attributeExists("financialArrangements"))
+                .andExpect(model().attributeExists("vesselTypes"))
+                .andExpect(model().attributeExists("rolesRequired"))
+                .andExpect(model().attributeExists("frequencies"));
 
         verify(mockUserService).findByUsername(username);
+        verifyListingFormReferenceDataFetched();
+    }
+
+    private void verifyListingFormReferenceDataFetched() {
         verify(mockReferenceDataService).ryaSailCruisingLevels();
         verify(mockReferenceDataService).sailingPurposes();
         verify(mockReferenceDataService).hullTypes();
         verify(mockReferenceDataService).financialArrangements();
+        verify(mockReferenceDataService).vesselTypes();
+        verify(mockReferenceDataService).rolesRequired();
+        verify(mockReferenceDataService).frequencies();
     }
 
     @Test
@@ -376,16 +392,44 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("editListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(4))
-                .andExpect(model().attributeExists("boat"))
+                .andExpect(model().size(9))
+                .andExpect(model().attribute("boat", is(boat)))
+                .andExpect(model().attribute("boatReference", equalTo(boat.getReference())))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
                 .andExpect(model().attributeExists("sailingPurposes"))
-                .andExpect(model().attributeExists("hullTypes"));
+                .andExpect(model().attributeExists("hullTypes"))
+                .andExpect(model().attributeExists("financialArrangements"))
+                .andExpect(model().attributeExists("vesselTypes"))
+                .andExpect(model().attributeExists("rolesRequired"))
+                .andExpect(model().attributeExists("frequencies"));
 
         verify(mockUserService).findByUsername(username);
-        verify(mockReferenceDataService).ryaSailCruisingLevels();
-        verify(mockReferenceDataService).sailingPurposes();
-        verify(mockReferenceDataService).hullTypes();
+        verifyListingFormReferenceDataFetched();
+    }
+
+    @Test
+    public void testEditListingActionWithErrorsShowsFormAgain() throws Exception {
+        final String username = "jimbob";
+        final Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn(username);
+
+        final User user = aUser().withUsername(username).withBoat().build();
+        when(mockUserService.findByUsername(username)).thenReturn(user);
+        final Boat originalBoat = user.getBoatListings().get(0);
+
+        // nothing but a title, so the other required fields are in error
+        mockMvc.perform(post("/s/listings/" + originalBoat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
+                        .param("title", "titleValueEdited"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editListing"))
+                .andExpect(model().attributeHasFieldErrors("boat", "makeAndModel", "vesselType", "yearBuilt", "roleRequired", "frequency"))
+                .andExpect(model().attribute("boatReference", equalTo(originalBoat.getReference())))
+                .andExpect(model().attributeExists("vesselTypes"))
+                .andExpect(model().attributeExists("rolesRequired"))
+                .andExpect(model().attributeExists("frequencies"));
+
+        verifyListingFormReferenceDataFetched();
+        verify(mockBoatService, never()).save(any(Boat.class));
     }
 
     @Test
@@ -397,6 +441,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final User user = aUser().withUsername(username).withBoat().build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
         final Boat originalBoat = user.getBoatListings().get(0);
+        originalBoat.setSuspended(true);
         final Boat savedBoat = new Boat(user);
 
         final String titleProperty = "title";
@@ -422,6 +467,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final String financialArrangementValue = FinancialArrangement.NO_CONTRIBUTION.getName();
 
         when(mockBoatService.save(any(Boat.class))).thenReturn(savedBoat);
+        when(mockBoatService.findLevelByRank(minimumQualificationValueAsInt)).thenReturn(RyaSailCruisingLevel.DAY_SKIPPER);
 
         final String boatAttribute = "boat";
 
@@ -449,6 +495,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(boatAttribute, is(savedBoat)));
 
         ArgumentCaptor<Boat> boatArgumentCaptor = ArgumentCaptor.forClass(Boat.class);
+        verify(mockBoatService).findLevelByRank(minimumQualificationValueAsInt);
         verify(mockBoatService).save(boatArgumentCaptor.capture());
         verify(mockUserService).findByUsername(username);
 
@@ -463,5 +510,11 @@ public class BoatControllerTest extends AbstractControllerTest {
         assertEquals(SailingPurpose.valueOf(sailingPurposeValue), boatThatWasSaved.getSailingPurpose());
         assertEquals(minimumQualificationValueAsInt, boatThatWasSaved.getMinimumRequiredLevelByRank());
         assertEquals(LocalDate.of(2015, 9, 26), boatThatWasSaved.getDateRelevantTo());
+        assertEquals(VesselType.SAIL, boatThatWasSaved.getVesselType());
+        assertEquals(Integer.valueOf(1995), boatThatWasSaved.getYearBuilt());
+        assertEquals(RoleRequired.CREW, boatThatWasSaved.getRoleRequired());
+        assertEquals(List.of("WEEKENDS"), boatThatWasSaved.getFrequency().stream().map(Frequency::getName).toList());
+        assertEquals(financialArrangementValue, boatThatWasSaved.getFinancialArrangement().getName());
+        assertTrue(boatThatWasSaved.isSuspended(), "editing must not change whether the listing is suspended");
     }
 }

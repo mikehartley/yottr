@@ -40,6 +40,11 @@ public class BoatService {
     }
 
     @Transactional(readOnly = true)
+    public RyaSailCruisingLevel findLevelByRank(int rank) {
+        return ryaSailCruisingLevelRepository.findByRank(rank);
+    }
+
+    @Transactional(readOnly = true)
     public Page<Boat> findAll(Pageable pageable) {
         return boatRepository.findAll(pageable);
     }

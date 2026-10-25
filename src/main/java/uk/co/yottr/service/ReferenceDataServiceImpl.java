@@ -76,6 +76,40 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         return financialArrangementEnums;
     }
 
+    @Override
+    public List<VesselType> vesselTypes() {
+        List<VesselType> vesselTypes = new ArrayList<>();
+
+        vesselTypes.add(VesselType.SAIL);
+        vesselTypes.add(VesselType.POWER);
+
+        return vesselTypes;
+    }
+
+    @Override
+    public List<RoleRequired> rolesRequired() {
+        List<RoleRequired> rolesRequired = new ArrayList<>();
+
+        rolesRequired.add(RoleRequired.CREW);
+        rolesRequired.add(RoleRequired.MATE);
+        rolesRequired.add(RoleRequired.SKIPPER);
+        rolesRequired.add(RoleRequired.DOESNT_MATTER);
+
+        return rolesRequired;
+    }
+
+    @Override
+    public List<Frequency> frequencies() {
+        List<Frequency> frequencies = new ArrayList<>();
+
+        frequencies.add(new Frequency(Frequency.FrequencyEnum.WEEKDAYS));
+        frequencies.add(new Frequency(Frequency.FrequencyEnum.WEEKENDS));
+        frequencies.add(new Frequency(Frequency.FrequencyEnum.HOLIDAYS));
+        frequencies.add(new Frequency(Frequency.FrequencyEnum.LONG_TERM));
+        frequencies.add(new Frequency(Frequency.FrequencyEnum.TRIP));
+
+        return frequencies;
+    }
 
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {

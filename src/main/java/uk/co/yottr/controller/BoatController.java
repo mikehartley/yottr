@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
@@ -131,9 +132,8 @@ public class BoatController {
 
         final ModelAndView modelAndView = new ModelAndView("editListing");
         modelAndView.addObject("boat", boat);
-        modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
-        modelAndView.addObject("sailingPurposes", referenceDataService.sailingPurposes());
-        modelAndView.addObject("hullTypes", referenceDataService.hullTypes());
+        modelAndView.addObject("boatReference", boatReference);
+        addListingFormReferenceData(modelAndView);
 
         return modelAndView;
     }
@@ -143,20 +143,34 @@ public class BoatController {
                                           @PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
-            return new ModelAndView("editListing");
+            // the bound boat has a newly generated reference, so the form posts back using the one from the path
+            final ModelAndView modelAndView = new ModelAndView("editListing");
+            modelAndView.addObject("boatReference", boatReference);
+            addListingFormReferenceData(modelAndView);
+            return modelAndView;
         }
 
         final Boat boatForUpdate = findBoat(boatReference, principal);
+
+        // The form only carries the level's rank. Look up the stored level first: boatForUpdate is managed by
+        // Hibernate and gets flushed before the next query, so it must never refer to an unsaved level.
+        final RyaSailCruisingLevel minimumRequiredLevel = boatService.findLevelByRank(boatFromForm.getMinimumRequiredLevelByRank());
+
+        // suspended is not on the form; it is changed with /suspended/flip
         boatForUpdate.setTitle(boatFromForm.getTitle());
         boatForUpdate.setMakeAndModel(boatFromForm.getMakeAndModel());
         boatForUpdate.setLength(boatFromForm.getLength());
         boatForUpdate.setUnitsImperial(boatFromForm.isUnitsImperial());
         boatForUpdate.setHullType(boatFromForm.getHullType());
+        boatForUpdate.setVesselType(boatFromForm.getVesselType());
+        boatForUpdate.setYearBuilt(boatFromForm.getYearBuilt());
         boatForUpdate.setDescription(boatFromForm.getDescription());
         boatForUpdate.setDateRelevantTo(boatFromForm.getDateRelevantTo());
-        boatForUpdate.setMinimumRequiredLevel(boatFromForm.getMinimumRequiredLevel());
+        boatForUpdate.setMinimumRequiredLevel(minimumRequiredLevel);
+        boatForUpdate.setRoleRequired(boatFromForm.getRoleRequired());
         boatForUpdate.setSailingPurpose(boatFromForm.getSailingPurpose());
-        boatForUpdate.setSuspended(boatFromForm.isSuspended());
+        boatForUpdate.setFrequency(boatFromForm.getFrequency());
+        boatForUpdate.setFinancialArrangement(boatFromForm.getFinancialArrangement());
 
         final Boat updatedBoat = boatService.save(boatForUpdate);
 
@@ -174,7 +188,14 @@ public class BoatController {
 
     private void addModelAttributesForNewListing(ModelAndView modelAndView, User user) {
         modelAndView.addObject("allowedMoreListings", user.isAllowedMoreListings());
+        addListingFormReferenceData(modelAndView);
+    }
+
+    private void addListingFormReferenceData(ModelAndView modelAndView) {
         addReferenceData(modelAndView);
+        modelAndView.addObject("vesselTypes", referenceDataService.vesselTypes());
+        modelAndView.addObject("rolesRequired", referenceDataService.rolesRequired());
+        modelAndView.addObject("frequencies", referenceDataService.frequencies());
     }
 
     private void addReferenceData(ModelAndView modelAndView) {

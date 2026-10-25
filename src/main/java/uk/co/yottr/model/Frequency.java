@@ -66,4 +66,12 @@ public class Frequency {
     public String getDisplayName() {
         return displayName;
     }
+
+    /**
+     * The name, which is also the id, so that Thymeleaf can mark the bound value as selected in forms.
+     */
+    @Override
+    public String toString() {
+        return name;
+    }
 }
