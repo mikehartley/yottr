@@ -156,6 +156,9 @@ public class InitialiseDatabase {
         boat.setDateRelevantTo(LocalDate.of(2075, 3, 10));
         boat.setFinancialArrangement(FinancialArrangement.FOOD_ONLY);
         boat.setFrequency(Arrays.asList(Frequency.HOLIDAYS, Frequency.WEEKENDS));
+        boat.setYearBuilt(1998);
+        boat.setVesselType(VesselType.SAIL);
+        boat.setRoleRequired(RoleRequired.CREW);
 
         final int rank = RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank();
         final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(rank);

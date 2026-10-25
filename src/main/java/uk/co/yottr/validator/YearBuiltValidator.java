@@ -2,7 +2,9 @@ package uk.co.yottr.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import java.util.Calendar;
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+
+import java.time.Year;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -17,20 +19,24 @@ public class YearBuiltValidator implements ConstraintValidator<YearBuilt, Intege
 	public void initialize(YearBuilt constraintAnnotation) {
 	}
 
+	/**
+	 * A null year is left to @NotNull, so that a missing year gets the single "required" message.
+	 */
 	@Override
 	public boolean isValid(Integer year, ConstraintValidatorContext ctx) {
 		if(year == null){
-			return false;
+			return true;
 		}
 
-        final int latestExpectedYear = Calendar.getInstance().get(Calendar.YEAR) + 2;
+        final int latestExpectedYear = Year.now().getValue() + 2;
 
 		final boolean isValid = year >= EARLIEST_EXPECTED_YEAR && year <= latestExpectedYear;
 
-		if (!isValid)
+		if (!isValid && ctx != null)
 		{
-			ctx.disableDefaultConstraintViolation();
-			ctx.buildConstraintViolationWithTemplate("{validation.year.built.2}").addPropertyNode("msg").addConstraintViolation();
+			ctx.unwrap(HibernateConstraintValidatorContext.class)
+					.addMessageParameter("min", EARLIEST_EXPECTED_YEAR)
+					.addMessageParameter("max", latestExpectedYear);
 		}
 
 		return isValid;

@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface YearBuilt {
 
-    String message() default "{validation.year.built.1}";
+    String message() default "{validation.year.built}";
 
     // required but not used
     Class<?>[] groups() default {};

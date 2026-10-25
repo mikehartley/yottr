@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import uk.co.yottr.initialise.InitialiseDatabase;
+import uk.co.yottr.model.FinancialArrangement;
+import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.testconfig.TestcontainersConfig;
@@ -36,12 +38,12 @@ public class ReferenceDataServiceIT {
     @Test
     public void ryaSailCruisingLevels() {
         InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
-        assertEquals(8, ryaSailCruisingLevelRepository.findAll().spliterator().getExactSizeIfKnown());
+        assertEquals(RyaSailCruisingLevel.Level.values().length, ryaSailCruisingLevelRepository.findAll().spliterator().getExactSizeIfKnown());
     }
 
     @Test
     public void financialArrangements() {
         InitialiseDatabase.initialise(financialArrangementRepository);
-        assertEquals(5, financialArrangementRepository.findAll().spliterator().getExactSizeIfKnown());
+        assertEquals(FinancialArrangement.FinancialArrangementEnum.values().length, financialArrangementRepository.findAll().spliterator().getExactSizeIfKnown());
     }
 }

@@ -139,8 +139,8 @@ public class BoatController {
     }
 
     @RequestMapping(value = "/s/listings/{boatReference}/edit", method = RequestMethod.POST)
-    public ModelAndView editListingAction(@Valid Boat boatFromForm, @PathVariable String boatReference,
-                                          BindingResult bindingResult, Principal principal) throws ResourceNotFoundException {
+    public ModelAndView editListingAction(@Valid Boat boatFromForm, BindingResult bindingResult,
+                                          @PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
             return new ModelAndView("editListing");

@@ -43,6 +43,9 @@ public class BoatRepositoryTest {
     @Autowired
     private FinancialArrangementRepository financialArrangementRepository;
 
+    @Autowired
+    private FrequencyRepository frequencyRepository;
+
     private User owner;
 
     @BeforeEach
@@ -50,6 +53,7 @@ public class BoatRepositoryTest {
 
         InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
         InitialiseDatabase.initialise(financialArrangementRepository);
+        InitialiseDatabase.initialise(frequencyRepository);
 
         owner = userService.save(aUser().build(), false);
     }
