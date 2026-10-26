@@ -77,7 +77,7 @@ public class Boat {
     @NotNull(message = REQUIRED_ERROR_MSG)
     private VesselType vesselType;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 2000)
     @NotEmpty(message = REQUIRED_ERROR_MSG)
     private String description;
 

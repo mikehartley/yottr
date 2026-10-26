@@ -17,12 +17,19 @@ To build:
 
 To run locally:
   ./mvnw spring-boot:run
-  This also starts, from compose.yaml:
+  This runs with the dev profile (application-dev.properties: SQL and security logging, templates
+  reloaded without a restart) and also starts, from compose.yaml:
     Postgres     data kept in the yottr-data volume
     Prometheus   http://localhost:39090
     Grafana      http://localhost:33000  (Yottr dashboard; anonymous viewing, admin / admin to edit)
 
-To put some initial data in the local database (reference data, an admin user "mike" and some boats):
+Database:
+  Flyway owns the schema: src/main/resources/db/migration. V2 loads the reference data
+  (qualification levels, financial arrangements, frequencies). Hibernate only validates the schema,
+  so a change to an entity needs a new migration. A database Hibernate created before Flyway is
+  baselined at V1.
+
+To put some sample data in the local database (an admin user "mike" and some boats):
   ./mvnw test -Dtest=InitialiseDatabase -Dyottr.initialise=true
 
 To run elsewhere:

@@ -65,10 +65,7 @@ public class InitialiseDatabase {
     public void init() {
         if (!ENABLED) return;
 
-        initialise(ryaSailCruisingLevelRepository);
-        initialise(financialArrangementRepository);
-        initialise(frequencyRepository);
-
+        // the reference data comes from the Flyway migrations
         final User adminUser = setupUserWithRoles("mike", Role.ADMIN, Role.FREE, Role.CREW);
         updateListingsLimit(adminUser, 50);
         addBoatsWithOwner(adminUser, 15);
@@ -91,33 +88,6 @@ public class InitialiseDatabase {
             }
 
         });
-    }
-
-    public static void initialise(RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository) {
-        if (ryaSailCruisingLevelRepository.findAll().iterator().hasNext()) return;
-
-        final List<RyaSailCruisingLevel.Level> levels = Arrays.asList(RyaSailCruisingLevel.Level.values());
-        for (RyaSailCruisingLevel.Level level : levels) {
-            ryaSailCruisingLevelRepository.save(new RyaSailCruisingLevel(level));
-        }
-    }
-
-    public static void initialise(FinancialArrangementRepository financialArrangementRepository) {
-        if (financialArrangementRepository.findAll().iterator().hasNext()) return;
-
-        final List<FinancialArrangement.FinancialArrangementEnum> arrangements = Arrays.asList(FinancialArrangement.FinancialArrangementEnum.values());
-        for (FinancialArrangement.FinancialArrangementEnum arrangement : arrangements) {
-            financialArrangementRepository.save(new FinancialArrangement(arrangement));
-        }
-    }
-
-    public static void initialise(FrequencyRepository frequencyRepository) {
-        if (frequencyRepository.findAll().iterator().hasNext()) return;
-
-        final List<Frequency.FrequencyEnum> frequencies = Arrays.asList(Frequency.FrequencyEnum.values());
-        for (Frequency.FrequencyEnum frequency : frequencies) {
-            frequencyRepository.save(new Frequency(frequency));
-        }
     }
 
     private User setupUserWithRoles(String username, Role... roles) {

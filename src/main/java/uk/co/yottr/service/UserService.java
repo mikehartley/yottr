@@ -39,9 +39,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * A page of users, with their listings loaded for the page to count.
+     */
     @Transactional(readOnly = true)
     public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+        final Page<User> users = userRepository.findAll(pageable);
+        users.forEach(user -> user.getBoatListings().size());
+        return users;
     }
 
     @Transactional(readOnly = true)

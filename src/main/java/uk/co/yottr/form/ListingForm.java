@@ -62,6 +62,7 @@ public class ListingForm {
     private Integer yearBuilt;
 
     @NotEmpty(message = REQUIRED_ERROR_MSG)
+    @Size(max = 2000)
     private String description;
 
     @NotNull(message = REQUIRED_ERROR_MSG)

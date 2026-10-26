@@ -10,11 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.ListingForm;
-import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.*;
-import uk.co.yottr.repository.FinancialArrangementRepository;
-import uk.co.yottr.repository.FrequencyRepository;
-import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import java.time.LocalDate;
@@ -51,24 +47,10 @@ public class BoatServiceIT {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
-
-    @Autowired
-    private FinancialArrangementRepository financialArrangementRepository;
-
-    @Autowired
-    private FrequencyRepository frequencyRepository;
-
     private User owner;
 
     @BeforeEach
-    public void initialiseReferenceData() {
-
-        InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
-        InitialiseDatabase.initialise(financialArrangementRepository);
-        InitialiseDatabase.initialise(frequencyRepository);
-
+    public void createOwner() {
         owner = userService.save(aUser().build(), false);
     }
 

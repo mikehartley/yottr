@@ -81,7 +81,7 @@ public class User {
     private String aboutMe;
 
     // deleting a member deletes their listings, which can't exist without an owner
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("reference")
     private List<Boat> boatListings = new ArrayList<>();
 

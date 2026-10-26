@@ -8,11 +8,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.*;
-import uk.co.yottr.repository.FinancialArrangementRepository;
-import uk.co.yottr.repository.FrequencyRepository;
-import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.TestcontainersConfig;
@@ -53,23 +49,10 @@ public class BoatControllerIT {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
-
-    @Autowired
-    private FinancialArrangementRepository financialArrangementRepository;
-
-    @Autowired
-    private FrequencyRepository frequencyRepository;
-
     private User owner;
 
     @BeforeEach
-    public void initialiseReferenceData() {
-        InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
-        InitialiseDatabase.initialise(financialArrangementRepository);
-        InitialiseDatabase.initialise(frequencyRepository);
-
+    public void createOwner() {
         owner = userService.save(aUser().withUsername("owner" + secure().nextAlphanumeric(10)).build(), false);
     }
 

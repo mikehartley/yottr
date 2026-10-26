@@ -1,6 +1,5 @@
 package uk.co.yottr.acceptance;
 
-import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -9,10 +8,6 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.co.yottr.initialise.InitialiseDatabase;
-import uk.co.yottr.repository.FinancialArrangementRepository;
-import uk.co.yottr.repository.FrequencyRepository;
-import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
 
 import java.io.IOException;
 
@@ -30,22 +25,6 @@ public class ListingSteps {
 
     @Autowired
     private Browser browser;
-
-    @Autowired
-    private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
-
-    @Autowired
-    private FinancialArrangementRepository financialArrangementRepository;
-
-    @Autowired
-    private FrequencyRepository frequencyRepository;
-
-    @Before
-    public void loadReferenceData() {
-        InitialiseDatabase.initialise(ryaSailCruisingLevelRepository);
-        InitialiseDatabase.initialise(financialArrangementRepository);
-        InitialiseDatabase.initialise(frequencyRepository);
-    }
 
     @Given("I have posted a listing for a {string}")
     @When("I post a listing for a {string}")
