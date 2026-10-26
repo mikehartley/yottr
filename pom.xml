@@ -146,12 +146,6 @@
 			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- Cucumber acceptance tests, driving the real pages with HtmlUnit -->
 		<dependency>
 			<groupId>io.cucumber</groupId>
@@ -245,12 +239,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<!-- Needs a running server and a browser, so it is run on request: -Dit.test=SignInSignOutIT -->
-					<excludes>
-						<exclude>**/acceptance/SignInSignOutIT.java</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

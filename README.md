@@ -36,7 +36,4 @@ Operations:
   /actuator/health and /actuator/prometheus are open, for Prometheus.
   Administrators can change log levels at /admin/logging, or through /actuator/loggers.
   Changes last until the application restarts.
-
-The Selenium sign-in test needs the app running and Firefox installed, so it is left out of the build
-(the Cucumber features cover the same ground):
-  ./mvnw verify -Dit.test=SignInSignOutIT
+  In production, put the actuator on its own management port (management.server.port) that isn't public.

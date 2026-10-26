@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 
 public class PageWrapper<T> {
 
-    private static int RANGE_RADIUS = 3;
+    private static final int RANGE_RADIUS = 3;
 
     private Page<T> page;
 

@@ -1,6 +1,5 @@
 package uk.co.yottr.model;
 
-import org.springframework.stereotype.Component;
 import uk.co.yottr.security.Role;
 
 import jakarta.persistence.*;
@@ -20,7 +19,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Component
 public class User {
 
     private static final String REQUIRED_ERROR_MSG = "required";

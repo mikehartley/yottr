@@ -32,7 +32,7 @@ public class UserDetailsAdaptorService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 
-        LOG.info("UserDetailsAdaptorService.loadUserByUsername : " + username);
+        LOG.info("loading user {} for sign-in", username);
 
         final User user = userRepository.findByUsername(username);
 
