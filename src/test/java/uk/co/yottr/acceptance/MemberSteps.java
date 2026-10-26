@@ -3,7 +3,7 @@ package uk.co.yottr.acceptance;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,8 +97,15 @@ public class MemberSteps {
 
     @When("I sign out")
     public void iSignOut() throws IOException {
-        final HtmlAnchor logout = browser.page().getHtmlElementById("logout-link");
+        final HtmlElement logout = browser.page().getHtmlElementById("logout-link");
         browser.showing(logout.click());
+    }
+
+    @When("I delete my account")
+    public void iDeleteMyAccount() throws IOException {
+        browser.open("/s/myDetails");
+        final HtmlButton deleteMe = browser.page().getFirstByXPath("//button[@form='delete-me-form']");
+        browser.showing(deleteMe.click());
     }
 
     @When("I register as {string}")

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -12,12 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import uk.co.yottr.builder.BoatBuilder;
+import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.FrequencyRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
+import uk.co.yottr.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,6 +29,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -44,6 +49,9 @@ public class BoatServiceTest {
 
     @Mock
     private BoatRepository boatRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Mock
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
@@ -65,10 +73,10 @@ public class BoatServiceTest {
         reset(ryaSailCruisingLevelRepository);
         reset(temporalProvider);
 
-        boatService = new BoatService(boatRepository, ryaSailCruisingLevelRepository, frequencyRepository,
+        boatService = new BoatService(boatRepository, userRepository, ryaSailCruisingLevelRepository, frequencyRepository,
                 financialArrangementRepository, temporalProvider);
 
-        owner = aUser().build();
+        owner = aUser().withUsername("owner").withMaxListings(2).build();
     }
 
     private ListingForm aListingForm() {
@@ -117,12 +125,46 @@ public class BoatServiceTest {
     @Test
     public void createUsesTheStoredReferenceData() {
         givenStoredReferenceData();
+        when(userRepository.findByUsernameForUpdate("owner")).thenReturn(owner);
+        when(boatRepository.countByOwner(owner)).thenReturn(1L);
 
-        final Boat created = boatService.create(owner, aListingForm());
+        final Boat created = boatService.create("owner", aListingForm());
 
         assertMatchesTheForm(created);
         assertSame(owner, created.getOwner());
         assertTrue(owner.getBoatListings().contains(created), "the owner's listings include the new one");
+    }
+
+    @Test
+    public void createRefusesAMemberAtTheirListingLimit() {
+        when(userRepository.findByUsernameForUpdate("owner")).thenReturn(owner);
+        when(boatRepository.countByOwner(owner)).thenReturn(2L);
+
+        assertThrows(IllegalOperationException.class, () -> boatService.create("owner", aListingForm()));
+
+        verify(boatRepository, never()).save(any(Boat.class));
+    }
+
+    @Test
+    public void createLocksTheMemberBeforeCountingTheirListings() {
+        givenStoredReferenceData();
+        when(userRepository.findByUsernameForUpdate("owner")).thenReturn(owner);
+
+        boatService.create("owner", aListingForm());
+
+        final InOrder inOrder = inOrder(userRepository, boatRepository);
+        inOrder.verify(userRepository).findByUsernameForUpdate("owner");
+        inOrder.verify(boatRepository).countByOwner(owner);
+    }
+
+    @Test
+    public void flipSuspendedSuspendsAndReEnables() {
+        when(boatRepository.save(any(Boat.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(ryaSailCruisingLevelRepository.findByRank(RyaSailCruisingLevel.COASTAL_SKIPPER.getRank())).thenReturn(RyaSailCruisingLevel.COASTAL_SKIPPER);
+        final Boat boat = BoatBuilder.aBoat().withOwner(owner).withSuspended(false).build();
+
+        assertTrue(boatService.flipSuspended(boat).isSuspended());
+        assertFalse(boatService.flipSuspended(boat).isSuspended());
     }
 
     @Test

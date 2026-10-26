@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
@@ -24,6 +25,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -111,7 +113,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockBoatService.findListings(username)).thenReturn(user.getBoatListings());
 
         mockMvc.perform(get("/s/listings/mine").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
@@ -120,7 +122,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("boatListings"));
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).findListings(username);
     }
 
     @Test
@@ -130,12 +132,11 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
 
         final String boatAttribute = "boat";
         // owned by another user: built for this user, it would count towards their listing limit before the request
         final Boat createdBoat = aBoat().withOwner(aUser().build()).build();
-        when(mockBoatService.create(eq(user), any(ListingForm.class))).thenReturn(createdBoat);
+        when(mockBoatService.create(eq(username), any(ListingForm.class))).thenReturn(createdBoat);
 
         final String titleProperty = "title";
         final String titleValue = "titleValue";
@@ -181,9 +182,8 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attribute(boatAttribute, is(createdBoat)));
 
-        verify(mockUserService).findByUsername(username);
         final ArgumentCaptor<ListingForm> formCaptor = ArgumentCaptor.forClass(ListingForm.class);
-        verify(mockBoatService).create(eq(user), formCaptor.capture());
+        verify(mockBoatService).create(eq(username), formCaptor.capture());
 
         final ListingForm form = formCaptor.getValue();
         assertThat(form, hasProperty(titleProperty, equalTo(titleValue)));
@@ -210,6 +210,9 @@ public class BoatControllerTest extends AbstractControllerTest {
 
         final User user = aUser().withUsername(username).withMaxListings(0).build();
         when(mockUserService.findByUsername(username)).thenReturn(user);
+        // BoatService enforces the limit
+        when(mockBoatService.create(eq(username), any(ListingForm.class)))
+                .thenThrow(new IllegalOperationException("User is already at listing limit."));
 
         final String titleProperty = "title";
         final String titleValue = "titleValue";
@@ -250,7 +253,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         )
                 .andExpect(status().isForbidden());
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).create(eq(username), any(ListingForm.class));
     }
 
     @Test
@@ -303,7 +306,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat(aBoat()).build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockBoatService.findListings(username)).thenReturn(user.getBoatListings());
 
         mockMvc.perform(get("/s/listings/mine").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
@@ -312,7 +315,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("boatListings"));
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).findListings(username);
     }
 
     @Test
@@ -322,18 +325,15 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
         final Boat boat = user.getBoatListings().get(0);
+        when(mockBoatService.findListing(boat.getReference(), username)).thenReturn(Optional.of(boat));
 
-        mockMvc.perform(get("/s/listings/" + boat.getReference() + "/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
-                .andExpect(status().isOk())
-                .andExpect(view().name("myListings"))
-                .andExpect(model().hasNoErrors())
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists("boatListings"));
+        mockMvc.perform(post("/s/listings/" + boat.getReference() + "/suspended/flip").principal(mockPrincipal))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/s/listings/mine"));
 
-        verify(mockBoatService).save(boat);
-        verify(mockUserService, times(2)).findByUsername(username);
+        verify(mockBoatService).findListing(boat.getReference(), username);
+        verify(mockBoatService).flipSuspended(boat);
     }
 
     @Test
@@ -342,13 +342,20 @@ public class BoatControllerTest extends AbstractControllerTest {
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
-        final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockBoatService.findListing("unknownref", username)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/s/listings/unknownref/suspended/flip").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+        mockMvc.perform(post("/s/listings/unknownref/suspended/flip").principal(mockPrincipal))
                 .andExpect(status().isNotFound());
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).findListing("unknownref", username);
+    }
+
+    @Test
+    public void testFlipSuspendedIsNotAGet() throws Exception {
+        final Principal mockPrincipal = () -> "jimbob";
+
+        mockMvc.perform(get("/s/listings/someref/suspended/flip").principal(mockPrincipal))
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
@@ -358,18 +365,15 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
         final Boat boat = user.getBoatListings().get(0);
+        when(mockBoatService.findListing(boat.getReference(), username)).thenReturn(Optional.of(boat));
 
-        mockMvc.perform(get("/s/listings/" + boat.getReference() + "/delete").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
-                .andExpect(status().isOk())
-                .andExpect(view().name("myListings"))
-                .andExpect(model().hasNoErrors())
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists("boatListings"));
+        mockMvc.perform(post("/s/listings/" + boat.getReference() + "/delete").principal(mockPrincipal))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/s/listings/mine"));
 
+        verify(mockBoatService).findListing(boat.getReference(), username);
         verify(mockBoatService).delete(boat);
-        verify(mockUserService, times(2)).findByUsername(username);
     }
 
     @Test
@@ -378,13 +382,20 @@ public class BoatControllerTest extends AbstractControllerTest {
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
-        final User user = aUser().withUsername(username).withBoat(aBoat()).build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockBoatService.findListing("unknownref", username)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/s/listings/unknownref/delete").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+        mockMvc.perform(post("/s/listings/unknownref/delete").principal(mockPrincipal))
                 .andExpect(status().isNotFound());
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).findListing("unknownref", username);
+    }
+
+    @Test
+    public void testDeleteListingIsNotAGet() throws Exception {
+        final Principal mockPrincipal = () -> "jimbob";
+
+        mockMvc.perform(get("/s/listings/someref/delete").principal(mockPrincipal))
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
@@ -394,8 +405,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
         final Boat boat = user.getBoatListings().get(0);
+        when(mockBoatService.findListing(boat.getReference(), username)).thenReturn(Optional.of(boat));
 
         mockMvc.perform(get("/s/listings/" + boat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
@@ -415,7 +426,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists("rolesRequired"))
                 .andExpect(model().attributeExists("frequencies"));
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).findListing(boat.getReference(), username);
         verifyListingFormReferenceDataFetched();
     }
 
@@ -451,8 +462,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
         final Boat originalBoat = user.getBoatListings().get(0);
+        when(mockBoatService.findListing(originalBoat.getReference(), username)).thenReturn(Optional.of(originalBoat));
         originalBoat.setSuspended(true);
         final Boat savedBoat = new Boat(user);
 
@@ -508,7 +519,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         // the service applies the form to the listing it was given; BoatServiceTest checks what it changes
         ArgumentCaptor<ListingForm> formCaptor = ArgumentCaptor.forClass(ListingForm.class);
         verify(mockBoatService).update(eq(originalBoat), formCaptor.capture());
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).findListing(originalBoat.getReference(), username);
 
         final ListingForm form = formCaptor.getValue();
         assertEquals(titleValue, form.getTitle());
@@ -534,8 +545,8 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
         final Boat originalBoat = user.getBoatListings().get(0);
+        when(mockBoatService.findListing(originalBoat.getReference(), username)).thenReturn(Optional.of(originalBoat));
         when(mockBoatService.update(eq(originalBoat), any(ListingForm.class))).thenReturn(originalBoat);
 
         mockMvc.perform(post("/s/listings/" + originalBoat.getReference() + "/edit").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
@@ -558,7 +569,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().hasNoErrors());
 
         verify(mockBoatService).update(eq(originalBoat), any(ListingForm.class));
-        verify(mockUserService).findByUsername(username);
+        verify(mockBoatService).findListing(originalBoat.getReference(), username);
         assertEquals(user, originalBoat.getOwner());
     }
 

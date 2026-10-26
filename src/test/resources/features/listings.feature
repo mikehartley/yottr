@@ -20,3 +20,12 @@ Feature: Listing a boat
     And "dave" has signed in
     When I open "/s/listings/new"
     Then I see "You have reached the limit"
+
+  Scenario: A member deletes a listing
+    Given a member called "alice"
+    And "alice" has signed in
+    And I have posted a listing for a "Sigma 33"
+    And I have posted a listing for a "Contessa 32"
+    When I delete my "Sigma 33" listing
+    Then my listings do not include a "Sigma 33"
+    And my listings include a "Contessa 32"

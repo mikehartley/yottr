@@ -15,6 +15,7 @@ import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import static org.apache.commons.lang3.RandomStringUtils.secure;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,7 +51,7 @@ public class UserControllerIT {
     }
 
     private static MockHttpServletRequestBuilder signup(String username) {
-        return post("/signup").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        return post("/signup").contentType(MediaType.APPLICATION_FORM_URLENCODED).with(csrf())
                 .param("username", username)
                 .param("password", "new-members-password")
                 .param("firstName", "Newly")
@@ -99,7 +100,7 @@ public class UserControllerIT {
         final String username = unique("member");
         userService.save(aUser().withUsername(username).build(), true);
 
-        mockMvc.perform(post("/s/myDetails").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/s/myDetails").contentType(MediaType.APPLICATION_FORM_URLENCODED).with(csrf())
                         .with(user(username).authorities(new SimpleGrantedAuthority(Role.FREE.name())))
                         .param("username", unique("renamed"))
                         .param("maxListings", "1000")

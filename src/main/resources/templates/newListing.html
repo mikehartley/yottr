@@ -16,7 +16,6 @@
                 <h2>Enter boat details:</h2>
 
                 <fieldset>
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                     <div class="form-group" th:classappend="${#fields.hasErrors('title')}? 'has-error'">
                         <label for="title" class="col-lg-2 control-label">Title</label>

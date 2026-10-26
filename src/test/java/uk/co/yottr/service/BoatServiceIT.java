@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import uk.co.yottr.exception.IllegalOperationException;
+import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.initialise.InitialiseDatabase;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.FinancialArrangementRepository;
@@ -19,7 +21,14 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
@@ -177,6 +186,69 @@ public class BoatServiceIT {
         assertEquals("1", boatIterator.next().getDescription());
         assertEquals("2", boatIterator.next().getDescription());
         assertFalse(boatIterator.hasNext());
+    }
+
+    @Test
+    public void deletingAMemberDeletesTheirListings() {
+        final User member = createUser();
+        final String reference = boatService.save(aBoat().withOwner(member).build()).getReference();
+
+        userService.delete(member.getId());
+
+        assertFalse(userService.userExists(member.getId()), "the member is deleted");
+        assertNull(boatService.findByReference(reference), "their listing is deleted with them");
+    }
+
+    @Test
+    public void deletingAMemberLoadedEarlierDeletesTheirListings() {
+        final User member = createUser();
+        final String reference = boatService.save(aBoat().withOwner(member).build()).getReference();
+
+        userService.delete(userService.findByUsername(member.getUsername()));
+
+        assertFalse(userService.userExists(member.getId()), "the member is deleted");
+        assertNull(boatService.findByReference(reference), "their listing is deleted with them");
+    }
+
+    @Test
+    public void twoListingsPostedAtOnceCannotBothPassTheLimit() throws Exception {
+        final User member = userService.save(aUser().withUsername(randomAlphabetic(10)).withMaxListings(1).build(), false);
+        final CountDownLatch start = new CountDownLatch(1);
+        final ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        final Callable<Boolean> post = () -> {
+            start.await();
+            try {
+                boatService.create(member.getUsername(), aListingForm());
+                return true;
+            } catch (IllegalOperationException atLimit) {
+                return false;
+            }
+        };
+        final Future<Boolean> first = executor.submit(post);
+        final Future<Boolean> second = executor.submit(post);
+        start.countDown();
+
+        final List<Boolean> posted = List.of(first.get(30, TimeUnit.SECONDS), second.get(30, TimeUnit.SECONDS));
+        executor.shutdown();
+
+        assertEquals(1, posted.stream().filter(Boolean::booleanValue).count(), "exactly one post succeeds: " + posted);
+        assertEquals(1, userService.findByUsername(member.getUsername()).getBoatListings().size(), "listings saved");
+    }
+
+    private static ListingForm aListingForm() {
+        final ListingForm form = new ListingForm();
+        form.setTitle("Crew wanted");
+        form.setMakeAndModel("Sigma 33");
+        form.setLength(33);
+        form.setVesselType(VesselType.SAIL);
+        form.setYearBuilt(1987);
+        form.setDescription("Relaxed weekend cruising.");
+        form.setSailingPurpose(SailingPurpose.CRUISING);
+        form.setRoleRequired(RoleRequired.CREW);
+        form.setFrequency(List.of(Frequency.FrequencyEnum.WEEKENDS));
+        form.setFinancialArrangement(FinancialArrangement.FinancialArrangementEnum.SHARED_FIXED);
+        return form;
     }
 
     private User createUser() {

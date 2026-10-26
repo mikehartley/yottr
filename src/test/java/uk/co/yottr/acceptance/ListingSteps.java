@@ -79,6 +79,15 @@ public class ListingSteps {
         save(form);
     }
 
+    @When("I delete my {string} listing")
+    public void iDeleteMyListing(String makeAndModel) throws IOException {
+        browser.open("/s/listings/mine");
+        final HtmlButton delete = browser.page().getFirstByXPath(
+                "//div[span[normalize-space()='" + makeAndModel + "']]//form[contains(@action, '/delete')]//button");
+        assertThat(delete).as("Delete button for the " + makeAndModel + " listing").isNotNull();
+        browser.showing(delete.click());
+    }
+
     private void save(HtmlForm form) throws IOException {
         final HtmlButton save = form.getFirstByXPath(".//button[@type='submit']");
         browser.showing(save.click());

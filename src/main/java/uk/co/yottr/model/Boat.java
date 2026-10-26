@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Random;
+import java.util.UUID;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -150,7 +150,8 @@ public class Boat {
      * For Hibernate.
      */
     public Boat() {
-        this.reference = System.currentTimeMillis() + "-" + new Random().nextInt(100);
+        // a UUID: the old millisecond time plus a random number up to 100 could repeat
+        this.reference = UUID.randomUUID().toString();
         this.firstPosted = LocalDate.now();
         this.lastUpdated = LocalDate.now();
         this.minimumRequiredLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.NONE);

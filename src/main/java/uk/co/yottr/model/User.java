@@ -80,7 +80,8 @@ public class User {
     @Size(max = 400)
     private String aboutMe;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    // deleting a member deletes their listings, which can't exist without an owner
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("reference")
     private List<Boat> boatListings = new ArrayList<>();
 

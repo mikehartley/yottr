@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
@@ -33,6 +32,8 @@ import java.security.Principal;
 public class BoatController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BoatController.class);
+
+    private static final String REDIRECT_TO_MY_LISTINGS = "redirect:/s/listings/mine";
 
     private BoatService boatService;
     private UserService userService;
@@ -59,26 +60,23 @@ public class BoatController {
 
     // The listing forms bind to ListingForm, never to Boat, so a request can only set the fields on the form.
 
+    /**
+     * BoatService refuses the listing with IllegalOperationException, which is a 403, if the member is at their limit.
+     */
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.POST)
 	public ModelAndView newListingAction(@Valid @ModelAttribute("boat") ListingForm listingForm, BindingResult bindingResult,
-                                         Principal principal) throws IllegalOperationException {
-        final User user = userService.findByUsername(principal.getName());
-
+                                         Principal principal) {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
             ModelAndView modelAndView = new ModelAndView("newListing");
-            addModelAttributesForNewListing(modelAndView, user);
+            addModelAttributesForNewListing(modelAndView, userService.findByUsername(principal.getName()));
             return modelAndView;
         }
 
+        final Boat boat = boatService.create(principal.getName(), listingForm);
+
         ModelAndView modelAndView = new ModelAndView("newListingSuccess");
-
-        checkIsWithinListingLimit(user);
-
-        final Boat boat = boatService.create(user, listingForm);
-
         modelAndView.addObject("boat", boat);
-
         return modelAndView;
 	}
 
@@ -98,40 +96,39 @@ public class BoatController {
     public ModelAndView myListings(Principal principal) {
         LOG.info("My listings page");
 
-        return modelAndViewForMyListings(principal);
+        final ModelAndView modelAndView = new ModelAndView("myListings");
+        modelAndView.addObject("boatListings", boatService.findListings(principal.getName()));
+        return modelAndView;
     }
 
-    @RequestMapping(value = "/s/listings/{boatReference}/suspended/flip", method = RequestMethod.GET)
-    public ModelAndView updateUserEnabledStatus(@PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
+    // Changes are POSTs, which need the CSRF token, and redirect afterwards so that a refresh doesn't repeat them.
 
-        LOG.info("updating suspended status for boat listing with reference " + boatReference);
+    @RequestMapping(value = "/s/listings/{boatReference}/suspended/flip", method = RequestMethod.POST)
+    public String flipSuspended(@PathVariable String boatReference, Principal principal) {
 
-        final Boat boat = findBoat(boatReference, principal);
+        LOG.info("updating suspended status for boat listing with reference {}", boatReference);
 
-        boat.setSuspended(!boat.isSuspended());
-        boatService.save(boat);
+        boatService.flipSuspended(findListing(boatReference, principal));
 
-        return modelAndViewForMyListings(principal);
+        return REDIRECT_TO_MY_LISTINGS;
     }
 
-    @RequestMapping(value = "/s/listings/{boatReference}/delete", method = RequestMethod.GET)
-    public ModelAndView deleteUser(@PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
+    @RequestMapping(value = "/s/listings/{boatReference}/delete", method = RequestMethod.POST)
+    public String deleteListing(@PathVariable String boatReference, Principal principal) {
 
-        LOG.info("deleting listing with boat reference " + boatReference);
+        LOG.info("deleting listing with boat reference {}", boatReference);
 
-        final Boat boat = findBoat(boatReference, principal);
+        boatService.delete(findListing(boatReference, principal));
 
-        boatService.delete(boat);
-
-        return modelAndViewForMyListings(principal);
+        return REDIRECT_TO_MY_LISTINGS;
     }
 
     @RequestMapping(value = "/s/listings/{boatReference}/edit", method = RequestMethod.GET)
-    public ModelAndView editListingPage(@PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
+    public ModelAndView editListingPage(@PathVariable String boatReference, Principal principal) {
 
-        LOG.info("editing listing with boat reference " + boatReference);
+        LOG.info("editing listing with boat reference {}", boatReference);
 
-        final Boat boat = findBoat(boatReference, principal);
+        final Boat boat = findListing(boatReference, principal);
 
         final ModelAndView modelAndView = new ModelAndView("editListing");
         modelAndView.addObject("boat", ListingForm.from(boat));
@@ -143,7 +140,7 @@ public class BoatController {
 
     @RequestMapping(value = "/s/listings/{boatReference}/edit", method = RequestMethod.POST)
     public ModelAndView editListingAction(@Valid @ModelAttribute("boat") ListingForm listingForm, BindingResult bindingResult,
-                                          @PathVariable String boatReference, Principal principal) throws ResourceNotFoundException {
+                                          @PathVariable String boatReference, Principal principal) {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
             final ModelAndView modelAndView = new ModelAndView("editListing");
@@ -152,7 +149,7 @@ public class BoatController {
             return modelAndView;
         }
 
-        final Boat boatForUpdate = findBoat(boatReference, principal);
+        final Boat boatForUpdate = findListing(boatReference, principal);
 
         // suspended is not on the form; it is changed with /suspended/flip
         final Boat updatedBoat = boatService.update(boatForUpdate, listingForm);
@@ -188,29 +185,12 @@ public class BoatController {
         modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
     }
 
-    private void checkIsWithinListingLimit(User user) throws IllegalOperationException {
-        if (user.getBoatListings().size() >=  user.getMaxListings()) {
-            throw new IllegalOperationException("User is already at listing limit.");
-        }
-    }
-
-    private Boat findBoat(String boatReference, Principal principal) throws ResourceNotFoundException {
-
-        final User user = userService.findByUsername(principal.getName());
-
-        for (Boat userBoat : user.getBoatListings()) {
-            if (userBoat.getReference().equals(boatReference)) {
-                return userBoat;
-            }
-        }
-
-        throw new ResourceNotFoundException(String.format("No boat with reference %s found for user %s", boatReference, user.getUsername()));
-    }
-
-    private ModelAndView modelAndViewForMyListings(Principal principal) {
-        final ModelAndView modelAndView = new ModelAndView("myListings");
-        final User user = userService.findByUsername(principal.getName());
-        modelAndView.addObject("boatListings", user.getBoatListings());
-        return modelAndView;
+    /**
+     * The signed-in member's listing with this reference: someone else's is reported as not found.
+     */
+    private Boat findListing(String boatReference, Principal principal) {
+        return boatService.findListing(boatReference, principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("No boat with reference %s found for user %s", boatReference, principal.getName())));
     }
 }

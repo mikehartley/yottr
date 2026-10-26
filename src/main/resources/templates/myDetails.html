@@ -27,7 +27,7 @@
                     <label for="password" class="col-sm-4 control-label text-right">Change Password</label>
 
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="password" placeholder="Leave blank to keep existing password" th:field="*{password}"/>
+                        <input type="password" class="form-control" id="password" placeholder="Leave blank to keep existing password" th:field="*{password}"/>
                         <span class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Bad password</span>
                     </div>
                 </div>
@@ -109,11 +109,13 @@
                         <button type="submit" class="btn btn-default">Update</button>
                     </div>
                     <div class="col-sm-offset-2 col-sm-2">
-                        <a th:href="@{/s/deleteMe}" href="#" onclick="return confirm('This will permanently delete your profile! Are you sure you want to do this?')">Delete Me</a>
+                        <button type="submit" form="delete-me-form" class="btn btn-link"
+                                onclick="return confirm('This will permanently delete your profile! Are you sure you want to do this?')">Delete Me</button>
                     </div>
                 </div>
             </fieldset>
         </form>
+        <form id="delete-me-form" method="post" th:action="@{/s/deleteMe}"></form>
     </div>
     <!--/.row-->
 

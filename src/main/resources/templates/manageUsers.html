@@ -18,7 +18,6 @@
         <div class="col-sm-12">
             <div th:each="user : ${wrapper.getPage()}">
                 <strong>Username:</strong> <span th:text="${user.username}">JimBob</span><br/>
-                <strong>Password:</strong> <span th:text="${user.password}">xyz123</span><br/>
                 <strong>Email:</strong><span th:text="${user.email}">a@b.c</span><br/>
                 <strong>First Name:</strong> <span th:text="${user.firstName}">Jim</span><br/>
                 <strong>Last Name:</strong> <span th:text="${user.lastName}">Bob</span><br/>
@@ -27,8 +26,12 @@
                 <strong>Account enabled:</strong> <span th:text="${user.enabled}">true</span><br/>
                 <strong>Max listings:</strong> <span th:text="${user.maxListings}">2</span><br/>
                 <strong>Boat listings:</strong> <span th:text="${user.boatListings.size()}">1</span><br/>
-                EDIT | <a th:href="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">FLIP ENABLED</a> |
-                <a th:href="@{/admin/user/{userid}/delete(userid=${user.id})}" onclick="return confirm('Confirm user deletion')">DELETE</a><br/>
+                <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">
+                    <button type="submit" th:text="${user.enabled} ? 'DISABLE' : 'ENABLE'">DISABLE</button>
+                </form> |
+                <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/delete(userid=${user.id})}">
+                    <button type="submit" onclick="return confirm('Confirm user deletion')">DELETE</button>
+                </form><br/>
                 <hr/>
             </div>
 

@@ -18,6 +18,8 @@ import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
 import jakarta.validation.Valid;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 /*
@@ -66,7 +68,7 @@ public class UserController {
 
         userService.save(user, true);
 
-        LOG.info("Signed up new user: " + user);
+        LOG.info("Signed up new user {}", user.getUsername());
 
         return "signupSuccess";
     }
@@ -75,7 +77,7 @@ public class UserController {
     public ModelAndView myDetails(Principal principal) {
 
         final String currentUsername = principal.getName();
-        LOG.info("current username is: " + currentUsername);
+        LOG.info("current username is: {}", currentUsername);
 
         final User currentUser = userService.findByUsername(currentUsername);
         if (currentUser == null) {
@@ -92,7 +94,7 @@ public class UserController {
         final User userForUpdate = userService.findByUsername(principal.getName());
 
         if (bindingResult.hasErrors()) {
-            LOG.info("Errors from myDetails: " + bindingResult.getAllErrors().toString());
+            LOG.info("Errors from myDetails: {}", bindingResult.getAllErrors());
             return modelAndViewForMyDetails(myDetailsForm, userForUpdate);
         }
 
@@ -106,7 +108,7 @@ public class UserController {
             userService.save(userForUpdate, false);
         }
 
-        LOG.info("Updated user: " + userForUpdate);
+        LOG.info("Updated the details of {}", userForUpdate.getUsername());
 
         return new ModelAndView("redirect:myDetails?updated");
     }
@@ -121,21 +123,23 @@ public class UserController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/s/deleteMe", method = RequestMethod.GET)
-    public String deleteMe(Principal principal) {
-
-        final String logoutUrl = "redirect:/logout";
+    /**
+     * Deletes the member's account and listings, then signs them out here: with CSRF protection on, /logout
+     * only takes a POST, so it can't be reached by a redirect.
+     */
+    @RequestMapping(value = "/s/deleteMe", method = RequestMethod.POST)
+    public String deleteMe(Principal principal, HttpServletRequest request) throws ServletException {
 
         final String currentUsername = principal.getName();
-        LOG.info("current username is: " + currentUsername);
+        LOG.info("deleting the account of {}", currentUsername);
 
         final User currentUser = userService.findByUsername(currentUsername);
-        if (currentUser == null) {
-            return logoutUrl;
+        if (currentUser != null) {
+            userService.delete(currentUser);
         }
 
-        userService.delete(currentUser);
-        return logoutUrl;
+        request.logout();
+        return "redirect:/index?logout";
     }
 }
 

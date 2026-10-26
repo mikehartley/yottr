@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
@@ -15,9 +16,11 @@ import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.FrequencyRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
+import uk.co.yottr.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /*
  * Copyright (c) 2015. Mike Hartley Solutions Ltd
@@ -28,6 +31,7 @@ import java.util.List;
 public class BoatService {
 
     private BoatRepository boatRepository;
+    private UserRepository userRepository;
     private RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository;
     private FrequencyRepository frequencyRepository;
     private FinancialArrangementRepository financialArrangementRepository;
@@ -35,11 +39,13 @@ public class BoatService {
 
     @Autowired
     public BoatService(BoatRepository boatRepository,
+                       UserRepository userRepository,
                        RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository,
                        FrequencyRepository frequencyRepository,
                        FinancialArrangementRepository financialArrangementRepository,
                        TemporalProvider temporalProvider) {
         this.boatRepository = boatRepository;
+        this.userRepository = userRepository;
         this.ryaSailCruisingLevelRepository = ryaSailCruisingLevelRepository;
         this.frequencyRepository = frequencyRepository;
         this.financialArrangementRepository = financialArrangementRepository;
@@ -55,12 +61,40 @@ public class BoatService {
     }
 
     /**
-     * A new listing for the owner, from the new listing form.
+     * A new listing for the member, from the new listing form.
+     *
+     * @throws IllegalOperationException if the member already has as many listings as they are allowed
      */
     @Transactional
-    public Boat create(User owner, ListingForm listingForm) {
+    public Boat create(String ownerUsername, ListingForm listingForm) {
+        // Locking the member's row until the listing is saved means two posts at once can't both pass the limit.
+        final User owner = userRepository.findByUsernameForUpdate(ownerUsername);
+
+        if (boatRepository.countByOwner(owner) >= owner.getMaxListings()) {
+            throw new IllegalOperationException("User is already at listing limit.");
+        }
+
         final Boat boat = new Boat(owner);
         applyForm(listingForm, boat);
+        return save(boat);
+    }
+
+    /**
+     * The member's listing with this reference, if they have one.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Boat> findListing(String reference, String ownerUsername) {
+        return boatRepository.findByReferenceAndOwnerUsername(reference, ownerUsername);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Boat> findListings(String ownerUsername) {
+        return boatRepository.findByOwnerUsernameOrderByReference(ownerUsername);
+    }
+
+    @Transactional
+    public Boat flipSuspended(Boat boat) {
+        boat.setSuspended(!boat.isSuspended());
         return save(boat);
     }
 

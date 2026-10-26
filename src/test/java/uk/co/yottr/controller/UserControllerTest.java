@@ -264,9 +264,9 @@ public class UserControllerTest extends AbstractControllerTest {
         final User user = new User();
         when(mockUserService.findByUsername(username)).thenReturn(user);
 
-        mockMvc.perform(get("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+        mockMvc.perform(post("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/logout"))
+                .andExpect(redirectedUrl("/index?logout"))
                 .andExpect(model().hasNoErrors());
 
         verify(mockUserService).findByUsername(username);
@@ -282,9 +282,9 @@ public class UserControllerTest extends AbstractControllerTest {
 
         when(mockUserService.findByUsername(username)).thenReturn(null);
 
-        mockMvc.perform(get("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
+        mockMvc.perform(post("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/logout"))
+                .andExpect(redirectedUrl("/index?logout"))
                 .andExpect(model().hasNoErrors());
 
         verify(mockUserService).findByUsername(username);

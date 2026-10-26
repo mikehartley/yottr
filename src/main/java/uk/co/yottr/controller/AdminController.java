@@ -24,6 +24,8 @@ public class AdminController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
+    private static final String REDIRECT_TO_MANAGE_USERS = "redirect:/admin/users";
+
     @Autowired
     private UserService userService;
 
@@ -35,22 +37,24 @@ public class AdminController {
         return modelAndViewForManageUsers(pageable);
 	}
 
-    @RequestMapping(value = "/admin/user/{id}/delete", method = RequestMethod.GET)
-    public ModelAndView deleteUser(@PathVariable long id, Pageable pageable) throws ResourceNotFoundException {
+    // Changes are POSTs, which need the CSRF token, and redirect afterwards so that a refresh doesn't repeat them.
 
-        LOG.info("deleting user with ID " + id);
+    @RequestMapping(value = "/admin/user/{id}/delete", method = RequestMethod.POST)
+    public String deleteUser(@PathVariable long id) {
+
+        LOG.info("deleting user with ID {}", id);
 
         checkUserExists(id);
 
         userService.delete(id);
 
-        return modelAndViewForManageUsers(pageable);
+        return REDIRECT_TO_MANAGE_USERS;
     }
 
-    @RequestMapping(value = "/admin/user/{id}/enabled/flip", method = RequestMethod.GET)
-    public ModelAndView updateUserEnabledStatus(@PathVariable long id, Pageable pageable) throws ResourceNotFoundException {
+    @RequestMapping(value = "/admin/user/{id}/enabled/flip", method = RequestMethod.POST)
+    public String updateUserEnabledStatus(@PathVariable long id) {
 
-        LOG.info("updating enabled status for user with ID " + id);
+        LOG.info("updating enabled status for user with ID {}", id);
 
         checkUserExists(id);
 
@@ -58,12 +62,12 @@ public class AdminController {
         user.setEnabled(!user.isEnabled());
         userService.save(user, false);
 
-        return modelAndViewForManageUsers(pageable);
+        return REDIRECT_TO_MANAGE_USERS;
     }
 
-    private void checkUserExists(long id) throws ResourceNotFoundException {
+    private void checkUserExists(long id) {
         if (!userService.userExists(id)) {
-            LOG.warn("User does not exist with ID " + id);
+            LOG.warn("User does not exist with ID {}", id);
             throw new ResourceNotFoundException("User does not exist with ID " + id);
         }
     }

@@ -30,7 +30,7 @@
                     <label for="password" class="col-sm-4  control-label text-right">Password</label>
 
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="password" placeholder="Password"
+                        <input type="password" class="form-control" id="password" placeholder="Password"
                                th:field="*{password}"/>
                         <span class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Bad password</span>
                     </div>

@@ -1092,3 +1092,29 @@ ul.faq li > div h3 {
   margin-top: 150px;
   margin-bottom: 150px;
 }
+
+
+/* small forms that post an action but look like links */
+.inline-action {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.inline-action button {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #34495e;
+  text-decoration: underline;
+}
+
+/* the Logout button matches the nav links next to it */
+.navbar-nav .inline-action button {
+  display: block;
+  padding: 7px 15px;
+  line-height: 20px;
+  color: #fff;
+  font-weight: 300;
+  text-decoration: none;
+}

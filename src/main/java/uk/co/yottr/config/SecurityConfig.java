@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 /*
@@ -30,27 +29,20 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/s/**").hasAuthority("FREE")
-                .requestMatchers("/resources/**").permitAll()
-                .requestMatchers("/", "/signup*", "/denied*").permitAll()
+                .requestMatchers("/resources/**", "/webjars/**", "/favicon.ico").permitAll()
+                .requestMatchers("/", "/index", "/signup", "/about", "/error", "/error/**").permitAll()
                 // for Prometheus; in production these belong on a management port that isn't public
                 .requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()
                 .requestMatchers("/actuator/loggers", "/actuator/loggers/**").hasAuthority("ADMIN")
                 .requestMatchers("/actuator/**").denyAll()
-//                .anyRequest().authenticated()
-                .anyRequest().permitAll())
+                // anything not listed above needs a signed-in member, rather than being open by default
+                .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/index")
                 .permitAll())
+            // CSRF protection is on (the Spring Security default), so logging out and every other change is a POST
             .logout(logout -> logout
-                .permitAll())
-            .csrf(AbstractHttpConfigurer::disable);
-//                .logout().invalidateHttpSession(true).logoutSuccessUrl("/logout").logoutUrl("/logout")
-////            .and()
-////                .csrf()
-//            .and()
-//                .sessionManagement().maximumSessions(1).expiredUrl("/login").and().invalidSessionUrl("/login")
-//            .and()
-//                .exceptionHandling().accessDeniedPage("/denied");
+                .permitAll());
 
         return http.build();
     }
