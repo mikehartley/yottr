@@ -22,11 +22,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * The security rules, through the real filter chain.
  */

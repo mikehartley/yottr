@@ -6,11 +6,6 @@ import org.hibernate.validator.constraintvalidation.HibernateConstraintValidator
 
 import java.time.Year;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 public class YearBuiltValidator implements ConstraintValidator<YearBuilt, Integer> {
 
     public static final int EARLIEST_EXPECTED_YEAR = 1900;

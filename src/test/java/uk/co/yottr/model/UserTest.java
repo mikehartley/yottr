@@ -20,11 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UnitConfig.class})
 public class UserTest {

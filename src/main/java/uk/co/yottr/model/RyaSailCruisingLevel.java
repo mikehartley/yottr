@@ -2,11 +2,6 @@ package uk.co.yottr.model;
 
 import jakarta.persistence.*;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Entity
 @Table(name = "rya_sail_cruising_level")
 public class RyaSailCruisingLevel {

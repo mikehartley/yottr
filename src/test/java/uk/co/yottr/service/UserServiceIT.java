@@ -21,11 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @SpringBootTest
 @Import(TestcontainersConfig.class)
 public class UserServiceIT {

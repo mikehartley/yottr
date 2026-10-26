@@ -9,11 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Service
 @Transactional
 public class UserService {

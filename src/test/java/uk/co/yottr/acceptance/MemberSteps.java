@@ -20,11 +20,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 public class MemberSteps {
 
     private static final String PASSWORD = "correct-horse-battery";

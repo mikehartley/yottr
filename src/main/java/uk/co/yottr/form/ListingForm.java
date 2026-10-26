@@ -22,11 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * The new and edit listing forms. They bind here rather than to {@link Boat}, so a request can only set
  * the fields on the form. Frequencies, the financial arrangement and the minimum level are held by name

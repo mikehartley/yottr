@@ -9,11 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * A headless browser for one scenario. HtmlUnit submits the real forms over HTTP, so sessions, sign-in
  * and the security rules all apply. JavaScript is off: the pages work without it.

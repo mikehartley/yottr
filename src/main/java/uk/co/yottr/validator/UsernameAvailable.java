@@ -4,11 +4,6 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Documented
 @Constraint(validatedBy = UsernameAvailableValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD})

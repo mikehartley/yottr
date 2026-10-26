@@ -22,11 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Service
 public class BoatService {
 

@@ -15,11 +15,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 public class BoatTest {
     private static Validator validator;
 

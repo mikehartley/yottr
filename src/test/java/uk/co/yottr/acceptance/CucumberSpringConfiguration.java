@@ -7,11 +7,6 @@ import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * The whole application on a random port, against Postgres in Docker. Scenarios share the database,
  * so each one creates its own members under unique usernames.

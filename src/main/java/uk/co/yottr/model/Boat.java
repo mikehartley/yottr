@@ -15,11 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Entity
 @Table(name = "boats")
 public class Boat {

@@ -12,11 +12,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Entity
 @Table(name = "users")
 public class User {

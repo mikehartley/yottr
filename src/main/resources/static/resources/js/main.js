@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 jQuery(function($) {
 
 	//goto top

@@ -16,11 +16,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * This initialises the database and shouldn't be run as part of the normal set of tests,
  * and so should be left in a disabled state unless required.

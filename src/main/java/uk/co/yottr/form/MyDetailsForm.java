@@ -3,11 +3,6 @@ package uk.co.yottr.form;
 import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.User;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * A member's changes to their own details. The username can't be changed, and a blank password means
  * keep the current one.

@@ -11,11 +11,6 @@ import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * Controllers with mocked services and no security filters, as the old ControllerTestConfig set up.
  */

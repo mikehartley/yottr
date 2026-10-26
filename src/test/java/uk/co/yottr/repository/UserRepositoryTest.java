@@ -15,11 +15,6 @@ import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @SpringBootTest
 @Import(TestcontainersConfig.class)
 public class UserRepositoryTest {

@@ -10,11 +10,6 @@ import uk.co.yottr.model.User;
 import java.util.List;
 import java.util.Optional;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 public interface BoatRepository extends PagingAndSortingRepository<Boat, Long>, CrudRepository<Boat, Long> {
     Boat findByReference(String reference);
     Page<Boat> findBySuspended(boolean suspended, Pageable pageable);

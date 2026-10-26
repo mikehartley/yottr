@@ -5,11 +5,6 @@ import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.User;
 import uk.co.yottr.validator.UsernameAvailable;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 public class SignupForm extends PersonalDetailsForm {
 
     @NotNull(message = REQUIRED_ERROR_MSG)

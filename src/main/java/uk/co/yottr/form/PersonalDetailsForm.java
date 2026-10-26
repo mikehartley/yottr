@@ -6,11 +6,6 @@ import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * The details a member can enter about themselves, on sign-up and on My Details.
  * <p>

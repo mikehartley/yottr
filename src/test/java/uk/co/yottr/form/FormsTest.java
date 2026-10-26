@@ -22,11 +22,6 @@ import static org.mockito.Mockito.when;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UnitConfig.class})
 public class FormsTest {

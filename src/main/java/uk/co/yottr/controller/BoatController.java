@@ -23,11 +23,6 @@ import uk.co.yottr.service.UserService;
 import jakarta.validation.Valid;
 import java.security.Principal;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Controller
 public class BoatController {
 

@@ -14,11 +14,6 @@ import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Controller
 public class AdminController {
 

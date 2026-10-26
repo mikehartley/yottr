@@ -8,11 +8,6 @@ import uk.co.yottr.repository.UserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Component
 public class UsernameAvailableValidator implements ConstraintValidator<UsernameAvailable, String> {
 

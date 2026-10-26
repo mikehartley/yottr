@@ -9,11 +9,6 @@ import uk.co.yottr.model.UserRole;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 public class UserDetailsAdaptor {
 
     public static UserDetails toUserDetails(User user) {

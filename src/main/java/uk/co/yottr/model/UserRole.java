@@ -6,11 +6,6 @@ import jakarta.persistence.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 @Entity
 @Table(name = "user_roles")
 public class UserRole {

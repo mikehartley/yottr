@@ -26,11 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * The listing forms against a real database, which the controller tests with mocked services can't catch:
  * an edit changes a listing that Hibernate is already managing.

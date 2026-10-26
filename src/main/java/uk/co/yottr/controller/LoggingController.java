@@ -16,11 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 /**
  * Lets administrators see and change log levels while the application runs. It works through the actuator's
  * loggers endpoint, which is also available to administrators at /actuator/loggers.

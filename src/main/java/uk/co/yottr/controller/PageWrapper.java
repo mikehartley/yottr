@@ -2,11 +2,6 @@ package uk.co.yottr.controller;
 
 import org.springframework.data.domain.Page;
 
-/*
- * Copyright (c) 2015. Mike Hartley Solutions Ltd
- * All rights reserved.
- */
-
 public class PageWrapper<T> {
 
     private static final int RANGE_RADIUS = 3;
