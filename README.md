@@ -30,7 +30,8 @@ Database:
   baselined at V1.
 
 To put some sample data in the local database (an admin user "mike" and some boats):
-  ./mvnw test -Dtest=InitialiseDatabase -Dyottr.initialise=true
+  ./mvnw test -Dtest=InitialiseDatabase -Dyottr.initialise=true -Dyottr.admin.password=<a password>
+  No password is kept in the source. Keep yours in local-credentials.properties, which git ignores.
 
 To run elsewhere:
   java -jar target/yottr.jar

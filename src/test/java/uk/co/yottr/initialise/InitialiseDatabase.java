@@ -25,14 +25,17 @@ import java.util.List;
  * This initialises the database and shouldn't be run as part of the normal set of tests,
  * and so should be left in a disabled state unless required.
  *
- * It writes to the local database from compose.yaml. To run it:
- *   mvn test -Dtest=InitialiseDatabase -Dyottr.initialise=true
+ * It writes to the local database from compose.yaml. The users' password is given on the command line,
+ * so none is kept in the source:
+ *   ./mvnw test -Dtest=InitialiseDatabase -Dyottr.initialise=true -Dyottr.admin.password=...
  */
 
 @SpringBootTest(properties = "spring.docker.compose.skip.in-tests=false")
 public class InitialiseDatabase {
 
     private static final boolean ENABLED = Boolean.getBoolean("yottr.initialise"); // this should be left as false unless you're initialising the database
+
+    private static final String PASSWORD_PROPERTY = "yottr.admin.password";
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -65,12 +68,15 @@ public class InitialiseDatabase {
     public void init() {
         if (!ENABLED) return;
 
+        final String password = System.getProperty(PASSWORD_PROPERTY, "");
+        Assertions.assertTrue(password.length() >= 8, "give the users' password, of 8 or more characters, with -D" + PASSWORD_PROPERTY + "=...");
+
         // the reference data comes from the Flyway migrations
-        final User adminUser = setupUserWithRoles("mike", Role.ADMIN, Role.FREE, Role.CREW);
+        final User adminUser = setupUserWithRoles("mike", password, Role.ADMIN, Role.FREE, Role.CREW);
         updateListingsLimit(adminUser, 50);
         addBoatsWithOwner(adminUser, 15);
 
-        final User userOne = setupUserWithRoles("UserOne", Role.CREW, Role.FREE);
+        final User userOne = setupUserWithRoles("UserOne", password, Role.CREW, Role.FREE);
         addBoatsWithOwner(userOne, 3);
     }
 
@@ -90,11 +96,11 @@ public class InitialiseDatabase {
         });
     }
 
-    private User setupUserWithRoles(String username, Role... roles) {
+    private User setupUserWithRoles(String username, String password, Role... roles) {
         User user = new User();
 
         user.setUsername(username);
-        user.setPassword(new BCryptPasswordEncoder().encode("aph3xtwIn"));
+        user.setPassword(new BCryptPasswordEncoder().encode(password));
 
         for (Role role : roles) {
             user.addRole(role);
