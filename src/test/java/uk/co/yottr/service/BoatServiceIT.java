@@ -245,4 +245,23 @@ public class BoatServiceIT {
         final User user = aUser().withUsername(username).build();
         return userService.save(user, false);
     }
+
+    @Test
+    public void aListingToViewComesWithItsOwner() throws Exception {
+        final Boat boat = boatService.save(aBoat().withOwner(owner).build());
+
+        final Boat found = boatService.findListingToView(boat.getReference(), "someone else").orElseThrow();
+
+        // outside the service's transaction, so these fail if the owner, or the eager frequencies, weren't loaded
+        assertEquals(owner.getEmail(), found.getOwner().getEmail());
+        assertFalse(found.getFrequency().isEmpty(), "frequencies");
+    }
+
+    @Test
+    public void otherMembersCannotViewASuspendedListing() throws Exception {
+        final Boat boat = boatService.save(aBoat().withOwner(owner).withSuspended(true).build());
+
+        assertTrue(boatService.findListingToView(boat.getReference(), "someone else").isEmpty(), "hidden from others");
+        assertTrue(boatService.findListingToView(boat.getReference(), owner.getUsername()).isPresent(), "seen by its owner");
+    }
 }

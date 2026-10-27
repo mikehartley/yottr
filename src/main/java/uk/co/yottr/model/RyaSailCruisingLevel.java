@@ -44,8 +44,8 @@ public class RyaSailCruisingLevel {
     @Column(name = "display_name", unique = true, nullable = false)
     private String displayName;
 
-    private RyaSailCruisingLevel() {
-        // required for JPA
+    protected RyaSailCruisingLevel() {
+        // for JPA, which needs it to be at least protected so that Hibernate can make proxies
     }
 
     public RyaSailCruisingLevel(Level level) {

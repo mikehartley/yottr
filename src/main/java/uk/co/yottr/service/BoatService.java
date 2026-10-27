@@ -82,6 +82,16 @@ public class BoatService {
         return boatRepository.findByReferenceAndOwnerUsername(reference, ownerUsername);
     }
 
+    /**
+     * The listing with this reference, with its owner, if the member may see it: any member can see a visible
+     * listing, and an owner can always see their own.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Boat> findListingToView(String reference, String memberUsername) {
+        return boatRepository.findWithOwnerByReference(reference)
+                .filter(boat -> boat.isVisible() || boat.getOwner().getUsername().equals(memberUsername));
+    }
+
     @Transactional(readOnly = true)
     public List<Boat> findListings(String ownerUsername) {
         return boatRepository.findByOwnerUsernameOrderByReference(ownerUsername);

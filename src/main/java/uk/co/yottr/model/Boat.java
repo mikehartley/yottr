@@ -351,6 +351,14 @@ public class Boat {
         return suspended;
     }
 
+    /**
+     * Whether other members can see the listing: its owner hasn't suspended it, and the owner's account is enabled.
+     * BoatRepository.findBySuspendedFalseAndOwnerEnabledTrue is the same rule as a query.
+     */
+    public boolean isVisible() {
+        return !suspended && owner.isEnabled();
+    }
+
     public void setSuspended(boolean suspended) {
         this.suspended = suspended;
     }

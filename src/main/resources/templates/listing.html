@@ -7,7 +7,7 @@
 <article th:fragment="card" class="yottr-card yottr-listing p-4 mb-4">
     <header class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
         <div>
-            <h2 class="h5 mb-1" th:text="${boat.title}">Weekends in the Solent</h2>
+            <h2 class="h5 mb-1"><a th:href="@{/s/listings/{boatReference}(boatReference=${boat.reference})}" th:text="${boat.title}">Weekends in the Solent</a></h2>
             <div class="text-body-secondary">
                 <span class="yottr-listing-make" th:text="${boat.makeAndModel}">Sigma 33</span>,
                 <span th:text="${boat.length} + (${boat.unitsImperial} ? ' ft' : ' m')">33 ft</span>,
