@@ -70,7 +70,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockUserService.findMember(username)).thenReturn(user);
 
         mockMvc.perform(get("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
@@ -87,7 +87,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists("rolesRequired"))
                 .andExpect(model().attributeExists("frequencies"));
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockUserService).findMember(username);
         verifyListingFormReferenceDataFetched();
     }
 
@@ -204,7 +204,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withMaxListings(0).build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockUserService.findMember(username)).thenReturn(user);
         // BoatService enforces the limit
         when(mockBoatService.create(eq(username), any(ListingForm.class)))
                 .thenThrow(new IllegalOperationException("User is already at listing limit."));
@@ -256,7 +256,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final ArrayList<Boat> boatList = new ArrayList<>();
         boatList.add(aBoat().withOwner(aUser().build()).build());
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
-        when(mockBoatService.findAllExcludingSuspended(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(boatPage); // page and size come from fallback settings as found in config
+        when(mockBoatService.findAllVisible(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(boatPage); // page and size come from fallback settings as found in config
 
         mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
@@ -265,7 +265,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().size(1))
                 .andExpect(model().attributeExists("wrapper"));
 
-        verify(mockBoatService).findAllExcludingSuspended(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockBoatService).findAllVisible(ConstantsForTests.DEFAULT_PAGE_REQUEST);
     }
 
     @Test
@@ -432,7 +432,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockUserService.findMember(username)).thenReturn(user);
         final Boat originalBoat = user.getBoatListings().get(0);
 
         // nothing but a title, so the other required fields are in error
@@ -575,7 +575,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockUserService.findMember(username)).thenReturn(user);
 
         mockMvc.perform(post("/s/listings/new").contentType(MediaType.TEXT_HTML).principal(mockPrincipal)
                         .param("minimumRequiredLevelByRank", "150"))
@@ -583,7 +583,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("newListing"))
                 .andExpect(model().attributeHasFieldErrors("boat", "minimumRequiredLevelKnown"));
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockUserService).findMember(username);
         verifyListingFormReferenceDataFetched();
         verify(mockBoatService, never()).create(any(), any());
     }

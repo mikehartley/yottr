@@ -30,6 +30,9 @@
                 <div class="status alert alert-success" id="logged-out-msg" th:if="${param.logout != null}">
                     You have been logged out.
                 </div>
+                <div class="status alert alert-warning" id="session-ended-msg" th:if="${param.ended != null}">
+                    You have been signed out because your account was disabled or deleted.
+                </div>
                 <form action="#" th:action="@{/index}" id="main-sign-in-form" name="f" method="post">
                     <div class="row">
                         <div class="col-sm-5">

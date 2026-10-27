@@ -132,9 +132,11 @@ public class BoatService {
         return boatRepository.findByReference(reference);
     }
 
+    /**
+     * The listings members can see: not suspended by their owner, and not belonging to a disabled account.
+     */
     @Transactional(readOnly = true)
-    public Page<Boat> findAllExcludingSuspended(Pageable pageable) {
-        final boolean suspended = false;
-        return boatRepository.findBySuspended(suspended, pageable);
+    public Page<Boat> findAllVisible(Pageable pageable) {
+        return boatRepository.findBySuspendedFalseAndOwnerEnabledTrue(pageable);
     }
 }

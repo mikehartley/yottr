@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface BoatRepository extends PagingAndSortingRepository<Boat, Long>, CrudRepository<Boat, Long> {
     Boat findByReference(String reference);
-    Page<Boat> findBySuspended(boolean suspended, Pageable pageable);
+    Page<Boat> findBySuspendedFalseAndOwnerEnabledTrue(Pageable pageable);
 
     Optional<Boat> findByReferenceAndOwnerUsername(String reference, String ownerUsername);
     List<Boat> findByOwnerUsernameOrderByReference(String ownerUsername);

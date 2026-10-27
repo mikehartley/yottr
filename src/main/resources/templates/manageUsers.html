@@ -21,12 +21,15 @@
                 <strong>Account enabled:</strong> <span th:text="${user.enabled}">true</span><br/>
                 <strong>Max listings:</strong> <span th:text="${user.maxListings}">2</span><br/>
                 <strong>Boat listings:</strong> <span th:text="${user.boatListings.size()}">1</span><br/>
-                <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">
-                    <button type="submit" th:text="${user.enabled} ? 'DISABLE' : 'ENABLE'">DISABLE</button>
-                </form> |
-                <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/delete(userid=${user.id})}">
-                    <button type="submit" onclick="return confirm('Confirm user deletion')">DELETE</button>
-                </form><br/>
+                <!-- an administrator can't disable or delete their own account (AdminController refuses it too) -->
+                <th:block th:unless="${user.username == #authentication?.name}">
+                    <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">
+                        <button type="submit" th:text="${user.enabled} ? 'DISABLE' : 'ENABLE'">DISABLE</button>
+                    </form> |
+                    <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/delete(userid=${user.id})}">
+                        <button type="submit" onclick="return confirm('Confirm user deletion')">DELETE</button>
+                    </form><br/>
+                </th:block>
                 <hr/>
             </div>
 

@@ -10,15 +10,18 @@ import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.ConstantsForTests;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class AdminControllerTest extends AbstractControllerTest {
+
+    private static final Principal ADMINISTRATOR = () -> "ada";
 
     @Autowired
     private UserService mockUserService;
@@ -53,52 +56,79 @@ public class AdminControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDeleteUser() throws Exception {
+        final Long userId = 4L;
+        final User user = userCalled("bob");
+        when(mockUserService.findById(userId)).thenReturn(Optional.of(user));
 
-        Long userId = 4L;
-
-        when(mockUserService.userExists(userId)).thenReturn(true);
-
-        mockMvc.perform(post("/admin/user/" + userId + "/delete").contentType(MediaType.TEXT_HTML))
+        mockMvc.perform(post("/admin/user/" + userId + "/delete").principal(ADMINISTRATOR))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/users"));
 
-        verify(mockUserService).userExists(userId);
-        verify(mockUserService).delete(userId);
+        verify(mockUserService).findById(userId);
+        verify(mockUserService).delete(user);
     }
 
     @Test
     public void testDeleteUserWhenUserNotFound() throws Exception {
         final Long userId = 4L;
+        when(mockUserService.findById(userId)).thenReturn(Optional.empty());
 
-        mockMvc.perform(post("/admin/user/" + userId + "/delete").contentType(MediaType.TEXT_HTML))
+        mockMvc.perform(post("/admin/user/" + userId + "/delete").principal(ADMINISTRATOR))
                 .andExpect(status().isNotFound());
 
-        verify(mockUserService).userExists(userId);
+        verify(mockUserService).findById(userId);
+    }
+
+    @Test
+    public void anAdministratorCannotDeleteTheirOwnAccount() throws Exception {
+        final Long userId = 4L;
+        when(mockUserService.findById(userId)).thenReturn(Optional.of(userCalled(ADMINISTRATOR.getName())));
+
+        mockMvc.perform(post("/admin/user/" + userId + "/delete").principal(ADMINISTRATOR))
+                .andExpect(status().isForbidden());
+
+        verify(mockUserService).findById(userId);
     }
 
     @Test
     public void testFlipEnabled() throws Exception {
-        Long userId = 4L;
+        final Long userId = 4L;
+        final User user = userCalled("bob");
+        when(mockUserService.findById(userId)).thenReturn(Optional.of(user));
 
-        when(mockUserService.userExists(userId)).thenReturn(true);
-        when(mockUserService.findById(userId)).thenReturn(new User());
-
-        mockMvc.perform(post("/admin/user/4/enabled/flip").contentType(MediaType.TEXT_HTML))
+        mockMvc.perform(post("/admin/user/" + userId + "/enabled/flip").principal(ADMINISTRATOR))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/users"));
 
-        verify(mockUserService).userExists(4L);
-        verify(mockUserService).findById(4L);
-        verify(mockUserService).save(any(User.class), eq(false));
+        verify(mockUserService).findById(userId);
+        verify(mockUserService).flipEnabled(user);
     }
 
     @Test
     public void testFlipEnabledWhenUserNotFound() throws Exception {
         final Long userId = 4L;
+        when(mockUserService.findById(userId)).thenReturn(Optional.empty());
 
-        mockMvc.perform(post("/admin/user/" + userId + "/enabled/flip").contentType(MediaType.TEXT_HTML))
+        mockMvc.perform(post("/admin/user/" + userId + "/enabled/flip").principal(ADMINISTRATOR))
                 .andExpect(status().isNotFound());
 
-        verify(mockUserService).userExists(userId);
+        verify(mockUserService).findById(userId);
+    }
+
+    @Test
+    public void anAdministratorCannotDisableTheirOwnAccount() throws Exception {
+        final Long userId = 4L;
+        when(mockUserService.findById(userId)).thenReturn(Optional.of(userCalled(ADMINISTRATOR.getName())));
+
+        mockMvc.perform(post("/admin/user/" + userId + "/enabled/flip").principal(ADMINISTRATOR))
+                .andExpect(status().isForbidden());
+
+        verify(mockUserService).findById(userId);
+    }
+
+    private static User userCalled(String username) {
+        final User user = new User();
+        user.setUsername(username);
+        return user;
     }
 }
