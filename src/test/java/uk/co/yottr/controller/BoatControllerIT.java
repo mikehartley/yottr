@@ -70,7 +70,12 @@ public class BoatControllerIT {
                         .param("frequency", "WEEKENDS", "TRIP")
                         .param("dateRelevantTo", "14/06/2027")
                         .param("minimumRequiredLevelByRank", String.valueOf(RyaSailCruisingLevel.DAY_SKIPPER.getRank()))
-                        .param("financialArrangement", "PAID"))
+                        .param("financialArrangement", "PAID")
+                        .param("smoking", "YES_OUTSIDE")
+                        .param("travelExpenses", "PAID_BY_OWNER")
+                        .param("numberOfCrewWanted", "2")
+                        .param("whenFrom", "14/06/2027")
+                        .param("whenTo", "28/06/2027"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/s/listings/mine?updated"));
 
@@ -84,6 +89,34 @@ public class BoatControllerIT {
         assertEquals(LocalDate.of(2027, 6, 14), edited.getDateRelevantTo());
         assertEquals(RyaSailCruisingLevel.DAY_SKIPPER.getRank(), edited.getMinimumRequiredLevelByRank());
         assertEquals("PAID", edited.getFinancialArrangement().getName());
+        assertEquals(Smoking.YES_OUTSIDE, edited.getSmoking());
+        assertEquals(TravelExpenses.PAID_BY_OWNER, edited.getTravelExpenses());
+        assertEquals(Integer.valueOf(2), edited.getNumberOfCrewWanted());
+        assertEquals(LocalDate.of(2027, 6, 14), edited.getWhenFrom());
+        assertEquals(LocalDate.of(2027, 6, 28), edited.getWhenTo());
         assertTrue(edited.isSuspended(), "editing must not change whether the listing is suspended");
+    }
+
+    @Test
+    public void aCourseListingKeepsItsLevel() throws Exception {
+        final Boat boat = boatService.save(aBoat().withOwner(owner).build());
+        final Principal principal = owner::getUsername;
+
+        mockMvc.perform(post("/s/listings/" + boat.getReference() + "/edit").contentType(MediaType.APPLICATION_FORM_URLENCODED).principal(principal)
+                        .param("title", "Day Skipper course")
+                        .param("makeAndModel", "Sigma 33")
+                        .param("length", "33")
+                        .param("hullType", "MONO")
+                        .param("vesselType", "SAIL")
+                        .param("yearBuilt", "1988")
+                        .param("description", "Five days in the Solent")
+                        .param("sailingPurpose", "COURSE")
+                        .param("courseLevel", "DAY_SKIPPER")
+                        .param("roleRequired", "CREW")
+                        .param("frequency", "TRIP")
+                        .param("financialArrangement", "COMMERCIAL"))
+                .andExpect(status().is3xxRedirection());
+
+        assertEquals(CourseLevel.DAY_SKIPPER, boatService.findByReference(boat.getReference()).getCourseLevel());
     }
 }

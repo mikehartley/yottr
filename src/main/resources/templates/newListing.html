@@ -10,72 +10,7 @@
             <div class="col-sm-6">
                 <h2>Enter boat details:</h2>
 
-                <fieldset>
-
-                    <div class="form-group" th:classappend="${#fields.hasErrors('title')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Title</label>
-
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control" id="title" placeholder="Title" th:field="*{title}"/>
-                            <span class="help-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Bad title</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('makeAndModel')}? 'has-error'">
-                        <label for="makeAndModel" class="col-lg-2 control-label">Manufacturer</label>
-
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control" id="makeAndModel" placeholder="Manufacturer" th:field="*{makeAndModel}"/>
-                            <span class="help-block" th:if="${#fields.hasErrors('makeAndModel')}" th:errors="*{makeAndModel}">Bad Make and Model</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('length')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Length</label>
-
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control" id="length" placeholder="Length" th:field="*{length}"/>
-                            <input type="radio" th:field="*{unitsImperial}" value="true" />Feet
-                            <input type="radio" th:field="*{unitsImperial}" value="false" />Metres
-                            <span class="help-block" th:if="${#fields.hasErrors('length')}" th:errors="*{length}">Bad length</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('hullType')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Hull Type</label>
-
-                        <div class="col-lg-10">
-                            <select th:field="*{hullType}">
-                                <option th:each="hullType : ${hullTypes}" th:value="${hullType}" th:text="${hullType}">Monohull</option>
-                            </select>
-                            <span class="help-block" th:if="${#fields.hasErrors('hullType')}" th:errors="*{hullType}">Bad Hull Type</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('vesselType')}? 'has-error'">
-                        <label for="vesselType" class="col-lg-2 control-label">Vessel Type</label>
-
-                        <div class="col-lg-10">
-                            <select id="vesselType" th:field="*{vesselType}">
-                                <option th:value="${''}" th:text="${'Select vessel type:'}">Select vessel type:</option>
-                                <option th:each="vesselType : ${vesselTypes}" th:value="${vesselType.name()}" th:text="${vesselType.getDisplayName()}">Sail</option>
-                            </select>
-                            <span class="help-block" th:if="${#fields.hasErrors('vesselType')}" th:errors="*{vesselType}">Bad Vessel Type</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('yearBuilt')}? 'has-error'">
-                        <label for="yearBuilt" class="col-lg-2 control-label">Year Built</label>
-
-                        <div class="col-lg-10">
-                            <input type="number" class="form-control" id="yearBuilt" placeholder="Year built" th:field="*{yearBuilt}"/>
-                            <span class="help-block" th:if="${#fields.hasErrors('yearBuilt')}" th:errors="*{yearBuilt}">Bad year built</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('description')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Description</label>
-
-                        <div class="col-lg-10">
-                            <textarea cols="40" rows="4" class="form-control" id="description" placeholder="Description" th:field="*{description}"></textarea>
-                            <span class="help-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Bad description</span>
-                        </div>
-                    </div>
-                </fieldset>
+                <fieldset th:replace="~{listingFields :: boat}">The boat's fields go here.</fieldset>
             </div>
 
             <div class="col-sm-6">
@@ -84,76 +19,7 @@
                 <div class="gap"></div>
                 <div class="gap"></div>
 
-                <fieldset>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('sailingPurpose')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Sailing Purpose</label>
-
-                        <div class="col-lg-10">
-                            <select th:field="*{sailingPurpose}">
-                                <option th:value="${''}" th:text="${'Select sailing purpose:'}">Select sailing purpose:</option>
-                                <option th:each="sailingPurpose : ${sailingPurposes}" th:value="${sailingPurpose.name()}" th:text="${sailingPurpose.getDisplayName()}">Cruising</option>
-                            </select>
-                            <span class="help-block" th:if="${#fields.hasErrors('sailingPurpose')}" th:errors="*{sailingPurpose}">Bad Sailing Purpose</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('roleRequired')}? 'has-error'">
-                        <label for="roleRequired" class="col-lg-2 control-label">Role Required</label>
-
-                        <div class="col-lg-10">
-                            <select id="roleRequired" th:field="*{roleRequired}">
-                                <option th:value="${''}" th:text="${'Select role:'}">Select role:</option>
-                                <option th:each="roleRequired : ${rolesRequired}" th:value="${roleRequired.name()}" th:text="${roleRequired.getDisplayName()}">Crew</option>
-                            </select>
-                            <span class="help-block" th:if="${#fields.hasErrors('roleRequired')}" th:errors="*{roleRequired}">Bad Role Required</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('frequency')}? 'has-error'">
-                        <label class="col-lg-2 control-label">When</label>
-
-                        <div class="col-lg-10">
-                            <label class="checkbox-inline" th:each="frequency : ${frequencies}">
-                                <input type="checkbox" th:field="*{frequency}" th:value="${frequency.getName()}"/>
-                                <span th:text="${frequency.getDisplayName()}">Weekends</span>
-                            </label>
-                            <span class="help-block" th:if="${#fields.hasErrors('frequency')}" th:errors="*{frequency}">Bad Frequency</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('dateRelevantTo')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Date which this advert is relevant to (optional):</label>
-
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control" id="dateRelevantTo" placeholder="dd/mm/yyyy" th:field="*{dateRelevantTo}"/>
-                            <span class="help-block" th:if="${#fields.hasErrors('dateRelevantTo')}" th:errors="*{dateRelevantTo}">Bad Date Relevant To</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('minimumRequiredLevelByRank')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Minimum level required for crew</label>
-
-                        <div class="col-lg-10">
-                            <select th:field="*{minimumRequiredLevelByRank}">
-                                <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.getRank()}" th:text="${level.getDisplayName()}">None</option>
-                            </select>
-                            <span class="help-block" th:if="${#fields.hasErrors('minimumRequiredLevelByRank')}" th:errors="*{minimumRequiredLevelByRank}">Bad Minimum Required Level</span>
-                        </div>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('financialArrangement')}? 'has-error'">
-                        <label for="title" class="col-lg-2 control-label">Money</label>
-
-                        <div class="col-lg-10">
-                            <select th:field="*{financialArrangement}">
-                                <option th:each="financialArrangement : ${financialArrangements}"
-                                        th:value="${financialArrangement.getName()}"
-                                        th:text="${financialArrangement.getDisplayName()}">Free</option>
-                            </select>
-                            <span class="help-block" th:if="${#fields.hasErrors('financialArrangement')}" th:errors="*{financialArrangement}">Bad Money</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-offset-2 col-lg-10">
-                            <button type="submit" class="btn btn-default">Save</button>
-                        </div>
-                    </div>
-                </fieldset>
+                <fieldset th:replace="~{listingFields :: terms}">The sailing, crew and money fields go here.</fieldset>
             </div>
         </form>
         <div th:if="${not allowedMoreListings}">

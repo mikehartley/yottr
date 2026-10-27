@@ -194,4 +194,94 @@ public class FormsTest {
         assertEquals(1, violations.size(), "should be one violation: " + violations);
         assertEquals("minimumRequiredLevelKnown", violations.iterator().next().getPropertyPath().toString());
     }
+
+    @Test
+    public void listingFormRoundTripsTheTermsOfATrip() {
+        final Boat boat = aBoat().withOwner(aUser().build()).build();
+        boat.setSmoking(Smoking.YES_OUTSIDE);
+        boat.setTravelExpenses(TravelExpenses.NEGOTIABLE);
+        boat.setNumberOfCrewWanted(3);
+        boat.setWhenFrom(LocalDate.of(2027, 6, 14));
+        boat.setWhenTo(LocalDate.of(2027, 6, 28));
+
+        final ListingForm form = ListingForm.from(boat);
+        final Boat copy = aBoat().withOwner(aUser().build()).build();
+        form.copyTo(copy);
+
+        assertEquals(Smoking.YES_OUTSIDE, copy.getSmoking());
+        assertEquals(TravelExpenses.NEGOTIABLE, copy.getTravelExpenses());
+        assertEquals(Integer.valueOf(3), copy.getNumberOfCrewWanted());
+        assertEquals(LocalDate.of(2027, 6, 14), copy.getWhenFrom());
+        assertEquals(LocalDate.of(2027, 6, 28), copy.getWhenTo());
+        assertEquals(Set.of(), validator.validate(form));
+    }
+
+    @Test
+    public void listingFormNeedsTheLevelOfACourse() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setSailingPurpose(SailingPurpose.COURSE);
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("courseLevelGivenForACourse", violations.iterator().next().getPropertyPath().toString());
+
+        form.setCourseLevel(CourseLevel.DAY_SKIPPER);
+        assertEquals(Set.of(), validator.validate(form), "with its level");
+
+        final Boat boat = aBoat().withOwner(aUser().build()).build();
+        form.copyTo(boat);
+        assertEquals(CourseLevel.DAY_SKIPPER, boat.getCourseLevel());
+    }
+
+    @Test
+    public void listingFormDropsACourseLevelWhenItIsNotACourse() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setSailingPurpose(SailingPurpose.CRUISING);
+        form.setCourseLevel(CourseLevel.DAY_SKIPPER);
+
+        final Boat boat = aBoat().withOwner(aUser().build()).build();
+        form.copyTo(boat);
+
+        assertNull(boat.getCourseLevel(), "only a course has a level");
+    }
+
+    @Test
+    public void listingFormRefusesAStartAfterTheEnd() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setWhenFrom(LocalDate.of(2027, 6, 28));
+        form.setWhenTo(LocalDate.of(2027, 6, 14));
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("whenFromNotAfterWhenTo", violations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
+    public void listingFormAllowsADaySailAndOpenEndedDates() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+
+        form.setWhenFrom(LocalDate.of(2027, 6, 14));
+        form.setWhenTo(LocalDate.of(2027, 6, 14));
+        assertEquals(Set.of(), validator.validate(form), "a day sail");
+
+        form.setWhenTo(null);
+        assertEquals(Set.of(), validator.validate(form), "no end date");
+
+        form.setWhenFrom(null);
+        form.setWhenTo(LocalDate.of(2027, 6, 14));
+        assertEquals(Set.of(), validator.validate(form), "no start date");
+    }
+
+    @Test
+    public void listingFormLimitsTheCrewWanted() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+
+        form.setNumberOfCrewWanted(0);
+        assertEquals(1, validator.validate(form).size(), "none");
+
+        form.setNumberOfCrewWanted(100);
+        assertEquals(1, validator.validate(form).size(), "too many");
+    }
 }

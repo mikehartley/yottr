@@ -88,11 +88,11 @@ public class Boat {
 
     @DateTimeFormat(pattern = DATE_PATTERN)
     @Column(name = "when_from")
-    private LocalDate whenFrom; //TODO validation - cross field
+    private LocalDate whenFrom; // ListingForm checks it is before whenTo
 
     @DateTimeFormat(pattern = DATE_PATTERN)
     @Column(name = "when_to")
-    private LocalDate whenTo; //TODO validation - cross field
+    private LocalDate whenTo;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "min_required_level")
@@ -121,7 +121,7 @@ public class Boat {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "course_level")
-    //TODO validation - cross field
+    // ListingForm requires it for a course, and leaves it out otherwise
     private CourseLevel courseLevel;
 
     @Enumerated(EnumType.STRING)
