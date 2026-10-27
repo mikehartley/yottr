@@ -3,29 +3,15 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container">
-    <div class="row">
-        <div class="col-sm-6">
-            <h3>
-                Hello <span th:text="${user.firstName}">FirstName</span>, welcome to Yottr.
-            </h3>
+<section layout:fragment="content" id="signup-success-content" class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 yottr-card p-4">
+            <h1 class="h3">Hello <span th:text="${user.firstName}">FirstName</span>, welcome to Yottr.</h1>
+            <p>Your username is <strong th:text="${user.username}">UserBob</strong>, which you sign in with.</p>
+            <p>Happy sailing!</p>
+            <a class="btn btn-primary" th:href="@{/index}">Sign in</a>
         </div>
-        <!--/.col-sm-6-->
-        <div class="col-sm-6">
-            <div>Your username is <span th:text="${user.username}">UserBob</span> which you will need to log in.</div>
-            <br/>
-            <div>Happy sailing!</div>
-            <hr/>
-            <br/>
-
-            <a th:href="@{index}">Log in</a>
-        </div>
-        <!--/.col-sm-6-->
     </div>
-    <!--/.row-->
-
 </section>
-<!--/#index-content-->
 </body>
 </html>
-

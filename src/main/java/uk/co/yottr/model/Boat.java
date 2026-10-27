@@ -59,8 +59,20 @@ public class Boat {
     @YearBuilt
     private Integer yearBuilt;
 
-    public enum HullType {
-        MONO, MULTI
+    public enum HullType implements DisplayableName {
+        MONO("Monohull"),
+        MULTI("Multihull");
+
+        private final String displayName;
+
+        HullType(String displayName) {
+            this.displayName = displayName;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return displayName;
+        }
     }
     @Enumerated(EnumType.STRING)
     @Column(name = "hull_type", nullable = false)

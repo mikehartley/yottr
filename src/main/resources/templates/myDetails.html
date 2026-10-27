@@ -3,119 +3,34 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container col-sm-12">
-    <div class="row">
-        <form method="post" th:action="@{/s/myDetails}" th:object="${user}" th:id="signup-form">
-
-            <h1>My Details</h1>
-
-            <div class="status alert alert-success" id="mydetails-updated-msg" th:if="${param.updated != null}">
-                Updated.
+<section layout:fragment="content" id="mydetails-content" class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="h2">My Details</h1>
+            <div class="alert alert-success" id="mydetails-updated-msg" th:if="${param.updated != null}">
+                Your details are saved.
             </div>
 
-            <fieldset>
-                <div class="form-group">
-                    <label class="col-sm-4 control-label text-right">Username</label>
-                    <label class="col-sm-8 control-label" th:text="${username}">Username</label>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
-                    <label for="password" class="col-sm-4 control-label text-right">Change Password</label>
+            <form method="post" th:action="@{/s/myDetails}" th:object="${user}" id="signup-form" class="yottr-card p-4" novalidate="novalidate">
+                <dl class="row mb-3">
+                    <dt class="col-sm-4">Username</dt>
+                    <dd class="col-sm-8" th:text="${username}">Username</dd>
+                    <dt class="col-sm-4">Listings</dt>
+                    <dd class="col-sm-8"><span th:text="${listingCount}">1</span> of <span th:text="${maxListings}">2</span></dd>
+                </dl>
 
-                    <div class="col-sm-8">
-                        <input type="password" class="form-control" id="password" placeholder="Leave blank to keep existing password" th:field="*{password}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Bad password</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('title')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Title</label>
+                <div th:replace="~{fields :: textField(name='password', label='New password', type='password', hint='Leave it blank to keep your current password.')}"></div>
+                <th:block th:replace="~{personalDetails :: fields}"></th:block>
 
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="title" placeholder="Title" th:field="*{title}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Bad Title</span>
-                    </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" form="delete-me-form" class="btn btn-outline-danger"
+                            onclick="return confirm('This will permanently delete your account and your listings. Are you sure?')">Delete my account</button>
                 </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('firstName')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">First Name</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="firstName" placeholder="First Name" th:field="*{firstName}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Bad First Name</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('lastName')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Last Name</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="lastName" placeholder="Last Name" th:field="*{lastName}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Bad Last Name</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Email</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="email" placeholder="Email" th:field="*{email}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Bad Email</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('mobile')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Mobile</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="mobile" placeholder="Mobile" th:field="*{mobile}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}">Bad Mobile</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('country')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Country</label>
-
-                    <div class="col-sm-8">
-                        <select th:field="*{country}">
-                            <option th:value="${''}" th:text="${'Please choose:'}"></option>
-                            <option th:each="country : ${countries}" th:value="${country}" th:text="${country.getDisplayName()}"></option>
-                        </select>
-                        <span class="help-block" th:if="${#fields.hasErrors('country')}" th:errors="*{country}">Bad Country</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('postcode')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Postcode</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="postcode" placeholder="Postcode" th:field="*{postcode}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('postcode')}" th:errors="*{postcode}">Bad Postcode</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('aboutMe')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">About Me</label>
-
-                    <div class="col-sm-8">
-                        <textarea th:rows="4" th:cols="40" th:maxlength="400" class="form-control" id="aboutMe" placeholder="About Me" th:field="*{aboutMe}"></textarea>
-                        <span class="help-block" th:if="${#fields.hasErrors('aboutMe')}" th:errors="*{aboutMe}">Bad About Me</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-4 control-label text-right">Listings</label>
-                    <label class="col-sm-8 control-label"><span th:text="${listingCount}">1</span> out of a maximum of <span th:text="${maxListings}">2</span></label>
-                </div>
-                <div class="gap">&nbsp;</div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-4 col-sm-4">
-                        <button type="submit" class="btn btn-default">Update</button>
-                    </div>
-                    <div class="col-sm-offset-2 col-sm-2">
-                        <button type="submit" form="delete-me-form" class="btn btn-link"
-                                onclick="return confirm('This will permanently delete your profile! Are you sure you want to do this?')">Delete Me</button>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-        <form id="delete-me-form" method="post" th:action="@{/s/deleteMe}"></form>
+            </form>
+            <form id="delete-me-form" method="post" th:action="@{/s/deleteMe}"></form>
+        </div>
     </div>
-    <!--/.row-->
-
 </section>
-<!--/#index-content-->
 </body>
 </html>
-

@@ -4,4 +4,4 @@ Feature: Registering
     When I register as "carol"
     Then I see "welcome to Yottr"
     When "carol" signs in
-    Then I see "Logout"
+    Then I see "Sign out"

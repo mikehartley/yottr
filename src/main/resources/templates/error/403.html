@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container">
-    <div class="row">
-        <div class="col-sm-6">
-            <h3>
-                403 - Not your waters.
-            </h3>
-        </div>
-        <div class="col-sm-6">
-            <div>Sorry, you don't have permission to go there.</div>
-        </div>
-    </div>
+<section layout:fragment="content" id="error-content" class="container py-5 text-center">
+    <p class="display-1 fw-bold text-body-secondary">403</p>
+    <h1 class="h3">Not your waters.</h1>
+    <p>Sorry, you don't have permission to go there.</p>
+    <a class="btn btn-primary" th:href="@{/}">Back to the home page</a>
 </section>
 </body>
 </html>
-

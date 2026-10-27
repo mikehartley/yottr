@@ -1,40 +1,28 @@
 <!DOCTYPE html>
-<html layout:decorate="~{mainTemplate}"
-      xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <title>Pagingation control template</title>
-</head>
-
+<!--/* Page links for a PageWrapper in the model as "wrapper". Call it as control(url='/the/list'). */-->
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
-
-    <div th:fragment="control">
-        <ul class="pagination">
-            <li th:class="${wrapper.getPage().isFirst()}? 'disabled' : ''">
-                <span th:if="${wrapper.getPage().isFirst()}">← First</span>
-                <a th:if="${not wrapper.getPage().isFirst()}" th:href="@{${url}(page=0,size=${wrapper.getPage().size})}">← First</a>
-            </li>
-            <li th:class="${wrapper.getPage().hasPrevious()}? '' : 'disabled'">
-                <span th:if="${not wrapper.getPage().hasPrevious()}">«</span>
-                <a th:if="${wrapper.getPage().hasPrevious()}" th:href="@{${url}(page=${wrapper.getPage().number-1},size=${wrapper.getPage().size})}" title="Go to previous page">«</a>
-            </li>
-
-            <li th:each="i : ${#numbers.sequence(wrapper.getRangeStart(), wrapper.getRangeEnd())}" >
-                <span th:if="${wrapper.getPage().number == i}" th:class="${wrapper.getPage().number == i}? 'active' : ''"><strong th:text="${i + 1}">1</strong></span>
-                <a th:if="${wrapper.getPage().number != i}" th:href="@{${url}(page=${i},size=${wrapper.getPage().size})}"><span th:text="${i + 1}">1</span></a>
-            </li>
-
-            <li th:class="${wrapper.getPage().hasNext()}? '' : 'disabled'">
-                <span th:if="${not wrapper.getPage().hasNext()}">»</span>
-                <a th:if="${wrapper.getPage().hasNext()}" th:href="@{${url}(page=${wrapper.getPage().number + 1},size=${wrapper.getPage().size})}" title="Go to next page">»</a>
-            </li>
-            <li th:class="${wrapper.getPage().isLast()}? 'disabled' : ''">
-                <span th:if="${wrapper.getPage().isLast()}">Last →</span>
-                <a th:if="${not wrapper.getPage().isLast()}" th:href="@{${url}(page=${wrapper.getPage().totalPages - 1},size=${wrapper.getPage().size})}" th:text="'Last (' + ${wrapper.getPage().totalPages} + ') →'">Last</a>
-            </li>
-        </ul>
-    </div>
-
+<nav th:fragment="control" th:if="${wrapper.page.totalPages > 1}" aria-label="Pages" th:with="page=${wrapper.page}">
+    <ul class="pagination flex-wrap justify-content-center">
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=0,size=${page.size})}">First</a>
+        </li>
+        <li class="page-item" th:classappend="${page.hasPrevious()} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=${page.number - 1},size=${page.size})}" aria-label="Previous">&laquo;</a>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(wrapper.rangeStart, wrapper.rangeEnd)}"
+            th:classappend="${page.number == i} ? 'active'">
+            <a class="page-link" th:href="@{${url}(page=${i},size=${page.size})}" th:text="${i + 1}"
+               th:attr="aria-current=${page.number == i} ? 'page'">1</a>
+        </li>
+        <li class="page-item" th:classappend="${page.hasNext()} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=${page.number + 1},size=${page.size})}" aria-label="Next">&raquo;</a>
+        </li>
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link text-nowrap" th:href="@{${url}(page=${page.totalPages - 1},size=${page.size})}"
+               th:text="'Last (' + ${page.totalPages} + ')'">Last</a>
+        </li>
+    </ul>
+</nav>
 </body>
 </html>
-

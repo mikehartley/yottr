@@ -1,167 +1,75 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      lang="en">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en-GB">
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content="For boats looking for crew, and crew looking for boats."/>
     <title>Yottr</title>
 
-    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
-    <link href="../../resources/css/font-awesome.min.css" th:href="@{/resources/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
-    <link href="../../resources/css/main.css" th:href="@{/resources/css/main.css}" rel="stylesheet" type="text/css"/>
-    <link rel="shortcut icon" href="../../resources/images/ico/favicon.ico" th:href="@{/resources/images/ico/favicon.ico}"/>
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../resources/images/ico/apple-touch-icon-144-precomposed.png"  th:href="@{/resources/images/ico/apple-touch-icon-144-precomposed.png}"/>
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../resources/images/ico/apple-touch-icon-114-precomposed.png" th:href="@{/resources/images/ico/apple-touch-icon-114-precomposed.png}"/>
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../resources/images/ico/apple-touch-icon-72-precomposed.png" th:href="@{/resources/images/ico/apple-touch-icon-72-precomposed.png}"/>
-    <link rel="apple-touch-icon-precomposed" href="../../resources/images/ico/apple-touch-icon-57-precomposed.png" th:href="@{/resources/images/ico/apple-touch-icon-57-precomposed.png}"/>
+    <script>
+        // Bootstrap's colour modes switch on data-bs-theme, so this follows the visitor's light or dark preference.
+        (function () {
+            const dark = window.matchMedia('(prefers-color-scheme: dark)');
+            const apply = () => document.documentElement.setAttribute('data-bs-theme', dark.matches ? 'dark' : 'light');
+            apply();
+            dark.addEventListener('change', apply);
+        })();
+    </script>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}" rel="stylesheet"/>
+    <link th:href="@{/resources/css/yottr.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/svg+xml" th:href="@{/resources/images/favicon.svg}"/>
 </head>
-<!--/head-->
 <body>
-<header class="navbar navbar-inverse navbar-fixed-top wet-asphalt col-sm-12" role="banner">
+
+<nav class="navbar navbar-expand-lg navbar-dark yottr-nav" aria-label="Main">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="index.html" th:href="@{/}"><h1>Yottr</h1></a>
-        </div>
-        <div>
-            Built: <span th:text="#{build.date}">10-Mar-2014</span>
-        </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li sec:authorize="hasAuthority('ADMIN')"><a href="manageUsers.html" th:href="@{/admin/users}">Admin</a></li>
-                <li sec:authorize="hasAuthority('ADMIN')"><a href="adminLogging.html" th:href="@{/admin/logging}" id="logging-link">Logging</a></li>
-
-                <li class="active"><a href="index.html" th:href="@{/}">Home</a></li>
-
-                <li sec:authorize="isAnonymous()"><a href="signup.xhtml" th:href="@{/signup}">Register</a></li>
-
-                <li sec:authorize="hasAuthority('FREE')"><a href="newListing.html" th:href="@{/s/listings/new}">Add Boat</a></li>
-                <li sec:authorize="hasAuthority('FREE')"><a href="boatList.html" th:href="@{/s/listings/all}">View All</a></li>
-                <li sec:authorize="hasAuthority('FREE')"><a href="myDetails.html" th:href="@{/s/myDetails}">My Details</a></li>
-                <li sec:authorize="hasAuthority('FREE')"><a href="myListings.html" th:href="@{/s/listings/mine}">My Listings</a></li>
-                <li sec:authorize="isAuthenticated()">
+        <a class="navbar-brand yottr-brand" th:href="@{/}">
+            <img th:src="@{/resources/images/logo.svg}" alt=""/>
+            <span>Yottr</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
+                aria-controls="main-nav" aria-expanded="false" aria-label="Show the menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="main-nav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a class="nav-link" th:href="@{/s/listings/all}">Boats</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a class="nav-link" th:href="@{/s/listings/mine}">My Listings</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a class="nav-link" th:href="@{/s/myDetails}">My Details</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a class="nav-link" th:href="@{/admin/users}">Members</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a class="nav-link" th:href="@{/admin/logging}" id="logging-link">Logging</a></li>
+                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link" th:href="@{/signup}">Join</a></li>
+                <li class="nav-item ms-lg-2" sec:authorize="hasAuthority('FREE')">
+                    <a class="btn btn-light btn-sm" th:href="@{/s/listings/new}"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a boat</a>
+                </li>
+                <li class="nav-item ms-lg-2" sec:authorize="isAuthenticated()">
                     <form class="inline-action" method="post" th:action="@{/logout}">
-                        <button type="submit" id="logout-link">Logout</button>
+                        <button type="submit" id="logout-link" class="btn btn-link nav-link">Sign out</button>
                     </form>
                 </li>
             </ul>
         </div>
     </div>
-</header>
-<!--/header-->
+</nav>
 
-<div class="gap"></div>
+<main id="main-content">
+    <!--/* each page's content replaces this, and owns its own container, so that a page can run full width */-->
+    <section layout:fragment="content">
+        <p>The page's content goes here.</p>
+    </section>
+</main>
 
-<section layout:fragment="content" id="main-content" class="container col-sm-12">
-    <div class="row">
-        <div class="col-sm-6">
-            <h1>Left hand content</h1>
-        </div>
-        <!--/.col-sm-6-->
-        <div class="col-sm-6">
-            <h1>Right hand content</h1>
-        </div>
-        <!--/.col-sm-6-->
-    </div>
-    <!--/.row-->
-
-</section>
-<!--/#main-content-->
-
-<div class="gap"></div>
-
-<section id="bottom" class="wet-asphalt col-sm-12">
-    <div class="container">
-        <div class="row">
-
-            <div class="col-sm-9">
-                <h4 class="col-sm-12">Latest Listings</h4>
-
-                <div class="col-sm-12">
-                    <div class="media col-sm-4">
-                        <div class="pull-left">
-                            <img src="../../resources/images/blog/thumb1.jpg" th:src="@{/resources/images/blog/thumb1.jpg}" alt="" />
-                        </div>
-                        <div class="media-body">
-                            <span class="media-heading"><a href="#">Weekend sailing around the Solent</a></span>
-                            <small class="muted">Posted 17 Aug 2013</small>
-                        </div>
-                    </div>
-                    <div class="media col-sm-4">
-                        <div class="pull-left">
-                            <img src="../../resources/images/blog/thumb2.jpg" th:src="@{/resources/images/blog/thumb2.jpg}" alt="" />
-                        </div>
-                        <div class="media-body">
-                            <span class="media-heading"><a href="#">Racing to Spain</a></span>
-                            <small class="muted">Posted 13 Sep 2013</small>
-                        </div>
-                    </div>
-                    <div class="media col-sm-4">
-                        <div class="pull-left">
-                            <img src="../../resources/images/blog/thumb3.jpg" th:src="@{/resources/images/blog/thumb3.jpg}" alt="" />
-                        </div>
-                        <div class="media-body">
-                            <span class="media-heading"><a href="#">Cross channel adventure</a></span>
-                            <small class="muted">Posted 11 Jul 2013</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-3">
-                <h4>Useful Links</h4>
-                <div>
-                    <ul class="arrow">
-                        <li><a href="#">Weather</a></li>
-                        <li><a href="#">Tides</a></li>
-                        <li><a href="#">Schools and Courses</a></li>
-                        <li><a href="#">Skippers for Hire</a></li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-<!--/#bottom-->
-
-<footer id="footer" class="midnight-blue col-sm-12">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6">
-                &copy; 2014 Yottr. All Rights Reserved.
-            </div>
-            <div class="col-sm-6">
-                <ul class="pull-right">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Faq</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Terms &amp; Conditions</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a id="gototop" class="gototop" href="#"><i class="icon-chevron-up"></i></a></li>
-                    <!--#gototop-->
-                </ul>
-            </div>
-        </div>
+<footer class="yottr-footer py-4 mt-5">
+    <div class="container d-flex flex-column flex-sm-row justify-content-between gap-2 small">
+        <span>Yottr: boats looking for crew, and crew looking for boats.</span>
+        <span>Built <span th:text="#{build.date}">10-03-2014 12:00:00</span></span>
     </div>
 </footer>
-<!--/#footer-->
 
-<section>
-    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <script src="../../resources/js/main.js" th:src="@{/resources/js/main.js}"></script>
-</section>
-
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

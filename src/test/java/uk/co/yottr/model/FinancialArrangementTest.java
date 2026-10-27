@@ -25,4 +25,9 @@ public class FinancialArrangementTest {
         assertEquals("Commercial", FinancialArrangement.COMMERCIAL.getDisplayName());
         assertEquals("Paid Position", FinancialArrangement.PAID.getDisplayName());
     }
+
+    @Test
+    public void writesItselfAsItsNameSoAFormCanBindItBack() {
+        assertEquals("SHARED_FIXED", new FinancialArrangement(FinancialArrangement.FinancialArrangementEnum.SHARED_FIXED).toString());
+    }
 }

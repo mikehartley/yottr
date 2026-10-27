@@ -23,4 +23,9 @@ public class FrequencyTest {
         assertEquals("Long Term", Frequency.LONG_TERM.getDisplayName());
         assertEquals("Trip", Frequency.TRIP.getDisplayName());
     }
+
+    @Test
+    public void writesItselfAsItsNameSoAFormCanBindItBack() {
+        assertEquals("WEEKENDS", new Frequency(Frequency.FrequencyEnum.WEEKENDS).toString());
+    }
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--/* A listing as a card, for the lists of boats. Call it as card(boat=${boat}, actions=~{...}); actions is
+       optional markup for the foot of the card, such as My Listings' edit and delete buttons. */-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<article th:fragment="card" class="yottr-card yottr-listing p-4 mb-4">
+    <header class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+        <div>
+            <h2 class="h5 mb-1" th:text="${boat.title}">Weekends in the Solent</h2>
+            <div class="text-body-secondary">
+                <span class="yottr-listing-make" th:text="${boat.makeAndModel}">Sigma 33</span>,
+                <span th:text="${boat.length} + (${boat.unitsImperial} ? ' ft' : ' m')">33 ft</span>,
+                <span th:text="${boat.hullType.displayName}">Monohull</span>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-1">
+            <span class="yottr-badge yottr-badge-warning" th:if="${boat.suspended}">Suspended</span>
+            <span class="yottr-badge" th:text="${boat.sailingPurpose.displayName}">Cruising</span>
+            <span class="yottr-badge" th:if="${boat.courseLevel != null}" th:text="${boat.courseLevel.displayName}">Day Skipper</span>
+        </div>
+    </header>
+
+    <dl class="yottr-listing-facts mb-3">
+        <dt>When</dt>
+        <dd>
+            <span th:text="${#strings.listJoin(boat.frequency.![displayName], ', ')}">Weekends</span>
+            <span th:if="${boat.whenFrom != null or boat.whenTo != null}" class="text-body-secondary">
+                (<span th:text="${boat.whenFrom != null} ? ${#temporals.format(boat.whenFrom, 'd MMM yyyy')} : 'now'">14 Jun 2027</span>
+                to <span th:text="${boat.whenTo != null} ? ${#temporals.format(boat.whenTo, 'd MMM yyyy')} : 'open-ended'">28 Jun 2027</span>)
+            </span>
+        </dd>
+        <dt>Looking for</dt>
+        <dd>
+            <span th:text="${boat.roleRequired.displayName}">Crew</span><span th:if="${boat.numberOfCrewWanted != null}" th:text="' (' + ${boat.numberOfCrewWanted} + ')'"> (2)</span>,
+            <span th:text="${boat.minimumRequiredLevel.displayName}">Competent Crew</span> or above
+        </dd>
+        <dt>Costs</dt>
+        <dd>
+            <span th:text="${boat.financialArrangement.displayName}">Shared</span>;
+            travel <span th:text="${#strings.toLowerCase(boat.travelExpenses.displayName)}">paid by crew</span>
+        </dd>
+    </dl>
+
+    <p class="mb-2" th:text="${#strings.abbreviate(boat.description, 300)}">The boat and the plans.</p>
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center gap-2 small text-body-secondary">
+        <span>Posted <span th:text="${#temporals.format(boat.firstPosted, 'd MMM yyyy')}">17 Aug 2026</span>
+            · ref <span th:text="${boat.reference}">1a2b3c4d</span></span>
+        <!--/* th:replace runs before th:if, so the check is on a block around it */-->
+        <th:block th:if="${actions != null}"><div th:replace="${actions}">Actions</div></th:block>
+    </footer>
+</article>
+
+</body>
+</html>
