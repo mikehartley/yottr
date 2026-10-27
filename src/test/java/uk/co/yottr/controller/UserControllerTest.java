@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.form.MyDetailsForm;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
@@ -13,6 +14,7 @@ import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
 import java.security.Principal;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -147,7 +149,7 @@ public class UserControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = aUser().withUsername(username).withBoat().build();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockUserService.findMember(username)).thenReturn(user);
 
         mockMvc.perform(get("/s/myDetails").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().isOk())
@@ -163,7 +165,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute("maxListings", equalTo(user.getMaxListings())))
                 .andExpect(model().attributeExists("countries"));
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockUserService).findMember(username);
         verify(mockReferenceDataService).countries();
     }
 
@@ -173,15 +175,12 @@ public class UserControllerTest extends AbstractControllerTest {
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
-        when(mockUserService.findByUsername(username)).thenReturn(null);
+        when(mockUserService.findMember(username)).thenThrow(new ResourceNotFoundException("No member " + username));
 
         mockMvc.perform(get("/s/myDetails").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"))
-                .andExpect(model().hasNoErrors())
-                .andExpect(model().attributeDoesNotExist("user"));
+                .andExpect(status().isNotFound());
 
-        verify(mockUserService).findByUsername(username);
+        verify(mockUserService).findMember(username);
     }
 
     @Test
@@ -190,7 +189,7 @@ public class UserControllerTest extends AbstractControllerTest {
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
-        when(mockUserService.findByUsername(username)).thenReturn(aUser().withUsername(username).build());
+        when(mockUserService.findMember(username)).thenReturn(aUser().withUsername(username).build());
 
         final String passwordProperty = "password";
         final String passwordValue = "passwordValue";
@@ -235,7 +234,7 @@ public class UserControllerTest extends AbstractControllerTest {
         // Since Spring 6 the model is dropped on a redirect, so check the user that was saved instead.
         final ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(mockUserService).save(userCaptor.capture(), eq(true));
-        verify(mockUserService).findByUsername(username);
+        verify(mockUserService).findMember(username);
 
         final User savedUser = userCaptor.getValue();
         assertThat(savedUser, hasProperty(passwordProperty, equalTo(passwordValue)));
@@ -257,7 +256,7 @@ public class UserControllerTest extends AbstractControllerTest {
         when(mockPrincipal.getName()).thenReturn(username);
 
         final User user = new User();
-        when(mockUserService.findByUsername(username)).thenReturn(user);
+        when(mockUserService.findByUsername(username)).thenReturn(Optional.of(user));
 
         mockMvc.perform(post("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().is3xxRedirection())
@@ -275,7 +274,7 @@ public class UserControllerTest extends AbstractControllerTest {
         final Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn(username);
 
-        when(mockUserService.findByUsername(username)).thenReturn(null);
+        when(mockUserService.findByUsername(username)).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/s/deleteMe").contentType(MediaType.TEXT_HTML).principal(mockPrincipal))
                 .andExpect(status().is3xxRedirection())

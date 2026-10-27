@@ -74,10 +74,7 @@ public class UserController {
         final String currentUsername = principal.getName();
         LOG.info("current username is: {}", currentUsername);
 
-        final User currentUser = userService.findByUsername(currentUsername);
-        if (currentUser == null) {
-            return new ModelAndView("index");
-        }
+        final User currentUser = userService.findMember(currentUsername);
 
         return modelAndViewForMyDetails(MyDetailsForm.from(currentUser), currentUser);
     }
@@ -86,7 +83,7 @@ public class UserController {
     public ModelAndView myDetailsAction(@Valid @ModelAttribute("user") MyDetailsForm myDetailsForm, BindingResult bindingResult,
                                         Principal principal) {
 
-        final User userForUpdate = userService.findByUsername(principal.getName());
+        final User userForUpdate = userService.findMember(principal.getName());
 
         if (bindingResult.hasErrors()) {
             LOG.info("Errors from myDetails: {}", bindingResult.getAllErrors());
@@ -128,13 +125,9 @@ public class UserController {
         final String currentUsername = principal.getName();
         LOG.info("deleting the account of {}", currentUsername);
 
-        final User currentUser = userService.findByUsername(currentUsername);
-        if (currentUser != null) {
-            userService.delete(currentUser);
-        }
+        userService.findByUsername(currentUsername).ifPresent(userService::delete);
 
         request.logout();
         return "redirect:/index?logout";
     }
 }
-

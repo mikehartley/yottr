@@ -67,11 +67,11 @@ public class UserControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(view().name("signupSuccess"));
 
-        final User victimAfterwards = userService.findById(victim.getId());
+        final User victimAfterwards = userService.findById(victim.getId()).orElseThrow();
         assertEquals(victimUsername, victimAfterwards.getUsername(), "the existing account's username");
         assertEquals(victim.getPassword(), victimAfterwards.getPassword(), "the existing account's password");
 
-        final User newcomer = userService.findByUsername(newUsername);
+        final User newcomer = userService.findByUsername(newUsername).orElseThrow();
         assertNotNull(newcomer, "the new member is saved as a new account");
         assertNotEquals(victim.getId(), newcomer.getId());
     }
@@ -85,7 +85,7 @@ public class UserControllerIT {
                         .param("enabled", "false"))
                 .andExpect(view().name("signupSuccess"));
 
-        final User saved = userService.findByUsername(username);
+        final User saved = userService.findByUsername(username).orElseThrow();
         assertEquals(Integer.valueOf(2), saved.getMaxListings(), "listing limit");
         assertEquals(true, saved.isEnabled(), "enabled");
     }
@@ -107,7 +107,7 @@ public class UserControllerIT {
                         .param("postcode", "PO1 1AA"))
                 .andExpect(redirectedUrl("myDetails?updated"));
 
-        final User saved = userService.findByUsername(username);
+        final User saved = userService.findByUsername(username).orElseThrow();
         assertNotNull(saved, "still found by the original username");
         assertEquals("Changed", saved.getFirstName(), "the change that is on the form");
         assertEquals(Integer.valueOf(2), saved.getMaxListings(), "listing limit");

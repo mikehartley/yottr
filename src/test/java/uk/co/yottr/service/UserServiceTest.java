@@ -9,8 +9,10 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.security.MemberSessions;
 import uk.co.yottr.testconfig.ConstantsForTests;
 
 import java.util.ArrayList;
@@ -20,7 +22,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -35,11 +38,14 @@ public class UserServiceTest {
     @Mock
     private UserRepository mockUserRepository;
 
+    @Mock
+    private MemberSessions mockMemberSessions;
+
     private UserService userService;
 
     @BeforeEach
     public void init() {
-        userService = new UserService(mockUserRepository, passwordEncoder);
+        userService = new UserService(mockUserRepository, passwordEncoder, mockMemberSessions);
     }
 
     @Test
@@ -88,25 +94,67 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteByUser() {
+    public void deleteByUserEndsTheirSessions() {
         User user = createUser("u1");
 
         userService.delete(user);
 
         verify(mockUserRepository).delete(user);
-        verifyNoMoreInteractions(mockUserRepository);
+        verify(mockMemberSessions).expire("u1");
+        verifyNoMoreInteractions(mockUserRepository, mockMemberSessions);
     }
 
     @Test
-    public void deleteById() {
+    public void deleteByIdEndsTheirSessions() {
         final long id = 5L;
         User user = createUser("u1");
         user.setId(id);
+        when(mockUserRepository.findById(id)).thenReturn(Optional.of(user));
 
         userService.delete(id);
 
-        verify(mockUserRepository).deleteById(id);
-        verifyNoMoreInteractions(mockUserRepository);
+        verify(mockUserRepository).findById(id);
+        verify(mockUserRepository).delete(user);
+        verify(mockMemberSessions).expire("u1");
+        verifyNoMoreInteractions(mockUserRepository, mockMemberSessions);
+    }
+
+    @Test
+    public void deleteByIdWhenNotFoundDoesNothing() {
+        final long id = 5L;
+        when(mockUserRepository.findById(id)).thenReturn(Optional.empty());
+
+        userService.delete(id);
+
+        verify(mockUserRepository).findById(id);
+        verifyNoMoreInteractions(mockUserRepository, mockMemberSessions);
+    }
+
+    @Test
+    public void disablingAUserEndsTheirSessions() {
+        final User user = createUser("u1");
+        user.setEnabled(true);
+        when(mockUserRepository.save(user)).thenReturn(user);
+
+        final User saved = userService.flipEnabled(user);
+
+        assertFalse(saved.isEnabled(), "disabled");
+        verify(mockUserRepository).save(user);
+        verify(mockMemberSessions).expire("u1");
+        verifyNoMoreInteractions(mockUserRepository, mockMemberSessions);
+    }
+
+    @Test
+    public void enablingAUserLeavesSessionsAlone() {
+        final User user = createUser("u1");
+        user.setEnabled(false);
+        when(mockUserRepository.save(user)).thenReturn(user);
+
+        final User saved = userService.flipEnabled(user);
+
+        assertTrue(saved.isEnabled(), "enabled");
+        verify(mockUserRepository).save(user);
+        verifyNoMoreInteractions(mockUserRepository, mockMemberSessions);
     }
 
     @Test
@@ -116,9 +164,9 @@ public class UserServiceTest {
 
         when(mockUserRepository.findByUsername(username)).thenReturn(user);
 
-        final User foundUser = userService.findByUsername(username);
+        final Optional<User> foundUser = userService.findByUsername(username);
 
-        assertEquals(user, foundUser, "user");
+        assertEquals(Optional.of(user), foundUser, "user");
         verify(mockUserRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository);
     }
@@ -129,11 +177,28 @@ public class UserServiceTest {
 
         when(mockUserRepository.findByUsername(username)).thenReturn(null);
 
-        final User foundUser = userService.findByUsername(username);
+        final Optional<User> foundUser = userService.findByUsername(username);
 
-        assertNull(foundUser, "user should not have been found");
+        assertTrue(foundUser.isEmpty(), "user should not have been found");
         verify(mockUserRepository).findByUsername(username);
         verifyNoMoreInteractions(mockUserRepository);
+    }
+
+    @Test
+    public void findMember() {
+        final String username = "u1";
+        final User user = createUser(username);
+        when(mockUserRepository.findByUsername(username)).thenReturn(user);
+
+        assertSame(user, userService.findMember(username), "member");
+    }
+
+    @Test
+    public void findMemberWhenNotFound() {
+        final String username = "u1";
+        when(mockUserRepository.findByUsername(username)).thenReturn(null);
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.findMember(username));
     }
 
     @Test
@@ -143,9 +208,9 @@ public class UserServiceTest {
         user.setId(id);
         when(mockUserRepository.findById(id)).thenReturn(Optional.of(user));
 
-        final User foundUser = userService.findById(id);
+        final Optional<User> foundUser = userService.findById(id);
 
-        assertEquals(user, foundUser, "user");
+        assertEquals(Optional.of(user), foundUser, "user");
         verify(mockUserRepository).findById(id);
         verifyNoMoreInteractions(mockUserRepository);
     }

@@ -1,6 +1,5 @@
 package uk.co.yottr.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +15,6 @@ import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.co.yottr.builder.UserBuilder.aUser;
@@ -40,19 +38,18 @@ public class UserServiceIT {
 
         final User savedUser = userService.save(user, true);
 
-        final User foundUser = userService.findByUsername(username);
+        final User foundUser = userService.findByUsername(username).orElseThrow();
 
         assertEquals(savedUser.getId(), foundUser.getId(), "findByUsername user.getId()");
 
         userService.delete(savedUser);
 
-        assertNull(userService.findByUsername(username), "find by username should not contain the deleted user");
+        assertTrue(userService.findByUsername(username).isEmpty(), "find by username should not contain the deleted user");
     }
 
     @Test
     public void whenUsernameNotFound() throws Exception {
-        final User result = userService.findByUsername("garbage");
-        Assertions.assertNull(result, "result of not found should be null");
+        assertTrue(userService.findByUsername("garbage").isEmpty(), "a username that isn't there is not found");
     }
 
     @Test
@@ -77,7 +74,7 @@ public class UserServiceIT {
         final User user = aUser().withUsername(username).build();
         final User savedUser = userService.save(user, true);
 
-        final User foundUser = userService.findById(savedUser.getId());
+        final User foundUser = userService.findById(savedUser.getId()).orElseThrow();
 
         assertEquals(username, foundUser.getUsername(), "username");
     }
