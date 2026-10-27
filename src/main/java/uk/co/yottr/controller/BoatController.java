@@ -171,6 +171,9 @@ public class BoatController {
         modelAndView.addObject("vesselTypes", referenceDataService.vesselTypes());
         modelAndView.addObject("rolesRequired", referenceDataService.rolesRequired());
         modelAndView.addObject("frequencies", referenceDataService.frequencies());
+        modelAndView.addObject("smokingOptions", referenceDataService.smokingOptions());
+        modelAndView.addObject("travelExpensesOptions", referenceDataService.travelExpenses());
+        modelAndView.addObject("courseLevels", referenceDataService.courseLevels());
     }
 
     private void addReferenceData(ModelAndView modelAndView) {

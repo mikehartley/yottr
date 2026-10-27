@@ -13,4 +13,7 @@ public interface ReferenceDataService {
     List<VesselType> vesselTypes();
     List<RoleRequired> rolesRequired();
     List<Frequency> frequencies();
+    List<Smoking> smokingOptions();
+    List<TravelExpenses> travelExpenses();
+    List<CourseLevel> courseLevels();
 }

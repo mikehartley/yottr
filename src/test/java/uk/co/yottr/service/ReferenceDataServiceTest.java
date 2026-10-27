@@ -102,4 +102,24 @@ public class ReferenceDataServiceTest {
         assertEquals(Frequency.FrequencyEnum.TRIP.name(), frequencies.get(4).getName());
         assertEquals(5, frequencies.size(), "list size");
     }
+
+    @Test
+    public void testSmokingOptionsOrdering() throws Exception {
+        assertEquals(List.of(Smoking.NO, Smoking.YES_OUTSIDE, Smoking.YES_ANYWHERE), referenceDataService.smokingOptions());
+    }
+
+    @Test
+    public void testTravelExpensesOrdering() throws Exception {
+        assertEquals(List.of(TravelExpenses.PAID_BY_CREW, TravelExpenses.PAID_BY_OWNER, TravelExpenses.NEGOTIABLE),
+                referenceDataService.travelExpenses());
+    }
+
+    @Test
+    public void testCourseLevelsAreInTheOrderTheyAreTaken() throws Exception {
+        final List<CourseLevel> courseLevels = referenceDataService.courseLevels();
+
+        assertEquals(CourseLevel.START_YACHTING, courseLevels.get(0));
+        assertEquals(CourseLevel.YACHTMASTER_OCEAN, courseLevels.get(courseLevels.size() - 1));
+        assertEquals(7, courseLevels.size(), "list size");
+    }
 }

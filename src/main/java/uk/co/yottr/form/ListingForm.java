@@ -8,12 +8,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.CourseLevel;
 import uk.co.yottr.model.FinancialArrangement.FinancialArrangementEnum;
 import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.Frequency.FrequencyEnum;
 import uk.co.yottr.model.RoleRequired;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingPurpose;
+import uk.co.yottr.model.Smoking;
+import uk.co.yottr.model.TravelExpenses;
 import uk.co.yottr.model.VesselType;
 import uk.co.yottr.validator.YearBuilt;
 
@@ -78,6 +81,26 @@ public class ListingForm {
     @NotNull(message = REQUIRED_ERROR_MSG)
     private FinancialArrangementEnum financialArrangement;
 
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private Smoking smoking = Smoking.NO;
+
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private TravelExpenses travelExpenses = TravelExpenses.PAID_BY_CREW;
+
+    @Min(1)
+    @Max(99)
+    private Integer numberOfCrewWanted;
+
+    // needed for a course, and ignored for anything else (isCourseLevelGivenForACourse)
+    private CourseLevel courseLevel;
+
+    // either may be left out, and no end means open-ended (isWhenFromNotAfterWhenTo)
+    @DateTimeFormat(pattern = Boat.DATE_PATTERN)
+    private LocalDate whenFrom;
+
+    @DateTimeFormat(pattern = Boat.DATE_PATTERN)
+    private LocalDate whenTo;
+
     public static ListingForm from(Boat boat) {
         final ListingForm form = new ListingForm();
         form.title = boat.getTitle();
@@ -95,6 +118,12 @@ public class ListingForm {
         form.minimumRequiredLevelByRank = boat.getMinimumRequiredLevelByRank();
         form.financialArrangement = boat.getFinancialArrangement() == null
                 ? null : FinancialArrangementEnum.valueOf(boat.getFinancialArrangement().getName());
+        form.smoking = boat.getSmoking();
+        form.travelExpenses = boat.getTravelExpenses();
+        form.numberOfCrewWanted = boat.getNumberOfCrewWanted();
+        form.courseLevel = boat.getCourseLevel();
+        form.whenFrom = boat.getWhenFrom();
+        form.whenTo = boat.getWhenTo();
         return form;
     }
 
@@ -114,11 +143,30 @@ public class ListingForm {
         boat.setSailingPurpose(sailingPurpose);
         boat.setRoleRequired(roleRequired);
         boat.setDateRelevantTo(dateRelevantTo);
+        boat.setSmoking(smoking);
+        boat.setTravelExpenses(travelExpenses);
+        boat.setNumberOfCrewWanted(numberOfCrewWanted);
+        boat.setCourseLevel(sailingPurpose == SailingPurpose.COURSE ? courseLevel : null);
+        boat.setWhenFrom(whenFrom);
+        boat.setWhenTo(whenTo);
     }
 
     @AssertTrue(message = "unknown level")
     public boolean isMinimumRequiredLevelKnown() {
         return Arrays.stream(RyaSailCruisingLevel.Level.values()).anyMatch(level -> level.rank == minimumRequiredLevelByRank);
+    }
+
+    @AssertTrue(message = "a course needs its level")
+    public boolean isCourseLevelGivenForACourse() {
+        return sailingPurpose != SailingPurpose.COURSE || courseLevel != null;
+    }
+
+    /**
+     * The start may be the same day as the end, for a day sail.
+     */
+    @AssertTrue(message = "must not be after the end date")
+    public boolean isWhenFromNotAfterWhenTo() {
+        return whenFrom == null || whenTo == null || !whenFrom.isAfter(whenTo);
     }
 
     public String getTitle() {
@@ -231,5 +279,53 @@ public class ListingForm {
 
     public void setFinancialArrangement(FinancialArrangementEnum financialArrangement) {
         this.financialArrangement = financialArrangement;
+    }
+
+    public Smoking getSmoking() {
+        return smoking;
+    }
+
+    public void setSmoking(Smoking smoking) {
+        this.smoking = smoking;
+    }
+
+    public TravelExpenses getTravelExpenses() {
+        return travelExpenses;
+    }
+
+    public void setTravelExpenses(TravelExpenses travelExpenses) {
+        this.travelExpenses = travelExpenses;
+    }
+
+    public Integer getNumberOfCrewWanted() {
+        return numberOfCrewWanted;
+    }
+
+    public void setNumberOfCrewWanted(Integer numberOfCrewWanted) {
+        this.numberOfCrewWanted = numberOfCrewWanted;
+    }
+
+    public CourseLevel getCourseLevel() {
+        return courseLevel;
+    }
+
+    public void setCourseLevel(CourseLevel courseLevel) {
+        this.courseLevel = courseLevel;
+    }
+
+    public LocalDate getWhenFrom() {
+        return whenFrom;
+    }
+
+    public void setWhenFrom(LocalDate whenFrom) {
+        this.whenFrom = whenFrom;
+    }
+
+    public LocalDate getWhenTo() {
+        return whenTo;
+    }
+
+    public void setWhenTo(LocalDate whenTo) {
+        this.whenTo = whenTo;
     }
 }

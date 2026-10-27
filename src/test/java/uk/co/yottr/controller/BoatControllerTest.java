@@ -76,7 +76,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("newListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(9))
+                .andExpect(model().size(12))
                 .andExpect(model().attributeExists("boat"))
                 .andExpect(model().attributeExists("allowedMoreListings"))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
@@ -85,7 +85,8 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists("financialArrangements"))
                 .andExpect(model().attributeExists("vesselTypes"))
                 .andExpect(model().attributeExists("rolesRequired"))
-                .andExpect(model().attributeExists("frequencies"));
+                .andExpect(model().attributeExists("frequencies"))
+                .andExpect(model().attributeExists("smokingOptions", "travelExpensesOptions", "courseLevels"));
 
         verify(mockUserService).findByUsername(username);
         verifyListingFormReferenceDataFetched();
@@ -99,6 +100,9 @@ public class BoatControllerTest extends AbstractControllerTest {
         verify(mockReferenceDataService).vesselTypes();
         verify(mockReferenceDataService).rolesRequired();
         verify(mockReferenceDataService).frequencies();
+        verify(mockReferenceDataService).smokingOptions();
+        verify(mockReferenceDataService).travelExpenses();
+        verify(mockReferenceDataService).courseLevels();
     }
 
     @Test
@@ -407,7 +411,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("editListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(9))
+                .andExpect(model().size(12))
                 .andExpect(model().attribute("boat", allOf(
                         instanceOf(ListingForm.class),
                         hasProperty("title", equalTo(boat.getTitle())),
@@ -419,7 +423,8 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists("financialArrangements"))
                 .andExpect(model().attributeExists("vesselTypes"))
                 .andExpect(model().attributeExists("rolesRequired"))
-                .andExpect(model().attributeExists("frequencies"));
+                .andExpect(model().attributeExists("frequencies"))
+                .andExpect(model().attributeExists("smokingOptions", "travelExpensesOptions", "courseLevels"));
 
         verify(mockBoatService).findListing(boat.getReference(), username);
         verifyListingFormReferenceDataFetched();
@@ -444,7 +449,8 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute("boatReference", equalTo(originalBoat.getReference())))
                 .andExpect(model().attributeExists("vesselTypes"))
                 .andExpect(model().attributeExists("rolesRequired"))
-                .andExpect(model().attributeExists("frequencies"));
+                .andExpect(model().attributeExists("frequencies"))
+                .andExpect(model().attributeExists("smokingOptions", "travelExpensesOptions", "courseLevels"));
 
         verifyListingFormReferenceDataFetched();
         verify(mockBoatService, never()).save(any(Boat.class));

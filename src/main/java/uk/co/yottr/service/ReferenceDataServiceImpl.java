@@ -106,6 +106,24 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         return frequencies;
     }
 
+    @Override
+    public List<Smoking> smokingOptions() {
+        return List.of(Smoking.values());
+    }
+
+    @Override
+    public List<TravelExpenses> travelExpenses() {
+        return List.of(TravelExpenses.values());
+    }
+
+    /**
+     * In the order the RYA courses are taken.
+     */
+    @Override
+    public List<CourseLevel> courseLevels() {
+        return List.of(CourseLevel.values());
+    }
+
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {
         @Override
