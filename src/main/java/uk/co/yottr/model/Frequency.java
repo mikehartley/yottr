@@ -41,8 +41,8 @@ public class Frequency {
     @Column(name = "display_name")
     private String displayName;
 
-    private Frequency() {
-        // for JPA only
+    protected Frequency() {
+        // for JPA, which needs it to be at least protected so that Hibernate can make proxies
     }
 
     public Frequency(FrequencyEnum frequency) {

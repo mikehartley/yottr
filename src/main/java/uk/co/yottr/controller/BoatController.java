@@ -87,12 +87,27 @@ public class BoatController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/s/listings/mine*", method = RequestMethod.GET)
+    @RequestMapping(value = "/s/listings/mine", method = RequestMethod.GET)
     public ModelAndView myListings(Principal principal) {
         LOG.info("My listings page");
 
         final ModelAndView modelAndView = new ModelAndView("myListings");
         modelAndView.addObject("boatListings", boatService.findListings(principal.getName()));
+        return modelAndView;
+    }
+
+    /**
+     * A listing's own page, with its owner's contact details, which any signed-in member may see. A listing that
+     * isn't visible (suspended, or its owner disabled) is reported as not found, except to its owner.
+     */
+    @RequestMapping(value = "/s/listings/{boatReference}", method = RequestMethod.GET)
+    public ModelAndView listingPage(@PathVariable String boatReference, Principal principal) {
+        final Boat boat = boatService.findListingToView(boatReference, principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("No listing with reference " + boatReference));
+
+        final ModelAndView modelAndView = new ModelAndView("listingPage");
+        modelAndView.addObject("boat", boat);
+        modelAndView.addObject("own", boat.getOwner().getUsername().equals(principal.getName()));
         return modelAndView;
     }
 

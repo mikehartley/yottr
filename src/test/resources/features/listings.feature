@@ -29,3 +29,14 @@ Feature: Listing a boat
     When I delete my "Sigma 33" listing
     Then my listings do not include a "Sigma 33"
     And my listings include a "Contessa 32"
+
+  Scenario: A member sees who to get in touch with about a boat
+    Given a member called "alice"
+    And a member called "dave"
+    And "alice" has signed in
+    And I have posted a listing for a "Sigma 33"
+    And I sign out
+    When "dave" signs in
+    And I open the "Sigma 33" listing from all the boats
+    Then I see "Get in touch"
+    And I see "alice@example.test"

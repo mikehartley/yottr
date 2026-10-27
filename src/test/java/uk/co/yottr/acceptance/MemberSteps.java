@@ -55,6 +55,7 @@ public class MemberSteps {
     private void createMember(String name, int maxListings, Role... roles) {
         final User user = aUser().withUsername(username(name)).withMaxListings(maxListings).build();
         user.setPassword(PASSWORD);
+        user.setEmail(name + "@example.test");
         for (Role role : roles) {
             user.addRole(role);
         }

@@ -313,4 +313,18 @@ public class BoatTest {
         frequencies.addAll(Arrays.asList(frequency));
         return frequencies;
     }
+
+    @Test
+    public void aListingIsVisibleUnlessSuspendedOrItsOwnerIsDisabled() {
+        final User owner = aUser().build();
+        final Boat boat = new Boat(owner);
+        assertTrue(boat.isVisible(), "live, with an enabled owner");
+
+        boat.setSuspended(true);
+        assertFalse(boat.isVisible(), "suspended");
+
+        boat.setSuspended(false);
+        owner.setEnabled(false);
+        assertFalse(boat.isVisible(), "owner disabled");
+    }
 }

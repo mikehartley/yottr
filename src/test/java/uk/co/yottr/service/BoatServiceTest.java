@@ -242,4 +242,46 @@ public class BoatServiceTest {
 
         assertSame(page, resultFromService, "result from service");
     }
+
+    @Test
+    public void anyMemberCanViewAVisibleListing() {
+        final Boat boat = new Boat(owner);
+        when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
+
+        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), "someone else"));
+    }
+
+    @Test
+    public void otherMembersCannotViewASuspendedListing() {
+        final Boat boat = new Boat(owner);
+        boat.setSuspended(true);
+        when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
+
+        assertEquals(Optional.empty(), boatService.findListingToView(boat.getReference(), "someone else"));
+    }
+
+    @Test
+    public void otherMembersCannotViewTheListingOfADisabledMember() {
+        final Boat boat = new Boat(owner);
+        owner.setEnabled(false);
+        when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
+
+        assertEquals(Optional.empty(), boatService.findListingToView(boat.getReference(), "someone else"));
+    }
+
+    @Test
+    public void anOwnerCanViewTheirOwnSuspendedListing() {
+        final Boat boat = new Boat(owner);
+        boat.setSuspended(true);
+        when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
+
+        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), owner.getUsername()));
+    }
+
+    @Test
+    public void viewingAListingThatIsNotThereFindsNothing() {
+        when(boatRepository.findWithOwnerByReference("nope")).thenReturn(Optional.empty());
+
+        assertEquals(Optional.empty(), boatService.findListingToView("nope", "anyone"));
+    }
 }

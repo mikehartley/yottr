@@ -55,6 +55,16 @@ public class ListingSteps {
         save(form);
     }
 
+    @When("I open the {string} listing from all the boats")
+    public void iOpenTheListingFromAllTheBoats(String makeAndModel) throws IOException {
+        // newest first, so the listing is on the first page whatever other scenarios have posted
+        browser.open("/s/listings/all?sort=id,desc");
+        final HtmlAnchor title = browser.page().getFirstByXPath(
+                "//article[.//span[@class='yottr-listing-make'][normalize-space()='" + makeAndModel + "']]//h2/a");
+        assertThat(title).as("the title link of the " + makeAndModel + " listing").isNotNull();
+        browser.showing(title.click());
+    }
+
     @When("I delete my {string} listing")
     public void iDeleteMyListing(String makeAndModel) throws IOException {
         browser.open("/s/listings/mine");

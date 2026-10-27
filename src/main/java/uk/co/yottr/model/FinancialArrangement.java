@@ -42,8 +42,8 @@ public class FinancialArrangement {
     @Column(name = "display_name")
     private String displayName;
 
-    private FinancialArrangement() {
-        // for JPA only
+    protected FinancialArrangement() {
+        // for JPA, which needs it to be at least protected so that Hibernate can make proxies
     }
 
     public FinancialArrangement(FinancialArrangementEnum financialArrangementValue) {

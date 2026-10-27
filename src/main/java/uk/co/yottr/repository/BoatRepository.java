@@ -2,6 +2,7 @@ package uk.co.yottr.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import uk.co.yottr.model.Boat;
@@ -12,6 +13,13 @@ import java.util.Optional;
 
 public interface BoatRepository extends PagingAndSortingRepository<Boat, Long>, CrudRepository<Boat, Long> {
     Boat findByReference(String reference);
+
+    /**
+     * The listing with its owner loaded, for the listing's own page, which shows the owner's details. It is a LOAD
+     * graph: the default, FETCH, would make everything else lazy, including the eager frequencies.
+     */
+    @EntityGraph(attributePaths = "owner", type = EntityGraph.EntityGraphType.LOAD)
+    Optional<Boat> findWithOwnerByReference(String reference);
     Page<Boat> findBySuspendedFalseAndOwnerEnabledTrue(Pageable pageable);
 
     Optional<Boat> findByReferenceAndOwnerUsername(String reference, String ownerUsername);

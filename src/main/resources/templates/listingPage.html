@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="listing-page-content" class="container py-4">
+    <a class="small" th:href="@{/s/listings/all}"><i class="bi bi-arrow-left" aria-hidden="true"></i> All the boats</a>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-8">
+            <article class="yottr-card yottr-listing p-4">
+                <header class="mb-3">
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        <span class="yottr-badge yottr-badge-warning" th:if="${boat.suspended}">Suspended: only you can see it</span>
+                        <span class="yottr-badge" th:text="${boat.sailingPurpose.displayName}">Cruising</span>
+                        <span class="yottr-badge" th:if="${boat.courseLevel != null}" th:text="${boat.courseLevel.displayName}">Day Skipper</span>
+                    </div>
+                    <h1 class="h3 mb-1" th:text="${boat.title}">Weekends in the Solent</h1>
+                    <div class="text-body-secondary">
+                        <span class="yottr-listing-make" th:text="${boat.makeAndModel}">Sigma 33</span>,
+                        built <span th:text="${boat.yearBuilt}">1988</span>
+                    </div>
+                </header>
+
+                <p class="yottr-prose" th:text="${boat.description}">The boat, the plans and the people.</p>
+
+                <h2 class="h6 mt-4">The sailing</h2>
+                <dl class="yottr-listing-facts">
+                    <dt>When</dt>
+                    <dd th:text="${#strings.listJoin(boat.frequency.![displayName], ', ')}">Weekends</dd>
+                    <dt>Dates</dt>
+                    <dd>
+                        <span th:text="${boat.whenFrom != null} ? ${#temporals.format(boat.whenFrom, 'd MMM yyyy')} : 'From now'">14 Jun 2027</span>
+                        to <span th:text="${boat.whenTo != null} ? ${#temporals.format(boat.whenTo, 'd MMM yyyy')} : 'open-ended'">28 Jun 2027</span>
+                    </dd>
+                    <th:block th:if="${boat.dateRelevantTo != null}">
+                        <dt>Listing ends</dt>
+                        <dd th:text="${#temporals.format(boat.dateRelevantTo, 'd MMM yyyy')}">30 Jun 2027</dd>
+                    </th:block>
+                </dl>
+
+                <h2 class="h6 mt-4">The crew</h2>
+                <dl class="yottr-listing-facts">
+                    <dt>Looking for</dt>
+                    <dd><span th:text="${boat.roleRequired.displayName}">Crew</span><span th:if="${boat.numberOfCrewWanted != null}" th:text="' (' + ${boat.numberOfCrewWanted} + ')'"> (2)</span></dd>
+                    <dt>Minimum level</dt>
+                    <dd th:text="${boat.minimumRequiredLevel.displayName}">Competent Crew</dd>
+                    <dt>Smoking</dt>
+                    <dd th:text="${boat.smoking.displayName}">No</dd>
+                </dl>
+
+                <h2 class="h6 mt-4">The money</h2>
+                <dl class="yottr-listing-facts">
+                    <dt>Costs</dt>
+                    <dd th:text="${boat.financialArrangement.displayName}">Shared</dd>
+                    <dt>Travel</dt>
+                    <dd th:text="${boat.travelExpenses.displayName}">Paid by crew</dd>
+                </dl>
+
+                <h2 class="h6 mt-4">The boat</h2>
+                <dl class="yottr-listing-facts">
+                    <dt>Length</dt>
+                    <dd th:text="${boat.length} + (${boat.unitsImperial} ? ' ft' : ' m')">33 ft</dd>
+                    <dt>Type</dt>
+                    <dd th:text="${boat.vesselType.displayName} + ', ' + ${#strings.toLowerCase(boat.hullType.displayName)}">Sail, monohull</dd>
+                </dl>
+
+                <footer class="small text-body-secondary mt-4">
+                    Posted <span th:text="${#temporals.format(boat.firstPosted, 'd MMM yyyy')}">17 Aug 2026</span>,
+                    updated <span th:text="${#temporals.format(boat.lastUpdated, 'd MMM yyyy')}">18 Aug 2026</span>
+                    · ref <span th:text="${boat.reference}">1a2b3c4d</span>
+                </footer>
+            </article>
+        </div>
+
+        <div class="col-lg-4">
+            <aside class="yottr-card p-4" id="owner-contact" th:unless="${own}" th:with="owner=${boat.owner}">
+                <h2 class="h5">Get in touch</h2>
+                <p class="mb-1 fw-semibold" th:text="${owner.firstName} + ' ' + ${owner.lastName}">Ada Lovelace</p>
+                <p class="mb-3 text-body-secondary small" th:if="${owner.aboutMe != null and !owner.aboutMe.isBlank()}" th:text="${owner.aboutMe}">About the owner.</p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="bi bi-envelope me-2" aria-hidden="true"></i><a th:href="'mailto:' + ${owner.email}" th:text="${owner.email}">ada@example.test</a></li>
+                    <li><i class="bi bi-telephone me-2" aria-hidden="true"></i><a th:href="'tel:' + ${#strings.replace(owner.mobile, ' ', '')}" th:text="${owner.mobile}">07700 900123</a></li>
+                </ul>
+            </aside>
+            <aside class="yottr-card p-4" th:if="${own}">
+                <h2 class="h5">Your listing</h2>
+                <p class="text-body-secondary small">Other members see your name, email and mobile here, so they can get in touch.</p>
+                <a class="btn btn-outline-primary" th:href="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}">Edit</a>
+            </aside>
+        </div>
+    </div>
+</section>
+</body>
+</html>

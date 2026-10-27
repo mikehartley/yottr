@@ -593,4 +593,53 @@ public class BoatControllerTest extends AbstractControllerTest {
         verifyListingFormReferenceDataFetched();
         verify(mockBoatService, never()).create(any(), any());
     }
+
+    @Test
+    public void testListingPageForAnotherMember() throws Exception {
+        final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
+        when(mockBoatService.findListingToView(boat.getReference(), "crew")).thenReturn(Optional.of(boat));
+
+        mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "crew"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listingPage"))
+                .andExpect(model().size(2))
+                .andExpect(model().attribute("boat", sameInstance(boat)))
+                .andExpect(model().attribute("own", equalTo(false)))
+                .andExpect(content().string(containsString("Get in touch")));
+
+        verify(mockBoatService).findListingToView(boat.getReference(), "crew");
+    }
+
+    @Test
+    public void testListingPageForItsOwner() throws Exception {
+        final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
+        when(mockBoatService.findListingToView(boat.getReference(), "owner")).thenReturn(Optional.of(boat));
+
+        mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "owner"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("own", equalTo(true)))
+                .andExpect(content().string(not(containsString("Get in touch"))));
+
+        verify(mockBoatService).findListingToView(boat.getReference(), "owner");
+    }
+
+    @Test
+    public void testListingPageWhenTheListingCannotBeSeen() throws Exception {
+        when(mockBoatService.findListingToView("hidden", "crew")).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/s/listings/hidden").principal(() -> "crew"))
+                .andExpect(status().isNotFound());
+
+        verify(mockBoatService).findListingToView("hidden", "crew");
+    }
+
+    @Test
+    public void myListingsIsNotTakenForAListingReference() throws Exception {
+        when(mockBoatService.findListings("crew")).thenReturn(List.of());
+
+        mockMvc.perform(get("/s/listings/mine").principal(() -> "crew"))
+                .andExpect(view().name("myListings"));
+
+        verify(mockBoatService).findListings("crew");
+    }
 }
