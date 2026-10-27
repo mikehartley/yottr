@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Import(TestcontainersConfig.class)
-public class UserRepositoryTest {
+public class UserRepositoryIT {
 
     @Autowired
     private UserRepository userRepository;

@@ -20,6 +20,8 @@ listing fields still being worked out are in `design.txt`, and the wider wish li
 
 - JDK 25
 - Docker. The app starts its local services from `compose.yaml`, and the tests use Testcontainers.
+- `unzip`, on Linux and WSL. Without it the wrapper downloads Maven as a `.tar.gz`, checks it against
+  the zip's checksum, and stops with "your Maven distribution might be compromised".
 
 Use the Maven wrapper, `./mvnw` (`mvnw.cmd` on Windows). It downloads the Maven version named in
 `.mvn/wrapper/maven-wrapper.properties` for this project only, leaving the Maven on your `PATH`

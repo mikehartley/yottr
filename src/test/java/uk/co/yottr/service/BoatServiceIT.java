@@ -26,8 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
 import static uk.co.yottr.builder.UserBuilder.aUser;
@@ -88,12 +87,12 @@ public class BoatServiceIT {
     @Test
     public void allFieldsPersist() throws Exception {
 
-        final String title = randomAlphanumeric(50);
-        final String description = randomAlphanumeric(50);
+        final String title = secure().nextAlphanumeric(50);
+        final String description = secure().nextAlphanumeric(50);
         final Boat.HullType hullType = Boat.HullType.MONO;
         final Integer length = new Random().nextInt(99) + 3;
         final boolean unitsImperial = true;
-        final String makeAndModel = randomAlphanumeric(15);
+        final String makeAndModel = secure().nextAlphanumeric(15);
         final RyaSailCruisingLevel minLevel = new RyaSailCruisingLevel(RyaSailCruisingLevel.Level.COASTAL_SKIPPER);
         final SailingPurpose sailingPurpose = SailingPurpose.RACING;
         final LocalDate now = LocalDate.now();
@@ -189,7 +188,7 @@ public class BoatServiceIT {
 
     @Test
     public void twoListingsPostedAtOnceCannotBothPassTheLimit() throws Exception {
-        final User member = userService.save(aUser().withUsername(randomAlphabetic(10)).withMaxListings(1).build(), false);
+        final User member = userService.save(aUser().withUsername(secure().nextAlphabetic(10)).withMaxListings(1).build(), false);
         final CountDownLatch start = new CountDownLatch(1);
         final ExecutorService executor = Executors.newFixedThreadPool(2);
 
@@ -229,7 +228,7 @@ public class BoatServiceIT {
     }
 
     private User createUser() {
-        final String username = randomAlphabetic(10);
+        final String username = secure().nextAlphabetic(10);
         final User user = aUser().withUsername(username).build();
         return userService.save(user, false);
     }
