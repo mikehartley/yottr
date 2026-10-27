@@ -12,6 +12,11 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long>, 
     User findByUsername(String username);
 
     /**
+     * Whether the username is taken, ignoring case: "Mike" and "mike" would be too easily mistaken for each other.
+     */
+    boolean existsByUsernameIgnoreCase(String username);
+
+    /**
      * The user, with their row locked until the transaction ends.
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)

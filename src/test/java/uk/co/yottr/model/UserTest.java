@@ -125,27 +125,41 @@ public class UserTest {
         assertSingleViolation(NOT_NULL_ERROR_MSG);
 
         user.setEmail("");
-        assertSingleViolation(emailErrorMessage);
+        assertSingleViolation(NOT_NULL_ERROR_MSG);
 
         user.setEmail("asdf");
+        assertSingleViolation(emailErrorMessage);
+
+        user.setEmail("two@at@signs.test");
         assertSingleViolation(emailErrorMessage);
     }
 
     @Test
     public void mobile() {
-        final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 11, 25);
+        final String phoneErrorMessage = "must be a phone number";
 
         user.setMobile(null);
         assertSingleViolation(NOT_NULL_ERROR_MSG);
 
         user.setMobile("");
-        assertSingleViolation(sizeErrorMessage);
+        assertSingleViolation(phoneErrorMessage);
 
-        user.setMobile(secure().nextNumeric(10));
-        assertSingleViolation(sizeErrorMessage);
+        user.setMobile(secure().nextNumeric(6));
+        assertSingleViolation(phoneErrorMessage);
 
         user.setMobile(secure().nextNumeric(26));
-        assertSingleViolation(sizeErrorMessage);
+        assertSingleViolation(phoneErrorMessage);
+
+        user.setMobile("07700 9OO123");
+        assertSingleViolation(phoneErrorMessage);
+    }
+
+    @Test
+    public void mobileAcceptsTheWaysPeopleWriteNumbers() {
+        for (String mobile : new String[] { "07700900123", "07700 900123", "+44 7700 900123", "+44 (0)7700 900-123", "1234567" }) {
+            user.setMobile(mobile);
+            assertTrue(validator.validate(user).isEmpty(), mobile + " should be valid");
+        }
     }
 
     @Test
