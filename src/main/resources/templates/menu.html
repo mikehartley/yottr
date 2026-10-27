@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<!--/* A link in the main menu, marked as the current page (active, and aria-current for screen readers) when it is
+       the menu item for the page being shown. MenuItem works that out and puts it in currentMenuItem.
+       Call it as menuLink(path='/s/listings/all', text='Boats'), with id=... if the link needs one. */-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<a th:fragment="menuLink" class="nav-link" th:href="@{${path}}" th:id="${id}" th:text="${text}"
+   th:classappend="${currentMenuItem == path} ? 'active'"
+   th:attr="aria-current=${currentMenuItem == path} ? 'page'">Link</a>
+</body>
+</html>
