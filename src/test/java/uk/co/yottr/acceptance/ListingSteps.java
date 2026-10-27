@@ -6,17 +6,19 @@ import io.cucumber.java.en.When;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ListingSteps {
 
     // the listing forms reuse the sign-up form's id
-    private static final String LISTING_FORM_ID = "signup-form";
+    private static final String LISTING_FORM_ID = "listing-form";
 
     @Autowired
     private Browser browser;
@@ -44,7 +46,7 @@ public class ListingSteps {
     public void iChangeTheManufacturer(String makeAndModel, String newMakeAndModel) throws IOException {
         browser.open("/s/listings/mine");
         final HtmlAnchor edit = browser.page().getFirstByXPath(
-                "//div[span[normalize-space()='" + makeAndModel + "']]//a[normalize-space()='Edit']");
+                "//article[.//span[@class='yottr-listing-make'][normalize-space()='" + makeAndModel + "']]//a[normalize-space()='Edit']");
         assertThat(edit).as("Edit link for the " + makeAndModel + " listing").isNotNull();
         browser.showing(edit.click());
 
@@ -57,7 +59,7 @@ public class ListingSteps {
     public void iDeleteMyListing(String makeAndModel) throws IOException {
         browser.open("/s/listings/mine");
         final HtmlButton delete = browser.page().getFirstByXPath(
-                "//div[span[normalize-space()='" + makeAndModel + "']]//form[contains(@action, '/delete')]//button");
+                "//article[.//span[@class='yottr-listing-make'][normalize-space()='" + makeAndModel + "']]//form[contains(@action, '/delete')]//button");
         assertThat(delete).as("Delete button for the " + makeAndModel + " listing").isNotNull();
         browser.showing(delete.click());
     }
@@ -69,15 +71,20 @@ public class ListingSteps {
 
     @Then("my listings include a {string}")
     public void myListingsInclude(String makeAndModel) throws IOException {
-        assertThat(myListingsText()).contains("Manufacturer: " + makeAndModel + "\n");
+        assertThat(myListingsMakes()).contains(makeAndModel);
     }
 
     @Then("my listings do not include a {string}")
     public void myListingsDoNotInclude(String makeAndModel) throws IOException {
-        assertThat(myListingsText()).doesNotContain("Manufacturer: " + makeAndModel + "\n");
+        assertThat(myListingsMakes()).doesNotContain(makeAndModel);
     }
 
-    private String myListingsText() throws IOException {
-        return browser.open("/s/listings/mine").asNormalizedText() + "\n";
+    /**
+     * The make and model of each listing on My Listings.
+     */
+    private List<String> myListingsMakes() throws IOException {
+        return browser.open("/s/listings/mine").<HtmlElement>getByXPath("//span[@class='yottr-listing-make']").stream()
+                .map(HtmlElement::asNormalizedText)
+                .toList();
     }
 }

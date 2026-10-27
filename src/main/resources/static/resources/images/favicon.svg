@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- the logo on a rounded square, in the site's sea colour, so it stands out on light and dark browser tabs -->
+  <rect width="64" height="64" rx="14" fill="#0f5c74"/>
+  <g fill="#ffffff" transform="translate(6 4) scale(0.82)">
+    <path d="M30 6 L30 40 L10 40 Z"/>
+    <path d="M34 14 L34 40 L50 40 Z" opacity="0.75"/>
+    <path d="M6 46 h52 l-6 6 H12 Z"/>
+    <path d="M4 58 q7 -5 14 0 t14 0 t14 0 t14 0" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

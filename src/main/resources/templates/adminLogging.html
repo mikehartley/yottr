@@ -3,63 +3,65 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <h2>Log Levels</h2>
-            <p>Changes take effect at once and last until the application restarts.</p>
-        </div>
-    </div>
+<section layout:fragment="content" id="logging-content" class="container py-4">
+    <h1 class="h2">Log levels</h1>
+    <p class="text-body-secondary">Changes take effect at once and last until the application restarts.</p>
 
-    <div class="row">
-        <div class="col-sm-6">
-            <h4>Set a log level</h4>
-            <form method="post" th:action="@{/admin/logging}" id="set-level-form" class="form-inline">
-                <input type="text" name="name" id="logger-name" class="form-control" placeholder="Logger, e.g. uk.co.yottr"
-                       th:value="${filter}" required="required"/>
-                <select name="level" id="logger-level" class="form-control">
-                    <option value="">Inherit (remove its own level)</option>
-                    <option th:each="level : ${levels}" th:value="${level}" th:text="${level}">DEBUG</option>
-                </select>
-                <button type="submit" id="set-level-button" class="btn btn-primary btn-sm">Set</button>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <form method="post" th:action="@{/admin/logging}" id="set-level-form" class="yottr-card p-4 h-100">
+                <h2 class="h5">Set a log level</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="logger-name">Logger</label>
+                    <input type="text" name="name" id="logger-name" class="form-control" placeholder="uk.co.yottr"
+                           th:value="${filter}" required="required"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="logger-level">Level</label>
+                    <select name="level" id="logger-level" class="form-select">
+                        <option value="">Inherit (remove its own level)</option>
+                        <option th:each="level : ${levels}" th:value="${level}" th:text="${level}">DEBUG</option>
+                    </select>
+                </div>
+                <button type="submit" id="set-level-button" class="btn btn-primary">Set</button>
             </form>
         </div>
-        <div class="col-sm-6">
-            <h4>Find loggers</h4>
-            <form method="get" th:action="@{/admin/logging}" id="filter-form" class="form-inline">
-                <input type="text" name="filter" id="filter" class="form-control" placeholder="Part of a logger name"
-                       th:value="${filter}"/>
-                <button type="submit" class="btn btn-default btn-sm">Find</button>
-                <a th:href="@{/admin/logging}" class="btn btn-link btn-sm">Show loggers with their own level</a>
+        <div class="col-lg-6">
+            <form method="get" th:action="@{/admin/logging}" id="filter-form" class="yottr-card p-4 h-100">
+                <h2 class="h5">Find loggers</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="filter">Part of a logger name</label>
+                    <input type="text" name="filter" id="filter" class="form-control" th:value="${filter}"/>
+                </div>
+                <button type="submit" class="btn btn-outline-primary">Find</button>
+                <a th:href="@{/admin/logging}" class="btn btn-link">Show loggers with their own level</a>
             </form>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-12">
-            <p th:if="${filter.isEmpty()}">Loggers with a level of their own:</p>
-            <p th:unless="${filter.isEmpty()}">Loggers whose name contains "<span th:text="${filter}">uk.co.yottr</span>":</p>
-
-            <table class="table table-condensed" id="loggers">
-                <thead>
-                <tr>
-                    <th>Logger</th>
-                    <th>Own level</th>
-                    <th>Effective level</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="logger : ${loggers}" th:id="${'logger-' + logger.name}">
-                    <td class="logger-name" th:text="${logger.name}">uk.co.yottr</td>
-                    <td class="configured-level" th:text="${logger.configuredLevel} ?: '-'">INFO</td>
-                    <td class="effective-level" th:text="${logger.effectiveLevel}">INFO</td>
-                </tr>
-                </tbody>
-            </table>
-            <p th:if="${loggers.isEmpty()}">No loggers match.</p>
-            <p th:if="${moreLoggers}">Only the first 200 are shown; narrow the search to see the rest.</p>
-        </div>
+    <p th:if="${filter.isEmpty()}">Loggers with a level of their own:</p>
+    <p th:unless="${filter.isEmpty()}">Loggers whose name contains "<span th:text="${filter}">uk.co.yottr</span>":</p>
+    <div class="table-responsive yottr-card">
+        <!--/* the acceptance tests find the cells by their class, so each cell keeps exactly one */-->
+        <table class="table table-sm mb-0" id="loggers">
+            <thead>
+            <tr>
+                <th scope="col">Logger</th>
+                <th scope="col">Own level</th>
+                <th scope="col">Effective level</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="logger : ${loggers}" th:id="${'logger-' + logger.name}">
+                <td class="logger-name" th:text="${logger.name}">uk.co.yottr</td>
+                <td class="configured-level" th:text="${logger.configuredLevel} ?: '-'">INFO</td>
+                <td class="effective-level" th:text="${logger.effectiveLevel}">INFO</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+    <p class="mt-3" th:if="${loggers.isEmpty()}">No loggers match.</p>
+    <p class="mt-3" th:if="${moreLoggers}">Only the first 200 are shown; narrow the search to see the rest.</p>
 </section>
 </body>
 </html>

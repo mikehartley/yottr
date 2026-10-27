@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Yottr">
+  <!-- a mainsail and jib over a single wave: one colour, so it works as a favicon and in the nav bar -->
+  <g fill="currentColor">
+    <path d="M30 6 L30 40 L10 40 Z"/>
+    <path d="M34 14 L34 40 L50 40 Z" opacity="0.7"/>
+    <path d="M6 46 h52 l-6 6 H12 Z"/>
+    <path d="M4 58 q7 -5 14 0 t14 0 t14 0 t14 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

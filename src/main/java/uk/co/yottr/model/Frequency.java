@@ -61,4 +61,12 @@ public class Frequency {
     public String getDisplayName() {
         return displayName;
     }
+
+    /**
+     * The name, which is how a form writes this as an option and binds it back to its enum.
+     */
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

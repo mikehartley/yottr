@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--/* A member's details, shared by sign-up and My Details. Include it inside a form whose th:object is a
+       PersonalDetailsForm, with the countries in the model. */-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="fields">
+    <div class="row g-3">
+        <div class="col-sm-3">
+            <div th:replace="~{fields :: textField(name='title', label='Title')}"></div>
+        </div>
+        <div class="col-sm-4">
+            <div th:replace="~{fields :: textField(name='firstName', label='First name')}"></div>
+        </div>
+        <div class="col-sm-5">
+            <div th:replace="~{fields :: textField(name='lastName', label='Last name')}"></div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-sm-7">
+            <div th:replace="~{fields :: textField(name='email', label='Email', type='email')}"></div>
+        </div>
+        <div class="col-sm-5">
+            <div th:replace="~{fields :: textField(name='mobile', label='Mobile', type='tel')}"></div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-sm-7">
+            <div th:replace="~{fields :: selectField(name='country', label='Country', options=${countries}, blank='Choose a country')}"></div>
+        </div>
+        <div class="col-sm-5">
+            <div th:replace="~{fields :: textField(name='postcode', label='Postcode', hint='Needed for a UK address')}"></div>
+        </div>
+    </div>
+    <div th:replace="~{fields :: textArea(name='aboutMe', label='About me', hint='Your sailing so far, and what you are looking for. Up to 400 characters.')}"></div>
+</th:block>
+</body>
+</html>

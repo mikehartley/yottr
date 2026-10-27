@@ -78,13 +78,13 @@
 		<!-- Front end, served from /webjars/; webjars-locator-lite lets the pages leave the version out -->
 		<dependency>
 			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>3.7.1</version>
+			<artifactId>bootstrap</artifactId>
+			<version>5.3.8</version>
 		</dependency>
 		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>3.4.1</version>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>bootstrap-icons</artifactId>
+			<version>1.13.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>

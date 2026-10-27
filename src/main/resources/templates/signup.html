@@ -3,123 +3,31 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container col-sm-12">
-    <div class="row">
-        <form method="post" th:action="@{/signup}" th:object="${user}" th:id="signup-form">
+<section layout:fragment="content" id="signup-content" class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="h2">Join Yottr</h1>
+            <p class="text-body-secondary">It's free. Owners can post up to two boats.</p>
 
-            <h1>Sign-up</h1>
-
-            <h2>Please enter your details:</h2>
-
-            <fieldset>
-                <div class="form-group" th:classappend="${#fields.hasErrors('username')}? 'has-error'">
-                    <label for="username" class="col-sm-4 control-label text-right">Username</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="username" placeholder="Username"
-                               th:field="*{username}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Bad username</span>
+            <form method="post" th:action="@{/signup}" th:object="${user}" id="signup-form" class="yottr-card p-4" novalidate="novalidate">
+                <h2 class="h5 mb-3">Your account</h2>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div th:replace="~{fields :: textField(name='username', label='Username', hint='2 to 50 characters. You sign in with it.')}"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div th:replace="~{fields :: textField(name='password', label='Password', type='password', hint='At least 8 characters.')}"></div>
                     </div>
                 </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
-                    <label for="password" class="col-sm-4  control-label text-right">Password</label>
 
-                    <div class="col-sm-8">
-                        <input type="password" class="form-control" id="password" placeholder="Password"
-                               th:field="*{password}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Bad password</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('title')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Title</label>
+                <h2 class="h5 mt-2 mb-3">About you</h2>
+                <th:block th:replace="~{personalDetails :: fields}"></th:block>
 
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="title" placeholder="Title" th:field="*{title}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Bad Title</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('firstName')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">First Name</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="firstName" placeholder="First Name"
-                               th:field="*{firstName}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Bad First Name</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('lastName')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Last Name</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="lastName" placeholder="Last Name"
-                               th:field="*{lastName}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Bad Last Name</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Email</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="email" placeholder="Email" th:field="*{email}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Bad Email</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('mobile')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Mobile</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="mobile" placeholder="Mobile"
-                               th:field="*{mobile}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}">Bad Mobile</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('country')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Country</label>
-
-                    <div class="col-sm-8">
-                        <select th:field="*{country}">
-                            <option th:value="${''}" th:text="${'Please choose:'}"></option>
-                            <option th:each="country : ${countries}" th:value="${country}" th:text="${country.getDisplayName()}"></option>
-                        </select>
-                        <span class="help-block" th:if="${#fields.hasErrors('country')}" th:errors="*{country}">Bad Country</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('postcode')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">Postcode</label>
-
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control" id="postcode" placeholder="Postcode"
-                               th:field="*{postcode}"/>
-                        <span class="help-block" th:if="${#fields.hasErrors('postcode')}" th:errors="*{postcode}">Bad Postcode</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('aboutMe')}? 'has-error'">
-                    <label for="title" class="col-sm-4  control-label text-right">About Me</label>
-
-                    <div class="col-sm-8">
-                        <textarea th:rows="4" th:cols="40" th:maxlength="400" class="form-control" id="aboutMe"
-                                  placeholder="About Me" th:field="*{aboutMe}"></textarea>
-                        <span class="help-block" th:if="${#fields.hasErrors('aboutMe')}" th:errors="*{aboutMe}">Bad About Me</span>
-                    </div>
-                </div>
-                <div class="gap"></div>
-                <div class="form-group">
-                    <div class="col-sm-offset-4 col-sm-8">
-                        <button type="submit" class="btn btn-default">Sign up</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-4 col-sm-8">
-                        <p>Already have an account? <a href="#" th:href="@{/index}">Sign In Here</a></p>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
+                <button type="submit" class="btn btn-primary">Join</button>
+                <p class="small mt-3 mb-0">Already a member? <a th:href="@{/index}">Sign in</a></p>
+            </form>
+        </div>
     </div>
-    <!--/.row-->
-
 </section>
-<!--/#index-content-->
 </body>
 </html>
-

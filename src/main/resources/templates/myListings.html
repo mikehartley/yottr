@@ -3,48 +3,31 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <h2>My Listings</h2>
-            <div class="status alert alert-success" id="mydetails-updated-msg" th:if="${param.updated != null}">
-                Updated.
-            </div>
-        </div>
-
+<section layout:fragment="content" id="my-listings-content" class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">My Listings</h1>
+        <a class="btn btn-primary" th:href="@{/s/listings/new}"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a boat</a>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div th:each="boat : ${boatListings}">
-                <strong>Date posted:</strong> <span th:text="${boat.firstPosted}">01-Jan-1901</span><br/>
-                <strong>Date relevant to:</strong> <span th:text="${boat.dateRelevantTo}">01-Jan-1901</span><br/>
-                <strong>Reference:</strong><span th:text="${boat.reference}">ref001</span><br/>
-                <strong>Manufacturer:</strong> <span th:text="${boat.makeAndModel}">HR</span><br/>
-                <strong>Length:</strong> <span th:text="${boat.length}">42</span>
-                <span>
-                    <span th:if="${boat.unitsImperial}">Feet</span>
-                    <span th:unless="${boat.unitsImperial}">Metres</span>
-                </span><br/>
-                <strong>Hull type:</strong> <span th:text="${boat.hullType}">Mono</span><br/>
-                <strong>Minimum required RYA sail cruising qualification:</strong> <span th:text="${boat.minimumRequiredLevel.displayName}">Not too bad</span><br/>
-                <strong>Sailing purpose:</strong> <span th:text="${boat.sailingPurpose.displayName}">Racing</span><br/>
-                <strong>Money:</strong> <span th:text="${boat.financialArrangement.displayName}">Free</span><br/>
-                <strong>Description:</strong> <span th:text="${boat.description}">Desc</span><br/>
-                <br/>
-                <strong th:if="${boat.isSuspended()}">This listing is currently suspended.</strong><br/>
-                <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/suspended/flip(boatReference=${boat.reference})}">
-                    <button type="submit" th:text="${boat.isSuspended()} ? 'Re-enable' : 'Suspend listing'">Suspend listing</button>
-                </form>
-                | <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/delete(boatReference=${boat.reference})}">
-                    <button type="submit" onclick="return confirm('You want to permanently delete this listing?')">Delete</button>
-                </form>
-                | <a th:href="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}">Edit</a>
-                <hr/>
-            </div>
+    <div class="alert alert-success" id="mydetails-updated-msg" th:if="${param.updated != null}">
+        Your listing is saved.
+    </div>
+    <p th:if="${boatListings.empty}" class="text-body-secondary">You haven't listed a boat yet.</p>
+    <th:block th:each="boat : ${boatListings}">
+        <article th:replace="~{listing :: card(boat=${boat}, actions=~{:: listingActions})}">A listing.</article>
+    </th:block>
+
+    <!--/* the actions at the foot of each of the member's own listings, given to the card above */-->
+    <div th:remove="all">
+        <div th:fragment="listingActions" class="d-flex gap-2">
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}">Edit</a>
+            <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/suspended/flip(boatReference=${boat.reference})}">
+                <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${boat.suspended} ? 'Re-enable' : 'Suspend'">Suspend</button>
+            </form>
+            <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/delete(boatReference=${boat.reference})}">
+                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this listing for good?')">Delete</button>
+            </form>
         </div>
     </div>
-
 </section>
 </body>
 </html>
-

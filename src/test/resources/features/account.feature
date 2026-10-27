@@ -5,6 +5,6 @@ Feature: Closing an account
     And "alice" has signed in
     And I have posted a listing for a "Sigma 33"
     When I delete my account
-    Then I see "You have been logged out."
+    Then I see "You have signed out."
     When "alice" signs in
     Then I see "Invalid username and password."

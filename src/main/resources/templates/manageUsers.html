@@ -3,43 +3,50 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <h2>Manage Users</h2>
-        </div>
+<section layout:fragment="content" id="manage-users-content" class="container py-4">
+    <h1 class="h2 mb-4">Members</h1>
+    <div class="table-responsive yottr-card">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Roles</th>
+                <th scope="col">Listings</th>
+                <th scope="col">Account</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${wrapper.page}">
+                <td th:text="${user.username}">JimBob</td>
+                <td th:text="${user.firstName} + ' ' + ${user.lastName}">Jim Bob</td>
+                <td><a th:href="'mailto:' + ${user.email}" th:text="${user.email}">a@b.c</a></td>
+                <td th:text="${#strings.listJoin(user.userRoles.![role], ', ')}">FREE</td>
+                <td th:text="${user.boatListings.size()} + ' of ' + ${user.maxListings}">1 of 2</td>
+                <td>
+                    <span class="yottr-badge" th:if="${user.enabled}">Enabled</span>
+                    <span class="yottr-badge yottr-badge-warning" th:unless="${user.enabled}">Disabled</span>
+                </td>
+                <td class="text-end text-nowrap">
+                    <!--/* an administrator can't disable or delete their own account (AdminController refuses it too) */-->
+                    <th:block th:unless="${user.username == #authentication?.name}">
+                        <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${user.enabled} ? 'Disable' : 'Enable'">Disable</button>
+                        </form>
+                        <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/delete(userid=${user.id})}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this member and their listings?')">Delete</button>
+                        </form>
+                    </th:block>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div th:each="user : ${wrapper.getPage()}">
-                <strong>Username:</strong> <span th:text="${user.username}">JimBob</span><br/>
-                <strong>Email:</strong><span th:text="${user.email}">a@b.c</span><br/>
-                <strong>First Name:</strong> <span th:text="${user.firstName}">Jim</span><br/>
-                <strong>Last Name:</strong> <span th:text="${user.lastName}">Bob</span><br/>
-                <strong>About:</strong> <span th:text="${user.aboutMe}">About me...</span><br/>
-                <strong>Roles:</strong> <span th:text="${user.userRoles}">ADMIN</span><br/>
-                <strong>Account enabled:</strong> <span th:text="${user.enabled}">true</span><br/>
-                <strong>Max listings:</strong> <span th:text="${user.maxListings}">2</span><br/>
-                <strong>Boat listings:</strong> <span th:text="${user.boatListings.size()}">1</span><br/>
-                <!-- an administrator can't disable or delete their own account (AdminController refuses it too) -->
-                <th:block th:unless="${user.username == #authentication?.name}">
-                    <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">
-                        <button type="submit" th:text="${user.enabled} ? 'DISABLE' : 'ENABLE'">DISABLE</button>
-                    </form> |
-                    <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/delete(userid=${user.id})}">
-                        <button type="submit" onclick="return confirm('Confirm user deletion')">DELETE</button>
-                    </form><br/>
-                </th:block>
-                <hr/>
-            </div>
-
-            <div th:replace="~{pagination :: control(url='/admin/users')}">
-                Pagination control goes here.
-            </div>
-        </div>
+    <div class="mt-4">
+        <nav th:replace="~{pagination :: control(url='/admin/users')}">Pagination control goes here.</nav>
     </div>
-
 </section>
 </body>
 </html>
-

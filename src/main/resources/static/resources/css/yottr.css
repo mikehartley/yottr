@@ -1,0 +1,209 @@
+/*
+ * Yottr's look, on top of Bootstrap 5. Colours, type and spacing are tokens here; pages use Bootstrap's classes
+ * and these few of our own, so a change of look is a change to this file.
+ *
+ * Bootstrap's colour modes switch on data-bs-theme, which mainTemplate.html sets from the visitor's preference.
+ */
+
+:root,
+[data-bs-theme="light"] {
+    --yottr-sea: #0f5c74;
+    --yottr-sea-rgb: 15, 92, 116;
+    --yottr-sea-deep: #0b3d4f;
+    --yottr-surf: #e6f1f4;
+    --yottr-sand: #f6f1e7;
+    --yottr-coral: #d9603b;
+
+    --bs-primary: var(--yottr-sea);
+    --bs-primary-rgb: var(--yottr-sea-rgb);
+    --bs-link-color: var(--yottr-sea);
+    --bs-link-color-rgb: var(--yottr-sea-rgb);
+    --bs-link-hover-color: var(--yottr-sea-deep);
+    --bs-body-bg: #fbfaf7;
+    --bs-body-color: #1d2a30;
+    --bs-secondary-color: #5b6b72;
+    --bs-border-color: #d9dfe1;
+    --bs-body-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --bs-border-radius: 0.5rem;
+
+    --yottr-hero-bg: linear-gradient(160deg, var(--yottr-sea-deep), var(--yottr-sea));
+    --yottr-hero-color: #ffffff;
+    --yottr-card-bg: #ffffff;
+    --yottr-nav-bg: var(--yottr-sea-deep);
+}
+
+[data-bs-theme="dark"] {
+    --yottr-sea: #5fb3cc;
+    --yottr-sea-rgb: 95, 179, 204;
+    --yottr-sea-deep: #0b2a36;
+    --yottr-surf: #15303a;
+    --yottr-sand: #1c2326;
+    --yottr-coral: #ef8a68;
+
+    --bs-primary: var(--yottr-sea);
+    --bs-primary-rgb: var(--yottr-sea-rgb);
+    --bs-link-color: var(--yottr-sea);
+    --bs-link-color-rgb: var(--yottr-sea-rgb);
+    --bs-link-hover-color: #8fd0e2;
+    --bs-body-bg: #111a1e;
+    --bs-body-color: #e3eaec;
+    --bs-secondary-color: #9aaab0;
+    --bs-border-color: #2c3a40;
+
+    --yottr-hero-bg: linear-gradient(160deg, #0b2a36, #123f50);
+    --yottr-card-bg: #172227;
+    --yottr-nav-bg: #0b2a36;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bs-body-bg);
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Bootstrap's buttons take their colours from their own variables, so the primary one is set here. */
+.btn-primary {
+    --bs-btn-bg: var(--yottr-sea);
+    --bs-btn-border-color: var(--yottr-sea);
+    --bs-btn-hover-bg: var(--yottr-sea-deep);
+    --bs-btn-hover-border-color: var(--yottr-sea-deep);
+    --bs-btn-active-bg: var(--yottr-sea-deep);
+    --bs-btn-active-border-color: var(--yottr-sea-deep);
+    --bs-btn-color: #ffffff;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-color: #ffffff;
+}
+
+[data-bs-theme="dark"] .btn-primary {
+    --bs-btn-color: #0b2a36;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: #3f8ea6;
+    --bs-btn-hover-border-color: #3f8ea6;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--yottr-sea);
+    --bs-btn-border-color: var(--yottr-sea);
+    --bs-btn-hover-bg: var(--yottr-sea);
+    --bs-btn-hover-border-color: var(--yottr-sea);
+    --bs-btn-active-bg: var(--yottr-sea);
+    --bs-btn-active-border-color: var(--yottr-sea);
+}
+
+.pagination {
+    --bs-pagination-color: var(--yottr-sea);
+    --bs-pagination-hover-color: var(--yottr-sea-deep);
+    --bs-pagination-focus-color: var(--yottr-sea-deep);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.2rem rgba(var(--yottr-sea-rgb), 0.25);
+    --bs-pagination-active-bg: var(--yottr-sea);
+    --bs-pagination-active-border-color: var(--yottr-sea);
+}
+
+[data-bs-theme="dark"] .pagination {
+    --bs-pagination-hover-color: #8fd0e2;
+    --bs-pagination-active-color: #0b2a36;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--yottr-sea);
+    box-shadow: 0 0 0 0.2rem rgba(var(--yottr-sea-rgb), 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--yottr-sea);
+    border-color: var(--yottr-sea);
+}
+
+/* the nav bar */
+.yottr-nav {
+    background-color: var(--yottr-nav-bg);
+}
+
+.yottr-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+}
+
+.yottr-brand img {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* the logo is drawn in currentColor; as an <img> it is white on the dark nav bar */
+.yottr-nav .yottr-brand img {
+    filter: brightness(0) invert(1);
+}
+
+/* the welcome band on the home page */
+.yottr-hero {
+    background: var(--yottr-hero-bg);
+    color: var(--yottr-hero-color);
+}
+
+.yottr-hero .lead {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* cards: listings, forms and panels */
+.yottr-card {
+    background-color: var(--yottr-card-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.yottr-listing .yottr-listing-facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1rem;
+    margin: 0;
+}
+
+.yottr-listing .yottr-listing-facts dt {
+    font-weight: 500;
+    color: var(--bs-secondary-color);
+}
+
+.yottr-listing .yottr-listing-facts dd {
+    margin: 0;
+}
+
+.yottr-badge {
+    display: inline-block;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background-color: var(--yottr-surf);
+    color: var(--yottr-sea-deep);
+}
+
+[data-bs-theme="dark"] .yottr-badge {
+    color: var(--yottr-sea);
+}
+
+.yottr-badge-warning {
+    background-color: rgba(217, 96, 59, 0.15);
+    color: var(--yottr-coral);
+}
+
+/* forms that sit inline beside other actions, such as Suspend and Delete on a listing */
+.inline-action {
+    display: inline;
+}
+
+.yottr-footer {
+    background-color: var(--yottr-sand);
+    border-top: 1px solid var(--bs-border-color);
+    color: var(--bs-secondary-color);
+}

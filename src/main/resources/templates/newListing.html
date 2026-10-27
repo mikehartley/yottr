@@ -3,31 +3,20 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-<section layout:fragment="content" id="index-content" class="container">
-    <div class="row">
-        <form method="post" th:action="@{/s/listings/new}" th:object="${boat}" th:id="signup-form" th:if="${allowedMoreListings}">
-
-            <div class="col-sm-6">
-                <h2>Enter boat details:</h2>
-
+<section layout:fragment="content" id="new-listing-content" class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <h1 class="h2 mb-4">Add a boat</h1>
+            <form method="post" th:action="@{/s/listings/new}" th:object="${boat}" id="listing-form" th:if="${allowedMoreListings}" novalidate="novalidate">
                 <fieldset th:replace="~{listingFields :: boat}">The boat's fields go here.</fieldset>
-            </div>
-
-            <div class="col-sm-6">
-                <div class="gap"></div>
-                <div class="gap"></div>
-                <div class="gap"></div>
-                <div class="gap"></div>
-
                 <fieldset th:replace="~{listingFields :: terms}">The sailing, crew and money fields go here.</fieldset>
+            </form>
+            <div class="alert alert-info" th:unless="${allowedMoreListings}">
+                You have reached the limit of the number of listings you can have. If you would like to post more,
+                please get in touch with us.
             </div>
-        </form>
-        <div th:if="${not allowedMoreListings}">
-            You have reached the limit of the number of listings you can have. If you would like to post more listings then please contact admin.
         </div>
     </div>
-
 </section>
 </body>
 </html>
-

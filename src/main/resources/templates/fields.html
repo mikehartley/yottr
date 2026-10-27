@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--/*
+    Form fields, so that every form lays out its labels, inputs and errors the same way. Use them inside a form
+    with a th:object, and call them with named parameters, for example
+        <div th:replace="~{fields :: textField(name='email', label='Email', type='email')}"></div>
+    Parameters:
+        name     the form property
+        label    the label's text
+        hint     optional text under the field
+        also     optional: another property whose errors belong beside this field, such as an @AssertTrue check
+    and, depending on the fragment:
+        type     textField: the input type, text by default
+        options  selectField and checkboxField: the choices; each is written as its toString() and shown by its
+                 getDisplayName()
+        blank    selectField: text for an empty first choice, if there is one
+        rows     textArea: its height, 4 by default
+
+    The names aren't element names: a fragment selector also matches elements, so ~{fields :: input} would bring
+    every <input> in this file along with the fragment.
+*/-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="textField" class="mb-3">
+    <label class="form-label" th:for="${name}" th:text="${label}">Label</label>
+    <input class="form-control" th:type="${type} ?: 'text'" th:field="*{__${name}__}"
+           th:classappend="${also != null and #fields.hasErrors(also)} ? 'is-invalid'" th:errorclass="is-invalid"/>
+    <div th:replace="~{fields :: feedback}"></div>
+</div>
+
+<div th:fragment="textArea" class="mb-3">
+    <label class="form-label" th:for="${name}" th:text="${label}">Label</label>
+    <textarea class="form-control" th:rows="${rows} ?: 4" th:field="*{__${name}__}" th:errorclass="is-invalid"></textarea>
+    <div th:replace="~{fields :: feedback}"></div>
+</div>
+
+<div th:fragment="selectField" class="mb-3">
+    <label class="form-label" th:for="${name}" th:text="${label}">Label</label>
+    <select class="form-select" th:field="*{__${name}__}"
+            th:classappend="${also != null and #fields.hasErrors(also)} ? 'is-invalid'" th:errorclass="is-invalid">
+        <option th:if="${blank != null}" value="" th:text="${blank}">Choose</option>
+        <option th:each="option : ${options}" th:value="${option}" th:text="${option.displayName}">Option</option>
+    </select>
+    <div th:replace="~{fields :: feedback}"></div>
+</div>
+
+<fieldset th:fragment="checkboxField" class="mb-3">
+    <legend class="form-label fs-6" th:text="${label}">Label</legend>
+    <div class="form-check form-check-inline" th:each="option : ${options}">
+        <input class="form-check-input" type="checkbox" th:field="*{__${name}__}" th:value="${option}" th:errorclass="is-invalid"/>
+        <label class="form-check-label" th:for="${#ids.prev(name)}" th:text="${option.displayName}">Option</label>
+    </div>
+    <div th:replace="~{fields :: feedback}"></div>
+</fieldset>
+
+<!--/* The hint and any errors under a field. Bootstrap shows invalid-feedback only beside an .is-invalid input,
+       which a checkbox group's errors and an "also" property's errors aren't, so they are all shown outright (d-block). */-->
+<th:block th:fragment="feedback">
+    <div class="form-text" th:if="${hint != null}" th:text="${hint}">Hint</div>
+    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors(name)}" th:errors="*{__${name}__}">Error</div>
+    <div class="invalid-feedback d-block" th:if="${also != null and #fields.hasErrors(also)}" th:errors="*{__${also}__}">Error</div>
+</th:block>
+
+</body>
+</html>
