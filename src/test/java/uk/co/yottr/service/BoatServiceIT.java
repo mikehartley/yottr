@@ -10,21 +10,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.ListingForm;
+import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.model.*;
 import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,7 +83,7 @@ public class BoatServiceIT {
         final Boat liveBoat = boatService.save(aBoat().withSuspended(false).withOwner(owner).build());
         boatService.save(aBoat().withSuspended(true).withOwner(owner).build());
 
-        final Page<Boat> resultFromService = boatService.findAllVisible(PageRequest.of(0, 10));
+        final Page<Boat> resultFromService = boatService.search(new BoatSearch(), PageRequest.of(0, 10));
 
         assertEquals(1, resultFromService.getTotalElements(), "total elements in result");
         assertEquals(liveBoat.getReference(), resultFromService.iterator().next().getReference(), "element in result");
@@ -91,7 +96,7 @@ public class BoatServiceIT {
         disabledOwner.setEnabled(false);
         boatService.save(aBoat().withOwner(userService.save(disabledOwner, false)).build());
 
-        final Page<Boat> resultFromService = boatService.findAllVisible(PageRequest.of(0, 10));
+        final Page<Boat> resultFromService = boatService.search(new BoatSearch(), PageRequest.of(0, 10));
 
         assertEquals(1, resultFromService.getTotalElements(), "total elements in result");
         assertEquals(liveBoat.getReference(), resultFromService.iterator().next().getReference(), "element in result");
@@ -263,5 +268,82 @@ public class BoatServiceIT {
 
         assertTrue(boatService.findListingToView(boat.getReference(), "someone else").isEmpty(), "hidden from others");
         assertTrue(boatService.findListingToView(boat.getReference(), owner.getUsername()).isPresent(), "seen by its owner");
+    }
+
+    @Test
+    public void searchFindsTextInTheTitleMakeOrDescriptionIgnoringCase() throws Exception {
+        final Boat byTitle = boatService.save(aBoat().withOwner(owner).build());
+        byTitle.setTitle("Weekends in the SOLENT");
+        boatService.save(byTitle);
+        final Boat byMake = boatService.save(aBoat().withOwner(owner).build());
+        byMake.setMakeAndModel("Solent Sprinter");
+        boatService.save(byMake);
+        final Boat byDescription = boatService.save(aBoat().withOwner(owner).withDescription("Based on the solent.").build());
+        boatService.save(aBoat().withOwner(owner).withDescription("Clyde cruising").build());
+
+        assertEquals(Set.of(byTitle.getReference(), byMake.getReference(), byDescription.getReference()), references(search(s -> s.setText("Solent"))));
+    }
+
+    @Test
+    public void searchFindsAWholeReference() throws Exception {
+        final Boat boat = boatService.save(aBoat().withOwner(owner).build());
+        boatService.save(aBoat().withOwner(owner).build());
+
+        assertEquals(Set.of(boat.getReference()), references(search(s -> s.setText(boat.getReference()))));
+    }
+
+    @Test
+    public void searchNarrowsByPurposeWhenCostsAndLevel() throws Exception {
+        final Boat match = aBoat().withOwner(owner).withMinimumRequiredLevel(RyaSailCruisingLevel.DAY_SKIPPER).build();
+        match.setSailingPurpose(SailingPurpose.CRUISING);
+        match.setFrequency(new ArrayList<>(List.of(Frequency.WEEKENDS)));
+        match.setFinancialArrangement(FinancialArrangement.SHARED_FIXED);
+        final String matchReference = boatService.save(match).getReference();
+        // the defaults: a delivery, in the holidays, with no contribution, needing Coastal Skipper
+        boatService.save(aBoat().withOwner(owner).build());
+
+        assertEquals(Set.of(matchReference), references(search(s -> s.setPurpose(SailingPurpose.CRUISING))));
+        assertEquals(Set.of(matchReference), references(search(s -> s.setWhen(Frequency.FrequencyEnum.WEEKENDS))));
+        assertEquals(Set.of(matchReference), references(search(s -> s.setCosts(FinancialArrangement.FinancialArrangementEnum.SHARED_FIXED))));
+        assertEquals(Set.of(matchReference), references(search(s -> s.setMyLevel(RyaSailCruisingLevel.DAY_SKIPPER.getRank()))),
+                "a Day Skipper can't join a boat that needs a Coastal Skipper");
+        assertEquals(2, search(s -> s.setMyLevel(RyaSailCruisingLevel.COASTAL_SKIPPER.getRank())).getTotalElements(), "a Coastal Skipper can join both");
+    }
+
+    @Test
+    public void aListingWithSeveralFrequenciesIsFoundOnce() throws Exception {
+        final Boat boat = aBoat().withOwner(owner).build();
+        boat.setFrequency(new ArrayList<>(List.of(Frequency.WEEKENDS, Frequency.HOLIDAYS)));
+        boatService.save(boat);
+
+        final Page<Boat> found = search(s -> s.setWhen(Frequency.FrequencyEnum.HOLIDAYS));
+
+        assertEquals(1, found.getTotalElements(), "counted once");
+        assertEquals(1, found.getContent().size(), "listed once");
+    }
+
+    @Test
+    public void searchTextWithLikeWildcardsMatchesThemLiterally() throws Exception {
+        final Boat percent = boatService.save(aBoat().withOwner(owner).withDescription("100% fun").build());
+        boatService.save(aBoat().withOwner(owner).withDescription("1000 miles of fun").build());
+
+        assertEquals(Set.of(percent.getReference()), references(search(s -> s.setText("100%"))));
+    }
+
+    @Test
+    public void searchLeavesOutListingsMembersCannotSee() throws Exception {
+        final Boat suspended = boatService.save(aBoat().withOwner(owner).withSuspended(true).withDescription("hidden gem").build());
+
+        assertTrue(references(search(s -> s.setText("hidden gem"))).isEmpty(), "suspended " + suspended.getReference());
+    }
+
+    private Page<Boat> search(Consumer<BoatSearch> criteria) {
+        final BoatSearch search = new BoatSearch();
+        criteria.accept(search);
+        return boatService.search(search, PageRequest.of(0, 30));
+    }
+
+    private static Set<String> references(Page<Boat> page) {
+        return page.stream().map(Boat::getReference).collect(Collectors.toSet());
     }
 }

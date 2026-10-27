@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.exception.ResourceNotFoundException;
+import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
@@ -20,6 +23,8 @@ import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.security.Principal;
 
@@ -75,14 +80,23 @@ public class BoatController {
         return modelAndView;
 	}
 
+    /**
+     * The boats members can see, newest first, narrowed by the search. htmx asks for this as the search changes,
+     * and gets back only the results.
+     */
     @RequestMapping(value = "/s/listings/all", method = RequestMethod.GET)
-    public ModelAndView listBoats(Pageable pageable) {
-        LOG.info("All listings page");
+    public ModelAndView listBoats(@ModelAttribute("search") BoatSearch search,
+                                  @SortDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                  HttpServletRequest request, HttpServletResponse response) {
+        final boolean resultsOnly = Htmx.wantsPartOfPage(request, response);
+        final ModelAndView modelAndView = new ModelAndView(resultsOnly ? "boatList :: results" : "boatList");
 
-        ModelAndView modelAndView = new ModelAndView("boatList");
-
-        Page<Boat> boatPages = boatService.findAllVisible(pageable);
+        final Page<Boat> boatPages = boatService.search(search, pageable);
         modelAndView.addObject("wrapper", new PageWrapper<>(boatPages));
+        modelAndView.addObject("searchQuery", search.toQueryString());
+        if (!resultsOnly) {
+            addSearchReferenceData(modelAndView);
+        }
 
         return modelAndView;
     }
@@ -171,9 +185,7 @@ public class BoatController {
 
     @RequestMapping(value = { "/", "index" }, method = RequestMethod.GET)
     public ModelAndView index() {
-        final ModelAndView modelAndView = new ModelAndView("index");
-        addReferenceData(modelAndView);
-        return modelAndView;
+        return new ModelAndView("index");
     }
 
     private void addModelAttributesForNewListing(ModelAndView modelAndView, User user) {
@@ -189,6 +201,13 @@ public class BoatController {
         modelAndView.addObject("smokingOptions", referenceDataService.smokingOptions());
         modelAndView.addObject("travelExpensesOptions", referenceDataService.travelExpenses());
         modelAndView.addObject("courseLevels", referenceDataService.courseLevels());
+    }
+
+    private void addSearchReferenceData(ModelAndView modelAndView) {
+        modelAndView.addObject("sailingPurposes", referenceDataService.sailingPurposes());
+        modelAndView.addObject("frequencies", referenceDataService.frequencies());
+        modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
+        modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
     }
 
     private void addReferenceData(ModelAndView modelAndView) {

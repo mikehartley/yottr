@@ -9,12 +9,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.mockito.ArgumentMatchers;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import uk.co.yottr.builder.BoatBuilder;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.ListingForm;
+import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.model.*;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.FinancialArrangementRepository;
@@ -232,13 +235,13 @@ public class BoatServiceTest {
     }
 
     @Test
-    public void testFindAllVisible() throws Exception {
+    public void testSearch() throws Exception {
         final Pageable pageable = mock(Pageable.class);
         final ArrayList<Boat> boatList = new ArrayList<>();
         final PageImpl<Boat> page = new PageImpl<>(boatList);
-        when(boatRepository.findBySuspendedFalseAndOwnerEnabledTrue(pageable)).thenReturn(page);
+        when(boatRepository.findAll(ArgumentMatchers.<Specification<Boat>>any(), eq(pageable))).thenReturn(page);
 
-        final Page<Boat> resultFromService = boatService.findAllVisible(pageable);
+        final Page<Boat> resultFromService = boatService.search(new BoatSearch(), pageable);
 
         assertSame(page, resultFromService, "result from service");
     }

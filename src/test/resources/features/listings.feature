@@ -40,3 +40,15 @@ Feature: Listing a boat
     And I open the "Sigma 33" listing from all the boats
     Then I see "Get in touch"
     And I see "alice@example.test"
+
+  Scenario: A member searches the boats
+    Given a member called "alice"
+    And a member called "dave"
+    And "alice" has signed in
+    And I have posted a listing for a "Moody 31"
+    And I have posted a listing for a "Westerly Konsort"
+    And I sign out
+    When "dave" signs in
+    And I search the boats for "moody"
+    Then the boats found include a "Moody 31"
+    And the boats found do not include a "Westerly Konsort"

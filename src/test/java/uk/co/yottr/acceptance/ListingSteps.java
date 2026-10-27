@@ -11,6 +11,8 @@ import org.htmlunit.html.HtmlForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,6 +67,22 @@ public class ListingSteps {
         browser.showing(title.click());
     }
 
+    @When("I search the boats for {string}")
+    public void iSearchTheBoatsFor(String text) throws IOException {
+        // what the search form sends without JavaScript
+        browser.open("/s/listings/all?text=" + URLEncoder.encode(text, StandardCharsets.UTF_8));
+    }
+
+    @Then("the boats found include a {string}")
+    public void theBoatsFoundInclude(String makeAndModel) {
+        assertThat(makesOnThePage()).contains(makeAndModel);
+    }
+
+    @Then("the boats found do not include a {string}")
+    public void theBoatsFoundDoNotInclude(String makeAndModel) {
+        assertThat(makesOnThePage()).doesNotContain(makeAndModel);
+    }
+
     @When("I delete my {string} listing")
     public void iDeleteMyListing(String makeAndModel) throws IOException {
         browser.open("/s/listings/mine");
@@ -93,7 +111,15 @@ public class ListingSteps {
      * The make and model of each listing on My Listings.
      */
     private List<String> myListingsMakes() throws IOException {
-        return browser.open("/s/listings/mine").<HtmlElement>getByXPath("//span[@class='yottr-listing-make']").stream()
+        browser.open("/s/listings/mine");
+        return makesOnThePage();
+    }
+
+    /**
+     * The make and model of each listing card on the page.
+     */
+    private List<String> makesOnThePage() {
+        return browser.page().<HtmlElement>getByXPath("//span[@class='yottr-listing-make']").stream()
                 .map(HtmlElement::asNormalizedText)
                 .toList();
     }

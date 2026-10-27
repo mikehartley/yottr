@@ -15,7 +15,11 @@
                         and get in touch. It's free to join and free to post.
                     </p>
                     <a sec:authorize="isAnonymous()" class="btn btn-light btn-lg mt-2" th:href="@{/signup}">Join Yottr</a>
-                    <a sec:authorize="hasAuthority('FREE')" class="btn btn-light btn-lg mt-2" th:href="@{/s/listings/all}">Browse the boats</a>
+                    <form sec:authorize="hasAuthority('FREE')" method="get" th:action="@{/s/listings/all}" class="d-flex gap-2 mt-2" role="search" id="home-search-form">
+                        <label class="visually-hidden" for="home-search">Search the boats</label>
+                        <input type="search" name="text" id="home-search" class="form-control form-control-lg" placeholder="Boat, place or reference"/>
+                        <button type="submit" class="btn btn-light btn-lg text-nowrap">Find boats</button>
+                    </form>
                 </div>
 
                 <div class="col-lg-5" sec:authorize="isAnonymous()">
