@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static uk.co.yottr.builder.UserBuilder.aUser;
@@ -74,6 +75,17 @@ public class UserControllerIT {
         final User newcomer = userService.findByUsername(newUsername);
         assertNotNull(newcomer, "the new member is saved as a new account");
         assertNotEquals(victim.getId(), newcomer.getId());
+    }
+
+    @Test
+    public void signupRefusesAUsernameThatDiffersOnlyInCase() throws Exception {
+        final String existingUsername = unique("taken");
+        userService.save(aUser().withUsername(existingUsername).build(), true);
+
+        mockMvc.perform(signup(existingUsername.toUpperCase()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("signup"))
+                .andExpect(model().attributeHasFieldErrors("user", "username"));
     }
 
     @Test

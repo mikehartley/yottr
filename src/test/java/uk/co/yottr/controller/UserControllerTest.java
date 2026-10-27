@@ -76,16 +76,16 @@ public class UserControllerTest extends AbstractControllerTest {
         final String lastNameValue = "lastNameValue";
 
         final String emailProperty = "email";
-        final String emailValue = "email@Value";
+        final String emailValue = "email@example.test";
 
         final String mobileProperty = "mobile";
-        final String mobileValue = "mobileValue";
+        final String mobileValue = "07700 900123";
 
         final String countryProperty = "country";
         final String countryValue = Country.UK.name();
 
         final String postcodeProperty = "postcode";
-        final String postcodeValue = "postcodeValue";
+        final String postcodeValue = "PO1 1AA";
 
         final String aboutMeProperty = "aboutMe";
         final String aboutMeValue = "aboutMeValue";
@@ -205,16 +205,16 @@ public class UserControllerTest extends AbstractControllerTest {
         final String lastNameValue = "lastNameValue";
 
         final String emailProperty = "email";
-        final String emailValue = "email@Value";
+        final String emailValue = "email@example.test";
 
         final String mobileProperty = "mobile";
-        final String mobileValue = "mobileValue";
+        final String mobileValue = "07700 900123";
 
         final String countryProperty = "country";
         final String countryValue = Country.UK.name();
 
         final String postcodeProperty = "postcode";
-        final String postcodeValue = "postcodeValue";
+        final String postcodeValue = "PO1 1AA";
 
         final String aboutMeProperty = "aboutMe";
         final String aboutMeValue = "aboutMeValue";

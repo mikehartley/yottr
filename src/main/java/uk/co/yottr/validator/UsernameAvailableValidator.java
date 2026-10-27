@@ -2,7 +2,6 @@ package uk.co.yottr.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 
 import jakarta.validation.ConstraintValidator;
@@ -21,11 +20,11 @@ public class UsernameAvailableValidator implements ConstraintValidator<UsernameA
     @Override
     public boolean isValid(String username, ConstraintValidatorContext ctx) {
 
-        if (userRepository == null) {
+        // a missing username is left to @NotNull
+        if (userRepository == null || username == null) {
             return true;
         }
 
-        final User user = userRepository.findByUsername(username);
-        return user == null;
+        return !userRepository.existsByUsernameIgnoreCase(username);
     }
 }
