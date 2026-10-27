@@ -74,11 +74,24 @@ public class BoatServiceIT {
     }
 
     @Test
-    public void canFindAllExcludingSuspended() throws Exception {
+    public void visibleListingsLeaveOutSuspendedOnes() throws Exception {
         final Boat liveBoat = boatService.save(aBoat().withSuspended(false).withOwner(owner).build());
         boatService.save(aBoat().withSuspended(true).withOwner(owner).build());
 
-        final Page<Boat> resultFromService = boatService.findAllExcludingSuspended(PageRequest.of(0, 10));
+        final Page<Boat> resultFromService = boatService.findAllVisible(PageRequest.of(0, 10));
+
+        assertEquals(1, resultFromService.getTotalElements(), "total elements in result");
+        assertEquals(liveBoat.getReference(), resultFromService.iterator().next().getReference(), "element in result");
+    }
+
+    @Test
+    public void visibleListingsLeaveOutThoseOfDisabledMembers() throws Exception {
+        final Boat liveBoat = boatService.save(aBoat().withOwner(owner).build());
+        final User disabledOwner = aUser().build();
+        disabledOwner.setEnabled(false);
+        boatService.save(aBoat().withOwner(userService.save(disabledOwner, false)).build());
+
+        final Page<Boat> resultFromService = boatService.findAllVisible(PageRequest.of(0, 10));
 
         assertEquals(1, resultFromService.getTotalElements(), "total elements in result");
         assertEquals(liveBoat.getReference(), resultFromService.iterator().next().getReference(), "element in result");
@@ -180,7 +193,7 @@ public class BoatServiceIT {
         final User member = createUser();
         final String reference = boatService.save(aBoat().withOwner(member).build()).getReference();
 
-        userService.delete(userService.findByUsername(member.getUsername()));
+        userService.delete(userService.findByUsername(member.getUsername()).orElseThrow());
 
         assertFalse(userService.userExists(member.getId()), "the member is deleted");
         assertNull(boatService.findByReference(reference), "their listing is deleted with them");
@@ -209,7 +222,7 @@ public class BoatServiceIT {
         executor.shutdown();
 
         assertEquals(1, posted.stream().filter(Boolean::booleanValue).count(), "exactly one post succeeds: " + posted);
-        assertEquals(1, userService.findByUsername(member.getUsername()).getBoatListings().size(), "listings saved");
+        assertEquals(1, userService.findByUsername(member.getUsername()).orElseThrow().getBoatListings().size(), "listings saved");
     }
 
     private static ListingForm aListingForm() {

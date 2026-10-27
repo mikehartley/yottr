@@ -1,11 +1,13 @@
 package uk.co.yottr.model;
 
 import uk.co.yottr.security.Role;
+import uk.co.yottr.validator.PhoneNumber;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,13 +55,13 @@ public class User {
     private String lastName;
 
     @Column(name = "email", nullable = false)
-    @NotNull(message = REQUIRED_ERROR_MSG)
-    @Pattern(regexp = ".*@.*", message = "invalid email")
+    @NotBlank(message = REQUIRED_ERROR_MSG)
+    @Email(message = "invalid email")
     private String email;
 
     @Column(name = "mobile", length = 25)
     @NotNull(message = REQUIRED_ERROR_MSG)
-    @Size(min = 11, max = 25)
+    @PhoneNumber
     private String mobile;
 
     @Enumerated(EnumType.STRING)

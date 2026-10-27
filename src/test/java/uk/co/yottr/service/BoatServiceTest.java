@@ -232,14 +232,13 @@ public class BoatServiceTest {
     }
 
     @Test
-    public void testFindAllExcludingSuspended() throws Exception {
+    public void testFindAllVisible() throws Exception {
         final Pageable pageable = mock(Pageable.class);
         final ArrayList<Boat> boatList = new ArrayList<>();
         final PageImpl<Boat> page = new PageImpl<>(boatList);
-        final boolean suspended = false;
-        when(boatRepository.findBySuspended(suspended, pageable)).thenReturn(page);
+        when(boatRepository.findBySuspendedFalseAndOwnerEnabledTrue(pageable)).thenReturn(page);
 
-        final Page<Boat> resultFromService = boatService.findAllExcludingSuspended(pageable);
+        final Page<Boat> resultFromService = boatService.findAllVisible(pageable);
 
         assertSame(page, resultFromService, "result from service");
     }

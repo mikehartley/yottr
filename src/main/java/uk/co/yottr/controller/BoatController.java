@@ -43,7 +43,7 @@ public class BoatController {
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
 	public ModelAndView newListingPage(Principal principal) {
-        final User user = userService.findByUsername(principal.getName());
+        final User user = userService.findMember(principal.getName());
 
         ModelAndView modelAndView = new ModelAndView("newListing");
 
@@ -64,7 +64,7 @@ public class BoatController {
         if (bindingResult.hasErrors()) {
             LOG.info(bindingResult.toString());
             ModelAndView modelAndView = new ModelAndView("newListing");
-            addModelAttributesForNewListing(modelAndView, userService.findByUsername(principal.getName()));
+            addModelAttributesForNewListing(modelAndView, userService.findMember(principal.getName()));
             return modelAndView;
         }
 
@@ -81,7 +81,7 @@ public class BoatController {
 
         ModelAndView modelAndView = new ModelAndView("boatList");
 
-        Page<Boat> boatPages = boatService.findAllExcludingSuspended(pageable);
+        Page<Boat> boatPages = boatService.findAllVisible(pageable);
         modelAndView.addObject("wrapper", new PageWrapper<>(boatPages));
 
         return modelAndView;

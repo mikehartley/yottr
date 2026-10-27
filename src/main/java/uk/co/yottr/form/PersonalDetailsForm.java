@@ -1,10 +1,13 @@
 package uk.co.yottr.form;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
+import uk.co.yottr.validator.PhoneNumber;
+import uk.co.yottr.validator.PostcodeMatchesCountry;
 
 /**
  * The details a member can enter about themselves, on sign-up and on My Details.
@@ -12,6 +15,7 @@ import uk.co.yottr.model.User;
  * The forms bind to these classes rather than to {@link User}, so a request can only set the fields that are
  * on the form: never the id, roles, listing limit or whether the account is enabled.
  */
+@PostcodeMatchesCountry
 public abstract class PersonalDetailsForm {
 
     static final String REQUIRED_ERROR_MSG = "required";
@@ -27,17 +31,18 @@ public abstract class PersonalDetailsForm {
     @Size(min = 1, max = 50)
     private String lastName;
 
-    @NotNull(message = REQUIRED_ERROR_MSG)
-    @Pattern(regexp = ".*@.*", message = "invalid email")
+    @NotBlank(message = REQUIRED_ERROR_MSG)
+    @Email(message = "invalid email")
     private String email;
 
     @NotNull(message = REQUIRED_ERROR_MSG)
-    @Size(min = 11, max = 25)
+    @PhoneNumber
     private String mobile;
 
     @NotNull
     private Country country;
 
+    // checked against the country by @PostcodeMatchesCountry
     @NotNull
     private String postcode;
 

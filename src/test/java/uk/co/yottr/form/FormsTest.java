@@ -59,7 +59,7 @@ public class FormsTest {
 
     @Test
     public void signupRejectsAUsernameThatIsTaken() {
-        when(mockUserRepository.findByUsername("newcomer")).thenReturn(new User());
+        when(mockUserRepository.existsByUsernameIgnoreCase("newcomer")).thenReturn(true);
 
         final Set<ConstraintViolation<SignupForm>> violations = validator.validate(aSignupForm());
 
@@ -67,6 +67,51 @@ public class FormsTest {
         final ConstraintViolation<SignupForm> violation = violations.iterator().next();
         assertEquals("username", violation.getPropertyPath().toString());
         assertEquals("Username not available", violation.getMessage());
+    }
+
+    @Test
+    public void signupRejectsAUKAddressWithoutAUKPostcode() {
+        for (String postcode : new String[] { "", "not a postcode", "PO1", "12345" }) {
+            final SignupForm form = aSignupForm();
+            form.setPostcode(postcode);
+
+            final Set<ConstraintViolation<SignupForm>> violations = validator.validate(form);
+
+            assertEquals(1, violations.size(), postcode + " should be one violation: " + violations);
+            final ConstraintViolation<SignupForm> violation = violations.iterator().next();
+            assertEquals("postcode", violation.getPropertyPath().toString(), "reported on the postcode field");
+            assertEquals("must be a UK postcode", violation.getMessage());
+        }
+    }
+
+    @Test
+    public void signupAcceptsUKPostcodesWrittenEitherWay() {
+        for (String postcode : new String[] { "PO1 1AA", "po11aa", "W8 4QT", "EC1A 1BB", "M1 1AE", "DY8 1AA" }) {
+            final SignupForm form = aSignupForm();
+            form.setPostcode(postcode);
+
+            assertEquals(Set.of(), validator.validate(form), postcode + " should be valid");
+        }
+    }
+
+    @Test
+    public void signupLeavesThePostcodeOptionalOutsideTheUK() {
+        final SignupForm form = aSignupForm();
+        form.setCountry(Country.OTHER);
+        form.setPostcode("");
+
+        assertEquals(Set.of(), validator.validate(form));
+    }
+
+    @Test
+    public void signupRejectsAnEmailAddressThatIsNotOne() {
+        final SignupForm form = aSignupForm();
+        form.setEmail("new.example.test");
+
+        final Set<ConstraintViolation<SignupForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("email", violations.iterator().next().getPropertyPath().toString());
     }
 
     @Test
