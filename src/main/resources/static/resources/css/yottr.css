@@ -212,3 +212,15 @@ main {
 .yottr-prose {
     white-space: pre-line;
 }
+
+/* a listing's title links to its page; it reads as a heading until pointed at */
+.yottr-listing h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.yottr-listing h2 a:hover,
+.yottr-listing h2 a:focus-visible {
+    color: var(--bs-link-color);
+    text-decoration: underline;
+}

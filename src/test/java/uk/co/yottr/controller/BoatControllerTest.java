@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import uk.co.yottr.exception.IllegalOperationException;
+import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
@@ -260,16 +263,56 @@ public class BoatControllerTest extends AbstractControllerTest {
         final ArrayList<Boat> boatList = new ArrayList<>();
         boatList.add(aBoat().withOwner(aUser().build()).build());
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
-        when(mockBoatService.findAllVisible(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(boatPage); // page and size come from fallback settings as found in config
+        when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(boatPage);
 
-        mockMvc.perform(get("/s/listings/all").contentType(MediaType.TEXT_HTML))
+        mockMvc.perform(get("/s/listings/all").param("text", "solent").param("purpose", "RACING"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("boatList"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists("wrapper"));
+                .andExpect(model().attribute("search", allOf(
+                        hasProperty("text", equalTo("solent")),
+                        hasProperty("purpose", equalTo(SailingPurpose.RACING)))))
+                .andExpect(model().attribute("searchQuery", equalTo("text=solent&purpose=RACING")))
+                .andExpect(model().attributeExists("wrapper", "sailingPurposes", "frequencies", "financialArrangements", "ryaSailCruisingLevels"))
+                .andExpect(header().string("Vary", containsString("HX-Request")));
 
-        verify(mockBoatService).findAllVisible(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockBoatService).search(any(BoatSearch.class), eq(NEWEST_FIRST));
+        verifySearchReferenceDataFetched();
+    }
+
+    @Test
+    public void testListBoatsForHtmxIsOnlyTheResults() throws Exception {
+        when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(new PageImpl<>(new ArrayList<>()));
+
+        mockMvc.perform(get("/s/listings/all").header("HX-Request", "true"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("boatList :: results"))
+                .andExpect(model().attributeDoesNotExist("sailingPurposes"))
+                .andExpect(content().string(not(containsString("search-form"))))
+                .andExpect(content().string(containsString("No boats match")));
+
+        verify(mockBoatService).search(any(BoatSearch.class), eq(NEWEST_FIRST));
+    }
+
+    @Test
+    public void testListBoatsForAnHtmxHistoryRestoreIsTheWholePage() throws Exception {
+        when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(new PageImpl<>(new ArrayList<>()));
+
+        mockMvc.perform(get("/s/listings/all").header("HX-Request", "true").header("HX-History-Restore-Request", "true"))
+                .andExpect(view().name("boatList"));
+
+        verify(mockBoatService).search(any(BoatSearch.class), eq(NEWEST_FIRST));
+        verifySearchReferenceDataFetched();
+    }
+
+    private static final PageRequest NEWEST_FIRST = PageRequest.of(ConstantsForTests.DEFAULT_PAGE_REQUEST_PAGE,
+            ConstantsForTests.DEFAULT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "id"));
+
+    private void verifySearchReferenceDataFetched() {
+        verify(mockReferenceDataService).sailingPurposes();
+        verify(mockReferenceDataService).frequencies();
+        verify(mockReferenceDataService).financialArrangements();
+        verify(mockReferenceDataService).ryaSailCruisingLevels();
     }
 
     @Test
@@ -286,16 +329,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(4))
-                .andExpect(model().attributeExists("ryaSailCruisingLevels"))
-                .andExpect(model().attributeExists("sailingPurposes"))
-                .andExpect(model().attributeExists("hullTypes"))
-                .andExpect(model().attributeExists("financialArrangements"));
-
-        verify(mockReferenceDataService).ryaSailCruisingLevels();
-        verify(mockReferenceDataService).sailingPurposes();
-        verify(mockReferenceDataService).hullTypes();
-        verify(mockReferenceDataService).financialArrangements();
+                .andExpect(model().size(0));
     }
 
     @Test

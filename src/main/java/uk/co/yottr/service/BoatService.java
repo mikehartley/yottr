@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.yottr.exception.IllegalOperationException;
+import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
@@ -13,6 +14,7 @@ import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.BoatRepository;
+import uk.co.yottr.repository.BoatSpecifications;
 import uk.co.yottr.repository.FinancialArrangementRepository;
 import uk.co.yottr.repository.FrequencyRepository;
 import uk.co.yottr.repository.RyaSailCruisingLevelRepository;
@@ -143,10 +145,10 @@ public class BoatService {
     }
 
     /**
-     * The listings members can see: not suspended by their owner, and not belonging to a disabled account.
+     * A page of the listings members can see (not suspended, owner enabled) that match the search.
      */
     @Transactional(readOnly = true)
-    public Page<Boat> findAllVisible(Pageable pageable) {
-        return boatRepository.findBySuspendedFalseAndOwnerEnabledTrue(pageable);
+    public Page<Boat> search(BoatSearch search, Pageable pageable) {
+        return boatRepository.findAll(BoatSpecifications.matching(search), pageable);
     }
 }

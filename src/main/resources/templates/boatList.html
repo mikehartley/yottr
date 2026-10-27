@@ -5,11 +5,61 @@
 <body>
 <section layout:fragment="content" id="boat-list-content" class="container py-4">
     <h1 class="h2 mb-4">Boats looking for crew</h1>
-    <p th:if="${wrapper.page.empty}" class="text-body-secondary">No boats are listed at the moment.</p>
-    <th:block th:each="boat : ${wrapper.page}">
-        <article th:replace="~{listing :: card(boat=${boat}, actions=null)}">A listing.</article>
-    </th:block>
-    <nav th:replace="~{pagination :: control(url='/s/listings/all')}">Pagination control goes here.</nav>
+
+    <!--/* A plain GET form, which works without JavaScript. With htmx, the results update as the search changes and
+           the address keeps up, so a search can be bookmarked or shared. */-->
+    <form id="search-form" method="get" th:action="@{/s/listings/all}" th:object="${search}" class="yottr-card p-3 mb-4"
+          th:hx-get="@{/s/listings/all}" hx-target="#results" hx-swap="outerHTML" hx-push-url="true"
+          hx-trigger="change, input changed delay:400ms from:#text, submit">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-12 col-lg-4">
+                <label class="form-label small" for="text">Search</label>
+                <input type="search" class="form-control" th:field="*{text}" placeholder="Boat, place or reference"/>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="purpose">Purpose</label>
+                <select class="form-select" th:field="*{purpose}">
+                    <option value="">Any</option>
+                    <option th:each="option : ${sailingPurposes}" th:value="${option}" th:text="${option.displayName}">Cruising</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="when">When</label>
+                <select class="form-select" th:field="*{when}">
+                    <option value="">Any</option>
+                    <option th:each="option : ${frequencies}" th:value="${option}" th:text="${option.displayName}">Weekends</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="costs">Costs</label>
+                <select class="form-select" th:field="*{costs}">
+                    <option value="">Any</option>
+                    <option th:each="option : ${financialArrangements}" th:value="${option}" th:text="${option.displayName}">Shared</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="myLevel">My level</label>
+                <select class="form-select" th:field="*{myLevel}">
+                    <option value="">Any</option>
+                    <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.rank}" th:text="${level.displayName}">Day Skipper</option>
+                </select>
+            </div>
+        </div>
+        <noscript><button type="submit" class="btn btn-primary mt-3">Search</button></noscript>
+    </form>
+
+    <div id="results" th:fragment="results" aria-live="polite">
+        <p class="text-body-secondary small mb-3"
+           th:text="${wrapper.page.totalElements} == 1 ? '1 boat' : ${wrapper.page.totalElements} + ' boats'">12 boats</p>
+        <p th:if="${wrapper.page.empty}" class="text-body-secondary">No boats match. Try fewer filters.</p>
+        <th:block th:each="boat : ${wrapper.page}">
+            <article th:replace="~{listing :: card(boat=${boat}, actions=null)}">A listing.</article>
+        </th:block>
+        <!--/* page links keep the search, and htmx follows them in place, like the form */-->
+        <div hx-boost="true" hx-target="#results" hx-swap="outerHTML">
+            <nav th:replace="~{pagination :: control(url=${searchQuery.isEmpty()} ? '/s/listings/all' : '/s/listings/all?' + ${searchQuery})}">Pagination control goes here.</nav>
+        </div>
+    </div>
 </section>
 </body>
 </html>
