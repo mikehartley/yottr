@@ -140,6 +140,13 @@ main {
     height: 2rem;
 }
 
+/* the menu item for the page being shown */
+.yottr-nav .nav-link.active {
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 currentColor;
+}
+
 /* the logo is drawn in currentColor; as an <img> it is white on the dark nav bar */
 .yottr-nav .yottr-brand img {
     filter: brightness(0) invert(1);

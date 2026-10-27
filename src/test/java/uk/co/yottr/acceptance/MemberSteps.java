@@ -3,8 +3,8 @@ package uk.co.yottr.acceptance;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.yottr.model.Country;
@@ -14,6 +14,7 @@ import uk.co.yottr.service.UserService;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -118,6 +119,14 @@ public class MemberSteps {
         form.getInputByName("postcode").setValue("PO1 1AA");
         final HtmlButton signUp = form.getFirstByXPath(".//button[@type='submit']");
         browser.showing(signUp.click());
+    }
+
+    @Then("the menu shows I am in {string}")
+    public void theMenuShowsIAmIn(String item) {
+        final List<String> current = browser.page().<HtmlElement>getByXPath("//nav[@aria-label='Main']//a[@aria-current='page']").stream()
+                .map(HtmlElement::asNormalizedText)
+                .toList();
+        assertThat(current).containsExactly(item);
     }
 
     @Then("I see {string}")
