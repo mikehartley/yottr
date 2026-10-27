@@ -13,7 +13,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import java.util.Set;
 
-import static org.apache.commons.lang3.RandomStringUtils.*;
+import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,7 +60,7 @@ public class UserTest {
         user.setUsername("a");
         assertSingleViolation(sizeErrorMessage);
 
-        user.setUsername(randomAscii(51));
+        user.setUsername(secure().nextAscii(51));
         assertSingleViolation(sizeErrorMessage);
     }
 
@@ -74,10 +74,10 @@ public class UserTest {
         user.setPassword("");
         assertSingleViolation(sizeErrorMessage);
 
-        user.setPassword(randomAscii(7));
+        user.setPassword(secure().nextAscii(7));
         assertSingleViolation(sizeErrorMessage);
 
-        user.setPassword(randomAscii(61));
+        user.setPassword(secure().nextAscii(61));
         assertSingleViolation(sizeErrorMessage);
     }
 
@@ -85,7 +85,7 @@ public class UserTest {
     public void title() {
         final String sizeErrorMessage = String.format(SIZE_ERROR_MSG, 0, 10);
 
-        user.setTitle(randomAscii(11));
+        user.setTitle(secure().nextAscii(11));
         assertSingleViolation(sizeErrorMessage);
     }
 
@@ -99,7 +99,7 @@ public class UserTest {
         user.setFirstName("");
         assertSingleViolation(sizeErrorMessage);
 
-        user.setFirstName(randomAscii(51));
+        user.setFirstName(secure().nextAscii(51));
         assertSingleViolation(sizeErrorMessage);
     }
 
@@ -113,7 +113,7 @@ public class UserTest {
         user.setLastName("");
         assertSingleViolation(sizeErrorMessage);
 
-        user.setLastName(randomAscii(51));
+        user.setLastName(secure().nextAscii(51));
         assertSingleViolation(sizeErrorMessage);
     }
 
@@ -141,10 +141,10 @@ public class UserTest {
         user.setMobile("");
         assertSingleViolation(sizeErrorMessage);
 
-        user.setMobile(randomNumeric(10));
+        user.setMobile(secure().nextNumeric(10));
         assertSingleViolation(sizeErrorMessage);
 
-        user.setMobile(randomNumeric(26));
+        user.setMobile(secure().nextNumeric(26));
         assertSingleViolation(sizeErrorMessage);
     }
 
@@ -186,8 +186,8 @@ public class UserTest {
 
     private User createUser() {
         User user = new User();
-        user.setUsername(randomAlphabetic(10));
-        user.setPassword(randomAlphanumeric(10));
+        user.setUsername(secure().nextAlphabetic(10));
+        user.setPassword(secure().nextAlphanumeric(10));
         user.setTitle("Mr");
         user.setFirstName("First");
         user.setLastName("Last");

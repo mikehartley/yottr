@@ -3,8 +3,7 @@ package uk.co.yottr.builder;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static uk.co.yottr.builder.BoatBuilder.aBoat;
 
 public class UserBuilder {
@@ -14,16 +13,16 @@ public class UserBuilder {
     public UserBuilder() {
         User user = new User();
 
-        user.setUsername("user" + randomNumeric(10));
-        user.setPassword("password" + randomAlphanumeric(6));
+        user.setUsername("user" + secure().nextNumeric(10));
+        user.setPassword("password" + secure().nextAlphanumeric(6));
         user.setTitle("Mr");
         user.setFirstName("Izzy");
         user.setLastName("Wizzy");
         user.setEmail("izzy@wizzy.test");
-        user.setMobile(randomNumeric(5) + " " + randomNumeric(6));
+        user.setMobile(secure().nextNumeric(5) + " " + secure().nextNumeric(6));
         user.setCountry(Country.UK);
         user.setPostcode("W8 4QT");
-        user.setAboutMe("This is a bunch of text followed by some random characters " + randomAlphanumeric(50));
+        user.setAboutMe("This is a bunch of text followed by some random characters " + secure().nextAlphanumeric(50));
         user.setEnabled(true);
 
         this.user = user;

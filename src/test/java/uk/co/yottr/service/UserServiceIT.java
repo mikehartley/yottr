@@ -14,7 +14,7 @@ import uk.co.yottr.testconfig.TestcontainersConfig;
 
 import java.util.Random;
 
-import static org.apache.commons.lang3.RandomStringUtils.*;
+import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,7 +34,7 @@ public class UserServiceIT {
     @Test
     public void canCreateFindByUsernameAndDelete() throws Exception {
 
-        final String username = "user"  + randomAlphanumeric(12);
+        final String username = "user"  + secure().nextAlphanumeric(12);
 
         final User user = aUser().withUsername(username).build();
 
@@ -59,7 +59,7 @@ public class UserServiceIT {
     public void userWithRoles() throws Exception {
 
         final Role expectedRole = Role.CREW;
-        final User user = aUser().withUsername(randomAlphanumeric(10)).build();
+        final User user = aUser().withUsername(secure().nextAlphanumeric(10)).build();
         user.addRole(expectedRole);
 
         final User savedUser = userService.save(user, true);
@@ -73,7 +73,7 @@ public class UserServiceIT {
     @Test
     public void findById() throws Exception {
 
-        final String username = randomAlphanumeric(10);
+        final String username = secure().nextAlphanumeric(10);
         final User user = aUser().withUsername(username).build();
         final User savedUser = userService.save(user, true);
 
@@ -85,7 +85,7 @@ public class UserServiceIT {
     @Test
     public void deleteByIdAndUserExists() throws Exception {
 
-        final User savedUser = userService.save(aUser().withUsername(randomAlphanumeric(10)).build(), true);
+        final User savedUser = userService.save(aUser().withUsername(secure().nextAlphanumeric(10)).build(), true);
 
         final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
         assertTrue(userExistsBeforeDelete, "user should exist before delete");
@@ -99,7 +99,7 @@ public class UserServiceIT {
     @Test
     public void deleteByUser() throws Exception {
 
-        final User savedUser = userService.save(aUser().withUsername(randomAlphanumeric(10)).build(), true);
+        final User savedUser = userService.save(aUser().withUsername(secure().nextAlphanumeric(10)).build(), true);
 
         final boolean userExistsBeforeDelete = userService.userExists(savedUser.getId());
         assertTrue(userExistsBeforeDelete, "user should exist before delete");
@@ -112,16 +112,16 @@ public class UserServiceIT {
 
     @Test
     public void allFieldsPersist() throws Exception {
-        final String username = randomAlphanumeric(20);
-        final String password = "password" + randomAlphanumeric(22);
-        final String title = randomAlphabetic(10);
-        final String firstName = randomAlphabetic(20);
-        final String lastName = randomAlphabetic(20);
-        final String email = randomAlphabetic(10) + "@" + randomAlphabetic(10) + "." + randomAlphabetic(10);
-        final String mobile = randomNumeric(5) + " " + randomNumeric(6);
+        final String username = secure().nextAlphanumeric(20);
+        final String password = "password" + secure().nextAlphanumeric(22);
+        final String title = secure().nextAlphabetic(10);
+        final String firstName = secure().nextAlphabetic(20);
+        final String lastName = secure().nextAlphabetic(20);
+        final String email = secure().nextAlphabetic(10) + "@" + secure().nextAlphabetic(10) + "." + secure().nextAlphabetic(10);
+        final String mobile = secure().nextNumeric(5) + " " + secure().nextNumeric(6);
         final Country country = new Random().nextBoolean() ? Country.UK : Country.OTHER;
-        final String postcode = randomAlphabetic(1) + randomNumeric(1) + " " + randomNumeric(1) + randomAlphabetic(2);
-        final String aboutMe = "This is a bunch of text followed by some random characters " + randomAlphanumeric(50);
+        final String postcode = secure().nextAlphabetic(1) + secure().nextNumeric(1) + " " + secure().nextNumeric(1) + secure().nextAlphabetic(2);
+        final String aboutMe = "This is a bunch of text followed by some random characters " + secure().nextAlphanumeric(50);
         final boolean enabled = true;
 
         User user = new User();
