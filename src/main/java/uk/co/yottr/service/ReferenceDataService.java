@@ -11,6 +11,8 @@ public interface ReferenceDataService {
     List<Country> countries();
 
     List<MoneyPeriod> moneyPeriods();
+
+    List<CommercialOffering> commercialOfferings();
     List<FinancialArrangement> financialArrangements();
     List<VesselType> vesselTypes();
     List<RoleRequired> rolesRequired();

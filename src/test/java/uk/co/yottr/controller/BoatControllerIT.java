@@ -120,9 +120,11 @@ public class BoatControllerIT {
                         .param("frequency", "TRIP")
                         .param("financialArrangement", "COMMERCIAL")
                         .param("moneyAmount", "650")
-                        .param("moneyPeriod", "COURSE"))
+                        .param("moneyPeriod", "COURSE")
+                        .param("commercialOffering", "TUITION"))
                 .andExpect(status().is3xxRedirection());
 
         assertEquals(CourseLevel.DAY_SKIPPER, boatService.findByReference(boat.getReference()).getCourseLevel());
+        assertEquals(CommercialOffering.TUITION, boatService.findByReference(boat.getReference()).getCommercialOffering());
     }
 }

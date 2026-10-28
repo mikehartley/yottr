@@ -48,7 +48,7 @@
             <div th:replace="~{fields :: selectField(name='sailingPurpose', label='Purpose', options=${sailingPurposes}, blank='Choose')}"></div>
         </div>
         <div class="col-sm-6">
-            <div th:replace="~{fields :: selectField(name='courseLevel', label='Course level', options=${courseLevels}, blank='Not a course', also='courseLevelGivenForACourse', hint='Only for a course.')}"></div>
+            <div th:replace="~{fields :: selectField(name='courseLevel', label='Course level', options=${courseLevels}, blank='None', also='courseLevelGivenWhenNeeded', hint='For a course, or for tuition.')}"></div>
         </div>
     </div>
     <div th:replace="~{fields :: checkboxField(name='frequency', label='When', options=${frequencies})}"></div>
@@ -102,6 +102,9 @@
         </div>
         <div class="col-sm-4">
             <div th:replace="~{fields :: selectField(name='moneyPeriod', label='For', options=${moneyPeriods}, blank='Choose')}"></div>
+        </div>
+        <div class="col-sm-3">
+            <div th:replace="~{fields :: selectField(name='commercialOffering', label='What is offered', options=${commercialOfferings}, blank='Not commercial', also='commercialOfferingGivenWhenCommercial', hint='Only when crew pay a business.')}"></div>
         </div>
     </div>
 

@@ -129,6 +129,11 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         return List.of(MoneyPeriod.values());
     }
 
+    @Override
+    public List<CommercialOffering> commercialOfferings() {
+        return List.of(CommercialOffering.values());
+    }
+
 
     private class RankComparator implements Comparator<RyaSailCruisingLevel> {
         @Override

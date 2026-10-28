@@ -260,7 +260,7 @@ public class FormsTest {
         final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
 
         assertEquals(1, violations.size(), "should be one violation: " + violations);
-        assertEquals("courseLevelGivenForACourse", violations.iterator().next().getPropertyPath().toString());
+        assertEquals("courseLevelGivenWhenNeeded", violations.iterator().next().getPropertyPath().toString());
 
         form.setCourseLevel(CourseLevel.DAY_SKIPPER);
         assertEquals(Set.of(), validator.validate(form), "with its level");
@@ -320,6 +320,49 @@ public class FormsTest {
         assertEquals(Integer.valueOf(25), boat.getMoneyAmount());
         assertEquals(MoneyPeriod.WEEK, boat.getMoneyPeriod());
         assertEquals(form.getMoneyAmount(), ListingForm.from(boat).getMoneyAmount(), "and back to the form");
+    }
+
+    @Test
+    public void listingFormNeedsToKnowWhatIsOfferedWhenCrewPayABusiness() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setFinancialArrangement(FinancialArrangement.FinancialArrangementEnum.COMMERCIAL);
+        form.setMoneyAmount(900);
+        form.setMoneyPeriod(MoneyPeriod.WEEK);
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("commercialOfferingGivenWhenCommercial", violations.iterator().next().getPropertyPath().toString());
+
+        form.setCommercialOffering(CommercialOffering.SKIPPERED_CHARTER);
+        assertEquals(Set.of(), validator.validate(form));
+        final Boat boat = aBoat().withOwner(aUser().build()).build();
+        form.copyTo(boat);
+        assertEquals(CommercialOffering.SKIPPERED_CHARTER, boat.getCommercialOffering());
+        assertEquals(CommercialOffering.SKIPPERED_CHARTER, ListingForm.from(boat).getCommercialOffering(), "and back to the form");
+
+        form.setFinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAID);
+        form.copyTo(boat);
+        assertNull(boat.getCommercialOffering(), "only when crew pay a business");
+    }
+
+    @Test
+    public void tuitionNeedsItsLevelLikeACourse() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setSailingPurpose(SailingPurpose.CRUISING);
+        form.setFinancialArrangement(FinancialArrangement.FinancialArrangementEnum.COMMERCIAL);
+        form.setMoneyAmount(650);
+        form.setMoneyPeriod(MoneyPeriod.COURSE);
+        form.setCommercialOffering(CommercialOffering.TUITION);
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("courseLevelGivenWhenNeeded", violations.iterator().next().getPropertyPath().toString());
+
+        form.setCourseLevel(CourseLevel.COMP_CREW);
+        assertEquals(Set.of(), validator.validate(form));
+        final Boat boat = aBoat().withOwner(aUser().build()).build();
+        form.copyTo(boat);
+        assertEquals(CourseLevel.COMP_CREW, boat.getCourseLevel(), "kept for tuition, though the purpose isn't a course");
     }
 
     @Test

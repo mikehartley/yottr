@@ -141,9 +141,14 @@ public class Boat {
     @Column(name = "money_period")
     private MoneyPeriod moneyPeriod;
 
+    // ListingForm requires it when crew pay a business, and leaves it out otherwise
+    @Enumerated(EnumType.STRING)
+    @Column(name = "commercial_offering")
+    private CommercialOffering commercialOffering;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "course_level")
-    // ListingForm requires it for a course, and leaves it out otherwise
+    // ListingForm requires it for a course or tuition, and leaves it out otherwise
     private CourseLevel courseLevel;
 
     @Enumerated(EnumType.STRING)
@@ -365,6 +370,14 @@ public class Boat {
         final boolean estimate = financialArrangement != null
                 && FinancialArrangement.FinancialArrangementEnum.SHARED_VARIABLE.name().equals(financialArrangement.getName());
         return (estimate ? "about " : "") + amount + " " + moneyPeriod.getDisplayName();
+    }
+
+    public CommercialOffering getCommercialOffering() {
+        return commercialOffering;
+    }
+
+    public void setCommercialOffering(CommercialOffering commercialOffering) {
+        this.commercialOffering = commercialOffering;
     }
 
     public CourseLevel getCourseLevel() {

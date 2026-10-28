@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.co.yottr.model.Boat;
+import uk.co.yottr.model.CommercialOffering;
 import uk.co.yottr.model.CourseLevel;
 import uk.co.yottr.model.FinancialArrangement.FinancialArrangementEnum;
 import uk.co.yottr.model.Frequency;
@@ -99,7 +100,10 @@ public class ListingForm {
 
     private MoneyPeriod moneyPeriod;
 
-    // needed for a course, and ignored for anything else (isCourseLevelGivenForACourse)
+    // needed when crew pay a business, and ignored otherwise (isCommercialOfferingGivenWhenCommercial)
+    private CommercialOffering commercialOffering;
+
+    // needed for a course or for tuition, and ignored for anything else (isCourseLevelGivenWhenNeeded)
     private CourseLevel courseLevel;
 
     // either may be left out, and no end means open-ended (isWhenFromNotAfterWhenTo)
@@ -131,6 +135,7 @@ public class ListingForm {
         form.numberOfCrewWanted = boat.getNumberOfCrewWanted();
         form.moneyAmount = boat.getMoneyAmount();
         form.moneyPeriod = boat.getMoneyPeriod();
+        form.commercialOffering = boat.getCommercialOffering();
         form.courseLevel = boat.getCourseLevel();
         form.whenFrom = boat.getWhenFrom();
         form.whenTo = boat.getWhenTo();
@@ -159,7 +164,8 @@ public class ListingForm {
         final boolean money = financialArrangement != FinancialArrangementEnum.NO_CONTRIBUTION;
         boat.setMoneyAmount(money ? moneyAmount : null);
         boat.setMoneyPeriod(money ? moneyPeriod : null);
-        boat.setCourseLevel(sailingPurpose == SailingPurpose.COURSE ? courseLevel : null);
+        boat.setCommercialOffering(isCommercial() ? commercialOffering : null);
+        boat.setCourseLevel(isCourseLevelNeeded() ? courseLevel : null);
         boat.setWhenFrom(whenFrom);
         boat.setWhenTo(whenTo);
     }
@@ -169,9 +175,25 @@ public class ListingForm {
         return Arrays.stream(RyaSailCruisingLevel.Level.values()).anyMatch(level -> level.rank == minimumRequiredLevelByRank);
     }
 
-    @AssertTrue(message = "a course needs its level")
-    public boolean isCourseLevelGivenForACourse() {
-        return sailingPurpose != SailingPurpose.COURSE || courseLevel != null;
+    @AssertTrue(message = "a course or tuition needs its level")
+    public boolean isCourseLevelGivenWhenNeeded() {
+        return !isCourseLevelNeeded() || courseLevel != null;
+    }
+
+    @AssertTrue(message = "say what's offered")
+    public boolean isCommercialOfferingGivenWhenCommercial() {
+        return !isCommercial() || commercialOffering != null;
+    }
+
+    private boolean isCommercial() {
+        return financialArrangement == FinancialArrangementEnum.COMMERCIAL;
+    }
+
+    /**
+     * A course has a level, and so does tuition, which is a course that crew pay for.
+     */
+    private boolean isCourseLevelNeeded() {
+        return sailingPurpose == SailingPurpose.COURSE || (isCommercial() && commercialOffering == CommercialOffering.TUITION);
     }
 
     @AssertTrue(message = "say how much, and what it's for")
@@ -361,5 +383,13 @@ public class ListingForm {
 
     public void setMoneyPeriod(MoneyPeriod moneyPeriod) {
         this.moneyPeriod = moneyPeriod;
+    }
+
+    public CommercialOffering getCommercialOffering() {
+        return commercialOffering;
+    }
+
+    public void setCommercialOffering(CommercialOffering commercialOffering) {
+        this.commercialOffering = commercialOffering;
     }
 }
