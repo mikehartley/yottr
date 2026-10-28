@@ -3,6 +3,7 @@ package uk.co.yottr.form;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.User;
+import uk.co.yottr.validator.AcceptablePassword;
 import uk.co.yottr.validator.UsernameAvailable;
 
 public class SignupForm extends PersonalDetailsForm {
@@ -13,7 +14,7 @@ public class SignupForm extends PersonalDetailsForm {
     private String username;
 
     @NotNull(message = REQUIRED_ERROR_MSG)
-    @Size(min = 8, max = 60)
+    @AcceptablePassword
     private String password;
 
     /**

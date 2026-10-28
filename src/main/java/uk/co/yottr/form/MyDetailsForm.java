@@ -1,7 +1,7 @@
 package uk.co.yottr.form;
 
-import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.User;
+import uk.co.yottr.validator.AcceptablePassword;
 
 /**
  * A member's changes to their own details. The username can't be changed, and a blank password means
@@ -9,7 +9,7 @@ import uk.co.yottr.model.User;
  */
 public class MyDetailsForm extends PersonalDetailsForm {
 
-    @Size(min = 8, max = 60)
+    @AcceptablePassword
     private String password;
 
     /**

@@ -155,9 +155,19 @@ public class FormsTest {
     }
 
     @Test
+    public void signUpRefusesACommonPassword() {
+        final SignupForm form = aSignupForm();
+        form.setPassword("Password1234");
+
+        final Set<ConstraintViolation<SignupForm>> violations = validator.validate(form);
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("password", violations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
     public void myDetailsChecksTheLengthOfANewPassword() {
         final MyDetailsForm form = MyDetailsForm.from(aUser().build());
-        form.setPassword("short");
+        form.setPassword("eleven-char");
 
         assertTrue(form.isChangingPassword());
         final Set<ConstraintViolation<MyDetailsForm>> violations = validator.validate(form);
