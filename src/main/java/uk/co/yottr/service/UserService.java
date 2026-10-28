@@ -91,6 +91,16 @@ public class UserService {
     }
 
     /**
+     * The user, with their listings loaded.
+     */
+    @Transactional(readOnly = true)
+    public Optional<User> findMemberById(Long id) {
+        final Optional<User> user = userRepository.findById(id);
+        user.ifPresent(found -> found.getBoatListings().size());
+        return user;
+    }
+
+    /**
      * Enables a disabled account, or disables an enabled one and ends its sessions.
      */
     @Transactional

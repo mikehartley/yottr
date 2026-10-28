@@ -7,19 +7,24 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.exception.ResourceNotFoundException;
+import uk.co.yottr.form.MemberDetailsForm;
 import uk.co.yottr.form.MemberSearch;
 import uk.co.yottr.model.User;
+import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.security.Principal;
 
 @Controller
@@ -31,6 +36,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReferenceDataService referenceDataService;
 
     /**
      * The members, by username, narrowed by the search. htmx asks for this as the search changes, and gets back
@@ -69,6 +77,52 @@ public class AdminController {
         userService.flipEnabled(otherUser(id, principal));
 
         return REDIRECT_TO_MANAGE_USERS;
+    }
+
+    /**
+     * An administrator may correct any member's details, their own included.
+     */
+    @RequestMapping(value = "/admin/user/{id}/edit", method = RequestMethod.GET)
+    public ModelAndView editUserPage(@PathVariable long id) {
+        final User user = member(id);
+        return modelAndViewForMemberDetails(MemberDetailsForm.from(user), user);
+    }
+
+    @RequestMapping(value = "/admin/user/{id}/edit", method = RequestMethod.POST)
+    public ModelAndView editUserAction(@PathVariable long id, @Valid @ModelAttribute("details") MemberDetailsForm details,
+                                       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        final User user = member(id);
+
+        if (bindingResult.hasErrors()) {
+            LOG.info("Errors editing the details of {}: {}", user.getUsername(), bindingResult.getAllErrors());
+            return modelAndViewForMemberDetails(details, user);
+        }
+
+        details.applyTo(user);
+        userService.save(user, false);
+
+        LOG.info("Updated the details of {}", user.getUsername());
+
+        redirectAttributes.addFlashAttribute("updated", user.getUsername());
+        return new ModelAndView(REDIRECT_TO_MANAGE_USERS);
+    }
+
+    private ModelAndView modelAndViewForMemberDetails(MemberDetailsForm details, User user) {
+        final ModelAndView modelAndView = new ModelAndView("memberDetails");
+        modelAndView.addObject("details", details);
+        modelAndView.addObject("member", user);
+        modelAndView.addObject("countries", referenceDataService.countries());
+        return modelAndView;
+    }
+
+    /**
+     * The member with this ID, with their listings loaded.
+     */
+    private User member(long id) {
+        return userService.findMemberById(id).orElseThrow(() -> {
+            LOG.warn("User does not exist with ID {}", id);
+            return new ResourceNotFoundException("User does not exist with ID " + id);
+        });
     }
 
     /**

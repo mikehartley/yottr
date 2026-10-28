@@ -166,6 +166,32 @@ public class FormsTest {
     }
 
     @Test
+    public void memberDetailsRoundTripsAUserAndTheirListingLimit() {
+        final User user = aUser().withMaxListings(3).build();
+
+        final MemberDetailsForm form = MemberDetailsForm.from(user);
+        form.setLastName("Corrected");
+        form.setMaxListings(5);
+        form.applyTo(user);
+
+        assertEquals("Corrected", user.getLastName());
+        assertEquals(Integer.valueOf(5), user.getMaxListings());
+        assertEquals(Set.of(), validator.validate(form));
+    }
+
+    @Test
+    public void memberDetailsNeedsASensibleListingLimit() {
+        final MemberDetailsForm form = MemberDetailsForm.from(aUser().build());
+
+        for (Integer limit : new Integer[] {null, -1, 100}) {
+            form.setMaxListings(limit);
+            final Set<ConstraintViolation<MemberDetailsForm>> violations = validator.validate(form);
+            assertEquals(1, violations.size(), limit + " should be one violation: " + violations);
+            assertEquals("maxListings", violations.iterator().next().getPropertyPath().toString());
+        }
+    }
+
+    @Test
     public void listingFormRoundTripsABoat() {
         final Boat boat = aBoat().withOwner(aUser().build()).build();
         boat.setDateRelevantTo(LocalDate.of(2027, 6, 14));

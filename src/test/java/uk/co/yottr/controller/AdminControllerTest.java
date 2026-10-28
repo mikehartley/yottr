@@ -9,7 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import uk.co.yottr.form.MemberSearch;
+import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
+import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.ConstantsForTests;
 
@@ -19,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,9 +40,12 @@ public class AdminControllerTest extends AbstractControllerTest {
     @Autowired
     private UserService mockUserService;
 
+    @Autowired
+    private ReferenceDataService mockReferenceDataService;
+
     @BeforeEach
     public void resetMocks() {
-        reset(mockUserService);
+        reset(mockUserService, mockReferenceDataService);
     }
 
     @AfterEach
@@ -152,6 +159,81 @@ public class AdminControllerTest extends AbstractControllerTest {
                 .andExpect(status().isForbidden());
 
         verify(mockUserService).findById(userId);
+    }
+
+    @Test
+    public void testEditUserPageHasTheirDetails() throws Exception {
+        final User user = memberAlice();
+        when(mockUserService.findMemberById(4L)).thenReturn(Optional.of(user));
+
+        mockMvc.perform(get("/admin/user/4/edit"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("memberDetails"))
+                .andExpect(model().attribute("member", user))
+                .andExpect(model().attribute("details", allOf(
+                        hasProperty("lastName", equalTo("Smith")),
+                        hasProperty("maxListings", equalTo(2)))))
+                .andExpect(model().attributeExists("countries"));
+
+        verify(mockUserService).findMemberById(4L);
+    }
+
+    @Test
+    public void testEditUserSavesTheDetailsAndSaysSo() throws Exception {
+        final User user = memberAlice();
+        when(mockUserService.findMemberById(4L)).thenReturn(Optional.of(user));
+
+        mockMvc.perform(post("/admin/user/4/edit")
+                        .param("firstName", "Alice").param("lastName", "Jones").param("email", "alice@example.test")
+                        .param("mobile", "07700 900123").param("country", "UK").param("postcode", "PO1 1AA")
+                        .param("maxListings", "5"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/users"))
+                .andExpect(flash().attribute("updated", "alice"));
+
+        verify(mockUserService).findMemberById(4L);
+        verify(mockUserService).save(user, false);
+        assertEquals("Jones", user.getLastName());
+        assertEquals(Integer.valueOf(5), user.getMaxListings());
+        assertEquals("alice", user.getUsername(), "the username can't be changed");
+    }
+
+    @Test
+    public void testEditUserWithErrorsShowsThemAndSavesNothing() throws Exception {
+        final User user = memberAlice();
+        when(mockUserService.findMemberById(4L)).thenReturn(Optional.of(user));
+
+        mockMvc.perform(post("/admin/user/4/edit")
+                        .param("firstName", "Alice").param("lastName", "Jones").param("email", "not an email")
+                        .param("mobile", "07700 900123").param("country", "UK").param("postcode", "PO1 1AA")
+                        .param("maxListings", "-1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("memberDetails"))
+                .andExpect(model().attributeHasFieldErrors("details", "email", "maxListings"));
+
+        verify(mockUserService).findMemberById(4L);
+        verify(mockUserService, never()).save(any(User.class), anyBoolean());
+        assertEquals("Smith", user.getLastName(), "nothing is copied onto the member");
+    }
+
+    @Test
+    public void testEditUserWhenUserNotFound() throws Exception {
+        when(mockUserService.findMemberById(4L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/admin/user/4/edit")).andExpect(status().isNotFound());
+
+        verify(mockUserService).findMemberById(4L);
+    }
+
+    private static User memberAlice() {
+        final User user = userCalled("alice");
+        user.setFirstName("Alice");
+        user.setLastName("Smith");
+        user.setEmail("alice@example.test");
+        user.setMobile("07700 900123");
+        user.setCountry(Country.UK);
+        user.setPostcode("PO1 1AA");
+        return user;
     }
 
     private static User userCalled(String username) {

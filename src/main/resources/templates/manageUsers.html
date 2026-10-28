@@ -5,6 +5,8 @@
 <body>
 <section layout:fragment="content" id="manage-users-content" class="container py-4">
     <h1 class="h2 mb-4">Members</h1>
+    <div class="alert alert-success" id="member-updated-msg" th:if="${updated != null}"
+         th:text="'Saved the details of ' + ${updated} + '.'">Saved the details of alice.</div>
 
     <!--/* A plain GET form, like the boat search: htmx updates the results in place, and the address keeps up. */-->
     <form id="member-search-form" method="get" th:action="@{/admin/users}" th:object="${search}" class="yottr-card p-3 mb-4"
@@ -58,6 +60,7 @@
                         <span class="yottr-badge yottr-badge-warning" th:unless="${user.enabled}">Disabled</span>
                     </td>
                     <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/user/{userid}/edit(userid=${user.id})}">Edit</a>
                         <!--/* an administrator can't disable or delete their own account (AdminController refuses it too) */-->
                         <th:block th:unless="${user.username == #authentication?.name}">
                             <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">

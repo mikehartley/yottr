@@ -29,6 +29,11 @@ public class MenuItemTest {
     }
 
     @Test
+    public void editingAMemberComesUnderMembers() {
+        assertEquals("/admin/users", MenuItem.forPath("/admin/user/42/edit"));
+    }
+
+    @Test
     public void aPageOutsideTheMenuMatchesNoItem() {
         assertEquals("/index", MenuItem.forPath("/index"));
     }

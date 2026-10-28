@@ -3,6 +3,7 @@ package uk.co.yottr.acceptance;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
@@ -127,6 +128,17 @@ public class MemberSteps {
     public void iSearchTheMembersFor(String name) throws IOException {
         // what the search form sends without JavaScript; the username is unique, so the member is on the first page
         browser.open("/admin/users?text=" + URLEncoder.encode(username(name), StandardCharsets.UTF_8));
+    }
+
+    @When("I change {string}'s last name to {string}")
+    public void iChangeTheLastNameOf(String name, String lastName) throws IOException {
+        iSearchTheMembersFor(name);
+        final HtmlAnchor edit = browser.page().getFirstByXPath("//div[@id='results']//tbody/tr[1]//a[normalize-space()='Edit']");
+        browser.showing(edit.click());
+        final HtmlForm form = browser.form("member-details-form");
+        form.getInputByName("lastName").setValue(lastName);
+        final HtmlButton save = form.getFirstByXPath(".//button[@type='submit']");
+        browser.showing(save.click());
     }
 
     @Then("the members found are {string}")
