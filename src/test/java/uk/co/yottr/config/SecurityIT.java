@@ -89,6 +89,7 @@ public class SecurityIT {
         mockMvc.perform(get("/")).andExpect(status().isOk());
         mockMvc.perform(get("/index")).andExpect(status().isOk());
         mockMvc.perform(get("/signup")).andExpect(status().isOk());
+        mockMvc.perform(get("/about")).andExpect(status().isOk()).andExpect(content().string(containsString("Useful links")));
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
     }
 
