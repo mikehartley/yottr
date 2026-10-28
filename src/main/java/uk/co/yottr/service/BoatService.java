@@ -168,6 +168,6 @@ public class BoatService {
      */
     @Transactional(readOnly = true)
     public Page<Boat> search(BoatSearch search, Pageable pageable) {
-        return boatRepository.findAll(BoatSpecifications.matching(search), pageable);
+        return boatRepository.findAll(BoatSpecifications.matching(search, temporalProvider.today()), pageable);
     }
 }

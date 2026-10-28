@@ -1,16 +1,23 @@
 package uk.co.yottr.repository;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.User;
 
+import java.time.LocalDate;
+
 /**
  * The listing queries, as specifications that a search combines.
  */
 public final class BoatSpecifications {
+
+    private static final double FEET_PER_METRE = 3.28084;
 
     private BoatSpecifications() {
     }
@@ -27,9 +34,9 @@ public final class BoatSpecifications {
     }
 
     /**
-     * The visible listings that match every criterion given.
+     * The visible listings that match every criterion given, with how recently posted counted back from today.
      */
-    public static Specification<Boat> matching(BoatSearch search) {
+    public static Specification<Boat> matching(BoatSearch search, LocalDate today) {
         Specification<Boat> specification = visible();
 
         if (search.getText() != null && !search.getText().isBlank()) {
@@ -54,7 +61,38 @@ public final class BoatSpecifications {
             specification = specification.and((boat, query, cb) ->
                     cb.lessThanOrEqualTo(boat.get("minimumRequiredLevel").get("rank"), search.getMyLevel()));
         }
+        if (search.getPostedWithin() != null) {
+            final LocalDate since = today.minusDays(search.getPostedWithin());
+            specification = specification.and((boat, query, cb) -> cb.greaterThanOrEqualTo(boat.get("firstPosted"), since));
+        }
+        // A listing's dates may be open at either end: no start is from now, no end is open-ended.
+        if (search.getSailingFrom() != null) {
+            specification = specification.and((boat, query, cb) ->
+                    cb.or(cb.isNull(boat.get("whenTo")), cb.greaterThanOrEqualTo(boat.get("whenTo"), search.getSailingFrom())));
+        }
+        if (search.getSailingTo() != null) {
+            specification = specification.and((boat, query, cb) ->
+                    cb.or(cb.isNull(boat.get("whenFrom")), cb.lessThanOrEqualTo(boat.get("whenFrom"), search.getSailingTo())));
+        }
+        if (search.getMinLength() != null) {
+            specification = specification.and((boat, query, cb) ->
+                    cb.ge(lengthInFeet(boat, cb), search.getMinLength()));
+        }
+        if (search.getMaxLength() != null) {
+            specification = specification.and((boat, query, cb) ->
+                    cb.le(lengthInFeet(boat, cb), search.getMaxLength()));
+        }
         return specification;
+    }
+
+    /**
+     * The listing's length in feet, converting it if it was given in metres.
+     */
+    private static Expression<Double> lengthInFeet(Root<Boat> boat, CriteriaBuilder cb) {
+        final Expression<Double> length = boat.<Integer>get("length").as(Double.class);
+        return cb.<Double>selectCase()
+                .when(cb.isTrue(boat.get("isUnitsImperial")), length)
+                .otherwise(cb.prod(length, FEET_PER_METRE));
     }
 
     /**

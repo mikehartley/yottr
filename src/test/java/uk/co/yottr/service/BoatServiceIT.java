@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.context.annotation.Import;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.ListingForm;
@@ -45,6 +46,9 @@ public class BoatServiceIT {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private User owner;
 
@@ -328,6 +332,72 @@ public class BoatServiceIT {
         boatService.save(aBoat().withOwner(owner).withDescription("1000 miles of fun").build());
 
         assertEquals(Set.of(percent.getReference()), references(search(s -> s.setText("100%"))));
+    }
+
+    @Test
+    public void searchNarrowsByHowRecentlyAListingWasPosted() throws Exception {
+        final Boat today = boatService.save(aBoat().withOwner(owner).build());
+        final Boat twentyDaysAgo = postedDaysAgo(boatService.save(aBoat().withOwner(owner).build()), 20);
+        postedDaysAgo(boatService.save(aBoat().withOwner(owner).build()), 100);
+
+        assertEquals(Set.of(today.getReference()), references(search(s -> s.setPostedWithin(7))));
+        assertEquals(Set.of(today.getReference(), twentyDaysAgo.getReference()), references(search(s -> s.setPostedWithin(30))));
+    }
+
+    @Test
+    public void searchFindsListingsWhoseDatesOverlapTheSearchersOpenEndsIncluded() throws Exception {
+        final Boat june = sailing(LocalDate.of(2027, 6, 1), LocalDate.of(2027, 6, 14));
+        final Boat untilMay = sailing(null, LocalDate.of(2027, 5, 1));
+        final Boat fromJuly = sailing(LocalDate.of(2027, 7, 1), null);
+        final Boat anyTime = sailing(null, null);
+
+        assertEquals(Set.of(june.getReference(), anyTime.getReference()), references(search(s -> {
+            s.setSailingFrom(LocalDate.of(2027, 6, 10));
+            s.setSailingTo(LocalDate.of(2027, 6, 20));
+        })));
+        assertEquals(Set.of(fromJuly.getReference(), anyTime.getReference()),
+                references(search(s -> s.setSailingFrom(LocalDate.of(2027, 7, 5)))));
+        assertEquals(Set.of(untilMay.getReference(), anyTime.getReference()),
+                references(search(s -> s.setSailingTo(LocalDate.of(2027, 4, 1)))));
+        assertEquals(Set.of(june.getReference(), anyTime.getReference()), references(search(s -> {
+            s.setSailingFrom(LocalDate.of(2027, 6, 14));
+            s.setSailingTo(LocalDate.of(2027, 6, 14));
+        })), "the last day counts");
+    }
+
+    @Test
+    public void searchByLengthIsInFeetWhicheverUnitsTheListingUses() throws Exception {
+        final Boat feet33 = ofLength(33, true);
+        final Boat metres10 = ofLength(10, false);
+        final Boat metres12 = ofLength(12, false);
+        final Boat feet45 = ofLength(45, true);
+
+        assertEquals(Set.of(feet33.getReference(), metres12.getReference(), feet45.getReference()),
+                references(search(s -> s.setMinLength(33))), "10 m is 32.8 ft");
+        assertEquals(Set.of(feet33.getReference(), metres10.getReference()), references(search(s -> s.setMaxLength(33))));
+        assertEquals(Set.of(metres12.getReference()), references(search(s -> {
+            s.setMinLength(34);
+            s.setMaxLength(40);
+        })), "12 m is 39.4 ft");
+    }
+
+    private Boat postedDaysAgo(Boat boat, int days) {
+        jdbcTemplate.update("update boats set first_posted = ? where reference = ?", LocalDate.now().minusDays(days), boat.getReference());
+        return boat;
+    }
+
+    private Boat sailing(LocalDate from, LocalDate to) {
+        final Boat boat = aBoat().withOwner(owner).build();
+        boat.setWhenFrom(from);
+        boat.setWhenTo(to);
+        return boatService.save(boat);
+    }
+
+    private Boat ofLength(int length, boolean feet) {
+        final Boat boat = aBoat().withOwner(owner).build();
+        boat.setLength(length);
+        boat.setUnitsImperial(feet);
+        return boatService.save(boat);
     }
 
     @Test

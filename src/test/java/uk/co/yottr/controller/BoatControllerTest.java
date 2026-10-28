@@ -266,15 +266,18 @@ public class BoatControllerTest extends AbstractControllerTest {
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
         when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(boatPage);
 
-        mockMvc.perform(get("/s/listings/all").param("text", "solent").param("purpose", "RACING"))
+        mockMvc.perform(get("/s/listings/all").param("text", "solent").param("purpose", "RACING")
+                        .param("sailingFrom", "2027-06-01").param("minLength", "30"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("boatList"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attribute("search", allOf(
                         hasProperty("text", equalTo("solent")),
-                        hasProperty("purpose", equalTo(SailingPurpose.RACING)))))
-                .andExpect(model().attribute("searchQuery", equalTo("text=solent&purpose=RACING")))
-                .andExpect(model().attributeExists("wrapper", "sailingPurposes", "frequencies", "financialArrangements", "ryaSailCruisingLevels"))
+                        hasProperty("purpose", equalTo(SailingPurpose.RACING)),
+                        hasProperty("sailingFrom", equalTo(LocalDate.of(2027, 6, 1))),
+                        hasProperty("minLength", equalTo(30)))))
+                .andExpect(model().attribute("searchQuery", equalTo("text=solent&purpose=RACING&sailingFrom=2027-06-01&minLength=30")))
+                .andExpect(model().attributeExists("wrapper", "sailingPurposes", "frequencies", "financialArrangements", "ryaSailCruisingLevels", "postedWithinDays"))
                 .andExpect(header().string("Vary", containsString("HX-Request")));
 
         verify(mockBoatService).search(any(BoatSearch.class), eq(NEWEST_FIRST));

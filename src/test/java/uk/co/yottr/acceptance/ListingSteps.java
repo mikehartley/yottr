@@ -8,6 +8,7 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlRadioButtonInput;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -28,11 +29,18 @@ public class ListingSteps {
     @Given("I have posted a listing for a {string}")
     @When("I post a listing for a {string}")
     public void iPostAListingFor(String makeAndModel) throws IOException {
+        iPostAListingOfLength(makeAndModel, 33, "ft");
+    }
+
+    @Given("I have posted a listing for a {string} of {int} {word}")
+    public void iPostAListingOfLength(String makeAndModel, int length, String units) throws IOException {
         browser.open("/s/listings/new");
         final HtmlForm form = browser.form(LISTING_FORM_ID);
         form.getInputByName("title").setValue("Crew wanted for a " + makeAndModel);
         form.getInputByName("makeAndModel").setValue(makeAndModel);
-        form.getInputByName("length").setValue("33");
+        form.getInputByName("length").setValue(String.valueOf(length));
+        form.<HtmlRadioButtonInput>getFirstByXPath(
+                ".//input[@name='unitsImperial'][@value='" + units.equals("ft") + "']").setChecked(true);
         form.getSelectByName("vesselType").setSelectedAttribute("SAIL", true);
         form.getInputByName("yearBuilt").setValue("1987");
         form.getTextAreaByName("description").setText("Relaxed weekend cruising.");
@@ -71,6 +79,11 @@ public class ListingSteps {
     public void iSearchTheBoatsFor(String text) throws IOException {
         // what the search form sends without JavaScript
         browser.open("/s/listings/all?text=" + URLEncoder.encode(text, StandardCharsets.UTF_8));
+    }
+
+    @When("I search the boats for boats of {int} ft or more")
+    public void iSearchTheBoatsByLength(int minLength) throws IOException {
+        browser.open("/s/listings/all?minLength=" + minLength);
     }
 
     @Then("the boats found include a {string}")

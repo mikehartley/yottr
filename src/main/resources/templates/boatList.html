@@ -12,7 +12,7 @@
            the address keeps up, so a search can be bookmarked or shared. */-->
     <form id="search-form" method="get" th:action="@{/s/listings/all}" th:object="${search}" class="yottr-card p-3 mb-4"
           th:hx-get="@{/s/listings/all}" hx-target="#results" hx-swap="outerHTML" hx-push-url="true"
-          hx-trigger="change, input changed delay:400ms from:#text, submit">
+          hx-trigger="change, input changed delay:400ms from:#text, input changed delay:400ms from:#minLength, input changed delay:400ms from:#maxLength, submit">
         <div class="row g-2 align-items-end">
             <div class="col-md-12 col-lg-4">
                 <label class="form-label small" for="text">Search</label>
@@ -45,6 +45,32 @@
                     <option value="">Any</option>
                     <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.rank}" th:text="${level.displayName}">Day Skipper</option>
                 </select>
+            </div>
+        </div>
+        <div class="row g-2 align-items-end mt-1">
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="postedWithin">Posted</label>
+                <select class="form-select" th:field="*{postedWithin}">
+                    <option value="">Any time</option>
+                    <option th:each="days : ${postedWithinDays}" th:value="${days}"
+                            th:text="${days == 7} ? 'In the last week' : 'In the last ' + ${days} + ' days'">In the last week</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="sailingFrom">Sailing from</label>
+                <input type="date" class="form-control" th:field="*{sailingFrom}"/>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="sailingTo">Sailing to</label>
+                <input type="date" class="form-control" th:field="*{sailingTo}"/>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="minLength">Length from (ft)</label>
+                <input type="number" min="0" class="form-control" th:field="*{minLength}"/>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="maxLength">Length to (ft)</label>
+                <input type="number" min="0" class="form-control" th:field="*{maxLength}"/>
             </div>
         </div>
         <noscript><button type="submit" class="btn btn-primary mt-3">Search</button></noscript>

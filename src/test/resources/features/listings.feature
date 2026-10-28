@@ -84,3 +84,15 @@ Feature: Listing a boat
     And I delete the listing as an administrator
     Then I see "Deleted the listing"
     And the boats found do not include a "Contessa 26"
+
+  Scenario: A member searches the boats by length, in feet whatever the listing uses
+    Given a member called "alice"
+    And a member called "dave"
+    And "alice" has signed in
+    And I have posted a listing for a "Oyster 56" of 17 m
+    And I have posted a listing for a "Etap 21" of 21 ft
+    And I sign out
+    When "dave" signs in
+    And I search the boats for boats of 50 ft or more
+    Then the boats found include a "Oyster 56"
+    And the boats found do not include a "Etap 21"

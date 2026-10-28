@@ -5,6 +5,8 @@ import uk.co.yottr.model.FinancialArrangement.FinancialArrangementEnum;
 import uk.co.yottr.model.Frequency.FrequencyEnum;
 import uk.co.yottr.model.SailingPurpose;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BoatSearchTest {
@@ -32,6 +34,18 @@ public class BoatSearchTest {
         search.setMyLevel(300);
 
         assertEquals("text=Solent&purpose=CRUISING&when=WEEKENDS&costs=SHARED_FIXED&myLevel=300", search.toQueryString());
+    }
+
+    @Test
+    public void theQueryHasTheDatesAndLengths() {
+        final BoatSearch search = new BoatSearch();
+        search.setPostedWithin(30);
+        search.setSailingFrom(LocalDate.of(2027, 6, 1));
+        search.setSailingTo(LocalDate.of(2027, 6, 14));
+        search.setMinLength(30);
+        search.setMaxLength(40);
+
+        assertEquals("postedWithin=30&sailingFrom=2027-06-01&sailingTo=2027-06-14&minLength=30&maxLength=40", search.toQueryString());
     }
 
     @Test

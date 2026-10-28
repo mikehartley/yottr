@@ -212,6 +212,7 @@ public class BoatController {
         modelAndView.addObject("frequencies", referenceDataService.frequencies());
         modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
         modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        modelAndView.addObject("postedWithinDays", BoatSearch.POSTED_WITHIN_DAYS);
     }
 
     private void addReferenceData(ModelAndView modelAndView) {
