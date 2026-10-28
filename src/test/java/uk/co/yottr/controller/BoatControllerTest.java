@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.form.ListingForm;
@@ -631,40 +632,58 @@ public class BoatControllerTest extends AbstractControllerTest {
     @Test
     public void testListingPageForAnotherMember() throws Exception {
         final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
-        when(mockBoatService.findListingToView(boat.getReference(), "crew")).thenReturn(Optional.of(boat));
+        when(mockBoatService.findListingToView(boat.getReference(), "crew", false)).thenReturn(Optional.of(boat));
 
         mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "crew"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("listingPage"))
-                .andExpect(model().size(2))
+                .andExpect(model().size(3))
                 .andExpect(model().attribute("boat", sameInstance(boat)))
                 .andExpect(model().attribute("own", equalTo(false)))
-                .andExpect(content().string(containsString("Get in touch")));
+                .andExpect(model().attribute("administrator", equalTo(false)))
+                .andExpect(content().string(containsString("Get in touch")))
+                .andExpect(content().string(not(containsString("Moderation"))));
 
-        verify(mockBoatService).findListingToView(boat.getReference(), "crew");
+        verify(mockBoatService).findListingToView(boat.getReference(), "crew", false);
     }
 
     @Test
     public void testListingPageForItsOwner() throws Exception {
         final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
-        when(mockBoatService.findListingToView(boat.getReference(), "owner")).thenReturn(Optional.of(boat));
+        when(mockBoatService.findListingToView(boat.getReference(), "owner", false)).thenReturn(Optional.of(boat));
 
         mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "owner"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("own", equalTo(true)))
                 .andExpect(content().string(not(containsString("Get in touch"))));
 
-        verify(mockBoatService).findListingToView(boat.getReference(), "owner");
+        verify(mockBoatService).findListingToView(boat.getReference(), "owner", false);
+    }
+
+    @Test
+    public void testListingPageForAnAdministratorHasTheModerationActions() throws Exception {
+        final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
+        boat.setWithdrawn(true);
+        when(mockBoatService.findListingToView(boat.getReference(), "ada", true)).thenReturn(Optional.of(boat));
+
+        mockMvc.perform(get("/s/listings/" + boat.getReference())
+                        .principal(new TestingAuthenticationToken("ada", null, "FREE", "ADMIN")))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("administrator", equalTo(true)))
+                .andExpect(content().string(containsString("Withdrawn by an administrator")))
+                .andExpect(content().string(containsString("Put back")));
+
+        verify(mockBoatService).findListingToView(boat.getReference(), "ada", true);
     }
 
     @Test
     public void testListingPageWhenTheListingCannotBeSeen() throws Exception {
-        when(mockBoatService.findListingToView("hidden", "crew")).thenReturn(Optional.empty());
+        when(mockBoatService.findListingToView("hidden", "crew", false)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/s/listings/hidden").principal(() -> "crew"))
                 .andExpect(status().isNotFound());
 
-        verify(mockBoatService).findListingToView("hidden", "crew");
+        verify(mockBoatService).findListingToView("hidden", "crew", false);
     }
 
     @Test

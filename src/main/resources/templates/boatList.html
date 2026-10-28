@@ -5,6 +5,8 @@
 <body>
 <section layout:fragment="content" id="boat-list-content" class="container py-4">
     <h1 class="h2 mb-4">Boats looking for crew</h1>
+    <div class="alert alert-success" id="listing-deleted-msg" th:if="${deleted != null}"
+         th:text="'Deleted the listing ' + ${deleted} + '.'">Deleted the listing Weekends in the Solent.</div>
 
     <!--/* A plain GET form, which works without JavaScript. With htmx, the results update as the search changes and
            the address keeps up, so a search can be bookmarked or shared. */-->

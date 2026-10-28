@@ -251,7 +251,7 @@ public class BoatServiceTest {
         final Boat boat = new Boat(owner);
         when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
 
-        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), "someone else"));
+        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), "someone else", false));
     }
 
     @Test
@@ -260,7 +260,7 @@ public class BoatServiceTest {
         boat.setSuspended(true);
         when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
 
-        assertEquals(Optional.empty(), boatService.findListingToView(boat.getReference(), "someone else"));
+        assertEquals(Optional.empty(), boatService.findListingToView(boat.getReference(), "someone else", false));
     }
 
     @Test
@@ -269,7 +269,7 @@ public class BoatServiceTest {
         owner.setEnabled(false);
         when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
 
-        assertEquals(Optional.empty(), boatService.findListingToView(boat.getReference(), "someone else"));
+        assertEquals(Optional.empty(), boatService.findListingToView(boat.getReference(), "someone else", false));
     }
 
     @Test
@@ -278,13 +278,45 @@ public class BoatServiceTest {
         boat.setSuspended(true);
         when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
 
-        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), owner.getUsername()));
+        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), owner.getUsername(), false));
+    }
+
+    @Test
+    public void otherMembersCannotViewAWithdrawnListingButItsOwnerCan() {
+        final Boat boat = new Boat(owner);
+        boat.setWithdrawn(true);
+        when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
+
+        assertEquals(Optional.empty(), boatService.findListingToView(boat.getReference(), "someone else", false));
+        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), owner.getUsername(), false));
+    }
+
+    @Test
+    public void anAdministratorCanViewAnyListing() {
+        final Boat boat = new Boat(owner);
+        boat.setSuspended(true);
+        boat.setWithdrawn(true);
+        owner.setEnabled(false);
+        when(boatRepository.findWithOwnerByReference(boat.getReference())).thenReturn(Optional.of(boat));
+
+        assertEquals(Optional.of(boat), boatService.findListingToView(boat.getReference(), "an administrator", true));
+    }
+
+    @Test
+    public void flipWithdrawnWithdrawsAndPutsBackWithoutMarkingTheListingUpdated() {
+        final Boat boat = new Boat(owner);
+        final LocalDate lastUpdated = boat.getLastUpdated();
+        when(boatRepository.save(boat)).thenReturn(boat);
+
+        assertTrue(boatService.flipWithdrawn(boat).isWithdrawn());
+        assertFalse(boatService.flipWithdrawn(boat).isWithdrawn());
+        assertEquals(lastUpdated, boat.getLastUpdated());
     }
 
     @Test
     public void viewingAListingThatIsNotThereFindsNothing() {
         when(boatRepository.findWithOwnerByReference("nope")).thenReturn(Optional.empty());
 
-        assertEquals(Optional.empty(), boatService.findListingToView("nope", "anyone"));
+        assertEquals(Optional.empty(), boatService.findListingToView("nope", "anyone", false));
     }
 }

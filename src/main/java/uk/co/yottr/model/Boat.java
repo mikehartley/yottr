@@ -153,6 +153,10 @@ public class Boat {
     @Column(name = "suspended", nullable = false)
     private boolean suspended;
 
+    // taken down by an administrator; only an administrator can put it back
+    @Column(name = "withdrawn", nullable = false)
+    private boolean withdrawn;
+
     /**
      * For Hibernate.
      */
@@ -352,11 +356,19 @@ public class Boat {
     }
 
     /**
-     * Whether other members can see the listing: its owner hasn't suspended it, and the owner's account is enabled.
-     * BoatSpecifications.visible is the same rule as a query.
+     * Whether other members can see the listing: its owner hasn't suspended it, an administrator hasn't withdrawn
+     * it, and the owner's account is enabled. BoatSpecifications.visible is the same rule as a query.
      */
     public boolean isVisible() {
-        return !suspended && owner.isEnabled();
+        return !suspended && !withdrawn && owner.isEnabled();
+    }
+
+    public boolean isWithdrawn() {
+        return withdrawn;
+    }
+
+    public void setWithdrawn(boolean withdrawn) {
+        this.withdrawn = withdrawn;
     }
 
     public void setSuspended(boolean suspended) {

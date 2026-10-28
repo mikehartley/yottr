@@ -11,7 +11,9 @@
             <article class="yottr-card yottr-listing p-4">
                 <header class="mb-3">
                     <div class="d-flex flex-wrap gap-1 mb-2">
-                        <span class="yottr-badge yottr-badge-warning" th:if="${boat.suspended}">Suspended: only you can see it</span>
+                        <span class="yottr-badge yottr-badge-warning" th:if="${boat.withdrawn}">Withdrawn by an administrator</span>
+                        <span class="yottr-badge yottr-badge-warning" th:if="${boat.suspended}" th:text="${own} ? 'Suspended: only you can see it' : 'Suspended by its owner'">Suspended: only you can see it</span>
+                        <span class="yottr-badge yottr-badge-warning" th:if="${!boat.owner.enabled}">Owner's account disabled</span>
                         <span class="yottr-badge" th:text="${boat.sailingPurpose.displayName}">Cruising</span>
                         <span class="yottr-badge" th:if="${boat.courseLevel != null}" th:text="${boat.courseLevel.displayName}">Day Skipper</span>
                     </div>
@@ -86,7 +88,20 @@
             <aside class="yottr-card p-4" th:if="${own}">
                 <h2 class="h5">Your listing</h2>
                 <p class="text-body-secondary small">Other members see your name, email and mobile here, so they can get in touch.</p>
+                <p class="text-body-secondary small" th:if="${boat.withdrawn}">An administrator has withdrawn it, so other members can't see it.</p>
                 <a class="btn btn-outline-primary" th:href="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}">Edit</a>
+            </aside>
+            <aside class="yottr-card p-4 mt-4" id="moderation" th:if="${administrator}">
+                <h2 class="h5">Moderation</h2>
+                <p class="text-body-secondary small" th:text="${boat.withdrawn} ? 'Withdrawn: only its owner and administrators can see it.' : 'Withdrawing hides it from other members until an administrator puts it back. Its owner can see that it was withdrawn.'">Withdrawing hides it.</p>
+                <div class="d-flex gap-2">
+                    <form class="inline-action" method="post" th:action="@{/admin/listings/{boatReference}/withdrawn/flip(boatReference=${boat.reference})}">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${boat.withdrawn} ? 'Put back' : 'Withdraw'">Withdraw</button>
+                    </form>
+                    <form class="inline-action" method="post" th:action="@{/admin/listings/{boatReference}/delete(boatReference=${boat.reference})}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this listing for good?')">Delete</button>
+                    </form>
+                </div>
             </aside>
         </div>
     </div>

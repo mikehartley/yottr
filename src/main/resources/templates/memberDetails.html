@@ -16,7 +16,17 @@
                     <dt class="col-sm-4">Joined</dt>
                     <dd class="col-sm-8" th:text="${member.joined} ? ${#temporals.format(member.joined, 'd MMM yyyy')} : 'Not recorded'">28 Oct 2026</dd>
                     <dt class="col-sm-4">Listings</dt>
-                    <dd class="col-sm-8" th:text="${member.boatListings.size()}">1</dd>
+                    <dd class="col-sm-8">
+                        <span th:if="${member.boatListings.empty}">None</span>
+                        <!--/* links to each listing's page, where an administrator can withdraw or delete it */-->
+                        <ul class="list-unstyled mb-0" th:unless="${member.boatListings.empty}">
+                            <li th:each="boat : ${member.boatListings}">
+                                <a th:href="@{/s/listings/{boatReference}(boatReference=${boat.reference})}" th:text="${boat.title}">Weekends in the Solent</a>
+                                <span class="yottr-badge yottr-badge-warning" th:if="${boat.withdrawn}">Withdrawn</span>
+                                <span class="yottr-badge yottr-badge-warning" th:if="${boat.suspended}">Suspended</span>
+                            </li>
+                        </ul>
+                    </dd>
                 </dl>
 
                 <th:block th:replace="~{personalDetails :: fields}"></th:block>

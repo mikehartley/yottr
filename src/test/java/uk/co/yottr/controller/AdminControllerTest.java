@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import uk.co.yottr.form.MemberSearch;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
+import uk.co.yottr.model.Boat;
+import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.ConstantsForTests;
@@ -43,14 +45,17 @@ public class AdminControllerTest extends AbstractControllerTest {
     @Autowired
     private ReferenceDataService mockReferenceDataService;
 
+    @Autowired
+    private BoatService mockBoatService;
+
     @BeforeEach
     public void resetMocks() {
-        reset(mockUserService, mockReferenceDataService);
+        reset(mockUserService, mockReferenceDataService, mockBoatService);
     }
 
     @AfterEach
     public void afterEachTest() {
-        verifyNoMoreInteractions(mockUserService);
+        verifyNoMoreInteractions(mockUserService, mockBoatService);
     }
 
     @Test
@@ -223,6 +228,44 @@ public class AdminControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/admin/user/4/edit")).andExpect(status().isNotFound());
 
         verify(mockUserService).findMemberById(4L);
+    }
+
+    @Test
+    public void testFlipWithdrawnGoesBackToTheListing() throws Exception {
+        final Boat boat = new Boat(userCalled("alice"));
+        when(mockBoatService.findAnyListing(boat.getReference())).thenReturn(Optional.of(boat));
+
+        mockMvc.perform(post("/admin/listings/" + boat.getReference() + "/withdrawn/flip"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/s/listings/" + boat.getReference()));
+
+        verify(mockBoatService).findAnyListing(boat.getReference());
+        verify(mockBoatService).flipWithdrawn(boat);
+    }
+
+    @Test
+    public void testDeleteAnyListingSaysWhichWasDeleted() throws Exception {
+        final Boat boat = new Boat(userCalled("alice"));
+        boat.setTitle("Weekends in the Solent");
+        when(mockBoatService.findAnyListing(boat.getReference())).thenReturn(Optional.of(boat));
+
+        mockMvc.perform(post("/admin/listings/" + boat.getReference() + "/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/s/listings/all"))
+                .andExpect(flash().attribute("deleted", "Weekends in the Solent"));
+
+        verify(mockBoatService).findAnyListing(boat.getReference());
+        verify(mockBoatService).delete(boat);
+    }
+
+    @Test
+    public void testModeratingAListingThatIsNotThere() throws Exception {
+        when(mockBoatService.findAnyListing("nope")).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/admin/listings/nope/withdrawn/flip")).andExpect(status().isNotFound());
+        mockMvc.perform(post("/admin/listings/nope/delete")).andExpect(status().isNotFound());
+
+        verify(mockBoatService, times(2)).findAnyListing("nope");
     }
 
     private static User memberAlice() {

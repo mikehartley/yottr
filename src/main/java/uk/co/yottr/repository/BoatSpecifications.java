@@ -16,13 +16,13 @@ public final class BoatSpecifications {
     }
 
     /**
-     * Listings other members may see: not suspended, and their owner's account enabled. Boat.isVisible is the
-     * same rule for a single listing.
+     * Listings other members may see: not suspended, not withdrawn, and their owner's account enabled.
+     * Boat.isVisible is the same rule for a single listing.
      */
     public static Specification<Boat> visible() {
         return (boat, query, cb) -> {
             final Join<Boat, User> owner = boat.join("owner");
-            return cb.and(cb.isFalse(boat.get("suspended")), cb.isTrue(owner.get("enabled")));
+            return cb.and(cb.isFalse(boat.get("suspended")), cb.isFalse(boat.get("withdrawn")), cb.isTrue(owner.get("enabled")));
         };
     }
 

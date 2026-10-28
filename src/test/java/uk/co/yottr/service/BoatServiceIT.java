@@ -255,7 +255,7 @@ public class BoatServiceIT {
     public void aListingToViewComesWithItsOwner() throws Exception {
         final Boat boat = boatService.save(aBoat().withOwner(owner).build());
 
-        final Boat found = boatService.findListingToView(boat.getReference(), "someone else").orElseThrow();
+        final Boat found = boatService.findListingToView(boat.getReference(), "someone else", false).orElseThrow();
 
         // outside the service's transaction, so these fail if the owner, or the eager frequencies, weren't loaded
         assertEquals(owner.getEmail(), found.getOwner().getEmail());
@@ -266,8 +266,8 @@ public class BoatServiceIT {
     public void otherMembersCannotViewASuspendedListing() throws Exception {
         final Boat boat = boatService.save(aBoat().withOwner(owner).withSuspended(true).build());
 
-        assertTrue(boatService.findListingToView(boat.getReference(), "someone else").isEmpty(), "hidden from others");
-        assertTrue(boatService.findListingToView(boat.getReference(), owner.getUsername()).isPresent(), "seen by its owner");
+        assertTrue(boatService.findListingToView(boat.getReference(), "someone else", false).isEmpty(), "hidden from others");
+        assertTrue(boatService.findListingToView(boat.getReference(), owner.getUsername(), false).isPresent(), "seen by its owner");
     }
 
     @Test
@@ -333,8 +333,25 @@ public class BoatServiceIT {
     @Test
     public void searchLeavesOutListingsMembersCannotSee() throws Exception {
         final Boat suspended = boatService.save(aBoat().withOwner(owner).withSuspended(true).withDescription("hidden gem").build());
+        final Boat withdrawn = aBoat().withOwner(owner).withDescription("hidden gem").build();
+        withdrawn.setWithdrawn(true);
+        boatService.save(withdrawn);
 
-        assertTrue(references(search(s -> s.setText("hidden gem"))).isEmpty(), "suspended " + suspended.getReference());
+        assertTrue(references(search(s -> s.setText("hidden gem"))).isEmpty(),
+                "suspended " + suspended.getReference() + ", withdrawn " + withdrawn.getReference());
+    }
+
+    @Test
+    public void anAdministratorCanWithdrawAndDeleteAnyListing() throws Exception {
+        final Boat boat = boatService.save(aBoat().withOwner(owner).build());
+
+        boatService.flipWithdrawn(boatService.findAnyListing(boat.getReference()).orElseThrow());
+        assertTrue(boatService.findAnyListing(boat.getReference()).orElseThrow().isWithdrawn(), "withdrawn");
+        assertTrue(boatService.findListingToView(boat.getReference(), "someone else", false).isEmpty(), "hidden from others");
+        assertTrue(boatService.findListingToView(boat.getReference(), "an administrator", true).isPresent(), "seen by administrators");
+
+        boatService.delete(boatService.findAnyListing(boat.getReference()).orElseThrow());
+        assertTrue(boatService.findAnyListing(boat.getReference()).isEmpty(), "deleted");
     }
 
     private Page<Boat> search(Consumer<BoatSearch> criteria) {

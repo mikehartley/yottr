@@ -15,6 +15,7 @@
             </div>
         </div>
         <div class="d-flex flex-wrap gap-1">
+            <span class="yottr-badge yottr-badge-warning" th:if="${boat.withdrawn}">Withdrawn by an administrator</span>
             <span class="yottr-badge yottr-badge-warning" th:if="${boat.suspended}">Suspended</span>
             <span class="yottr-badge" th:text="${boat.sailingPurpose.displayName}">Cruising</span>
             <span class="yottr-badge" th:if="${boat.courseLevel != null}" th:text="${boat.courseLevel.displayName}">Day Skipper</span>

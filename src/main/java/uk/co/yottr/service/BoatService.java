@@ -86,12 +86,20 @@ public class BoatService {
 
     /**
      * The listing with this reference, with its owner, if the member may see it: any member can see a visible
-     * listing, and an owner can always see their own.
+     * listing, an owner can always see their own, and an administrator can see any.
      */
     @Transactional(readOnly = true)
-    public Optional<Boat> findListingToView(String reference, String memberUsername) {
+    public Optional<Boat> findListingToView(String reference, String memberUsername, boolean administrator) {
         return boatRepository.findWithOwnerByReference(reference)
-                .filter(boat -> boat.isVisible() || boat.getOwner().getUsername().equals(memberUsername));
+                .filter(boat -> administrator || boat.isVisible() || boat.getOwner().getUsername().equals(memberUsername));
+    }
+
+    /**
+     * Any listing with this reference, whoever owns it, for an administrator.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Boat> findAnyListing(String reference) {
+        return Optional.ofNullable(boatRepository.findByReference(reference));
     }
 
     @Transactional(readOnly = true)
@@ -103,6 +111,17 @@ public class BoatService {
     public Boat flipSuspended(Boat boat) {
         boat.setSuspended(!boat.isSuspended());
         return save(boat);
+    }
+
+    /**
+     * Withdraws a listing, or puts a withdrawn one back. This is the administrators' counterpart of suspending:
+     * the owner can't undo it.
+     */
+    @Transactional
+    public Boat flipWithdrawn(Boat boat) {
+        boat.setWithdrawn(!boat.isWithdrawn());
+        // not save(), which marks the listing updated: the owner hasn't changed it
+        return boatRepository.save(boat);
     }
 
     /**

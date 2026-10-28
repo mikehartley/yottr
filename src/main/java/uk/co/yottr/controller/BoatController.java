@@ -19,6 +19,7 @@ import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.security.Administrators;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
@@ -112,16 +113,19 @@ public class BoatController {
 
     /**
      * A listing's own page, with its owner's contact details, which any signed-in member may see. A listing that
-     * isn't visible (suspended, or its owner disabled) is reported as not found, except to its owner.
+     * isn't visible (suspended, withdrawn, or its owner disabled) is reported as not found, except to its owner and
+     * to administrators, who also get the means to withdraw or delete it.
      */
     @RequestMapping(value = "/s/listings/{boatReference}", method = RequestMethod.GET)
     public ModelAndView listingPage(@PathVariable String boatReference, Principal principal) {
-        final Boat boat = boatService.findListingToView(boatReference, principal.getName())
+        final boolean administrator = Administrators.isAdministrator(principal);
+        final Boat boat = boatService.findListingToView(boatReference, principal.getName(), administrator)
                 .orElseThrow(() -> new ResourceNotFoundException("No listing with reference " + boatReference));
 
         final ModelAndView modelAndView = new ModelAndView("listingPage");
         modelAndView.addObject("boat", boat);
         modelAndView.addObject("own", boat.getOwner().getUsername().equals(principal.getName()));
+        modelAndView.addObject("administrator", administrator);
         return modelAndView;
     }
 

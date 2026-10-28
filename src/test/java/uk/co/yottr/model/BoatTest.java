@@ -315,7 +315,7 @@ public class BoatTest {
     }
 
     @Test
-    public void aListingIsVisibleUnlessSuspendedOrItsOwnerIsDisabled() {
+    public void aListingIsVisibleUnlessSuspendedWithdrawnOrItsOwnerIsDisabled() {
         final User owner = aUser().build();
         final Boat boat = new Boat(owner);
         assertTrue(boat.isVisible(), "live, with an enabled owner");
@@ -324,6 +324,10 @@ public class BoatTest {
         assertFalse(boat.isVisible(), "suspended");
 
         boat.setSuspended(false);
+        boat.setWithdrawn(true);
+        assertFalse(boat.isVisible(), "withdrawn");
+
+        boat.setWithdrawn(false);
         owner.setEnabled(false);
         assertFalse(boat.isVisible(), "owner disabled");
     }

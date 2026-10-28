@@ -18,7 +18,9 @@ import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.form.MemberDetailsForm;
 import uk.co.yottr.form.MemberSearch;
+import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
@@ -39,6 +41,9 @@ public class AdminController {
 
     @Autowired
     private ReferenceDataService referenceDataService;
+
+    @Autowired
+    private BoatService boatService;
 
     /**
      * The members, by username, narrowed by the search. htmx asks for this as the search changes, and gets back
@@ -105,6 +110,36 @@ public class AdminController {
 
         redirectAttributes.addFlashAttribute("updated", user.getUsername());
         return new ModelAndView(REDIRECT_TO_MANAGE_USERS);
+    }
+
+    /**
+     * Takes any member's listing down, or puts it back. Its owner sees that it was withdrawn, and can't undo it.
+     */
+    @RequestMapping(value = "/admin/listings/{boatReference}/withdrawn/flip", method = RequestMethod.POST)
+    public String flipWithdrawn(@PathVariable String boatReference) {
+
+        LOG.info("updating withdrawn status for boat listing with reference {}", boatReference);
+
+        boatService.flipWithdrawn(anyListing(boatReference));
+
+        return "redirect:/s/listings/" + boatReference;
+    }
+
+    @RequestMapping(value = "/admin/listings/{boatReference}/delete", method = RequestMethod.POST)
+    public String deleteListing(@PathVariable String boatReference, RedirectAttributes redirectAttributes) {
+
+        LOG.info("an administrator is deleting listing with boat reference {}", boatReference);
+
+        final Boat boat = anyListing(boatReference);
+        boatService.delete(boat);
+
+        redirectAttributes.addFlashAttribute("deleted", boat.getTitle());
+        return "redirect:/s/listings/all";
+    }
+
+    private Boat anyListing(String boatReference) {
+        return boatService.findAnyListing(boatReference)
+                .orElseThrow(() -> new ResourceNotFoundException("No listing with reference " + boatReference));
     }
 
     private ModelAndView modelAndViewForMemberDetails(MemberDetailsForm details, User user) {

@@ -92,6 +92,15 @@ public class ListingSteps {
         browser.showing(delete.click());
     }
 
+    @When("I {word} the listing as an administrator")
+    public void iModerateTheListing(String action) throws IOException {
+        // Withdraw, Put back or Delete, from the Moderation panel on the listing's page
+        final String label = action.equals("restore") ? "Put back" : action.substring(0, 1).toUpperCase() + action.substring(1);
+        final HtmlButton button = browser.page().getFirstByXPath("//aside[@id='moderation']//button[normalize-space()='" + label + "']");
+        assertThat(button).as(label + " button").isNotNull();
+        browser.showing(button.click());
+    }
+
     private void save(HtmlForm form) throws IOException {
         final HtmlButton save = form.getFirstByXPath(".//button[@type='submit']");
         browser.showing(save.click());

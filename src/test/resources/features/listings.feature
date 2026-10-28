@@ -52,3 +52,35 @@ Feature: Listing a boat
     And I search the boats for "moody"
     Then the boats found include a "Moody 31"
     And the boats found do not include a "Westerly Konsort"
+
+  Scenario: An administrator withdraws a listing, which its owner can't put back
+    Given a member called "alice"
+    And a member called "dave"
+    And an administrator called "ada"
+    And "alice" has signed in
+    And I have posted a listing for a "Hallberg-Rassy 42"
+    And I sign out
+    When "ada" signs in
+    And I open the "Hallberg-Rassy 42" listing from all the boats
+    And I withdraw the listing as an administrator
+    Then I see "Withdrawn by an administrator"
+    And I sign out
+    When "dave" signs in
+    And I search the boats for "Hallberg-Rassy 42"
+    Then the boats found do not include a "Hallberg-Rassy 42"
+    And I sign out
+    When "alice" signs in
+    And I open "/s/listings/mine"
+    Then I see "Withdrawn by an administrator"
+
+  Scenario: An administrator deletes a listing
+    Given a member called "alice"
+    And an administrator called "ada"
+    And "alice" has signed in
+    And I have posted a listing for a "Contessa 26"
+    And I sign out
+    When "ada" signs in
+    And I open the "Contessa 26" listing from all the boats
+    And I delete the listing as an administrator
+    Then I see "Deleted the listing"
+    And the boats found do not include a "Contessa 26"
