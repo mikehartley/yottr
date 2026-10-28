@@ -24,7 +24,7 @@ public class MenuItem implements HandlerInterceptor {
     static final String MEMBERS = "/admin/users";
 
     // the fixed paths under /s/listings/; anything else there is a listing reference
-    private static final Set<String> LISTINGS_PAGES = Set.of("all", "mine", "new");
+    private static final Set<String> LISTINGS_PAGES = Set.of("all", "mine", "new", "saved");
     private static final Pattern LISTING_PAGE = Pattern.compile("/s/listings/([^/]+)");
     private static final Pattern EDIT_LISTING_PAGE = Pattern.compile("/s/listings/[^/]+/edit");
     private static final Pattern EDIT_MEMBER_PAGE = Pattern.compile("/admin/user/[^/]+/edit");

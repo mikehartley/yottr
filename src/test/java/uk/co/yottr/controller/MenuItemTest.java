@@ -14,6 +14,7 @@ public class MenuItemTest {
         assertEquals("/s/listings/all", MenuItem.forPath("/s/listings/all"));
         assertEquals("/s/listings/mine", MenuItem.forPath("/s/listings/mine"));
         assertEquals("/s/listings/new", MenuItem.forPath("/s/listings/new"));
+        assertEquals("/s/listings/saved", MenuItem.forPath("/s/listings/saved"));
         assertEquals("/s/myDetails", MenuItem.forPath("/s/myDetails"));
         assertEquals("/admin/users", MenuItem.forPath("/admin/users"));
     }

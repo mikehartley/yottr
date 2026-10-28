@@ -34,4 +34,26 @@ class FindingABoatIT extends Journey {
         alice.opensTheListingFor("Moody 31");
         assertThat(alice.sees()).contains("Your listing").doesNotContain("Get in touch");
     }
+
+    @Test
+    void crewSaveABoatAndSeeWhenItIsNoLongerAvailable() {
+        final Person alice = member("alice");
+        final Person dave = member("dave");
+        alice.signsIn();
+        alice.postsAListingFor("Sadler 34");
+        dave.signsIn();
+
+        dave.savesTheListingFor("Sadler 34");
+        assertThat(dave.savedBoats()).containsExactly("Sadler 34");
+        assertThat(dave.currentMenuItem()).isEqualTo("Saved");
+
+        alice.suspendsTheirListing("Sadler 34");
+        assertThat(dave.savedBoat("Sadler 34")).contains("No longer available");
+
+        alice.reEnablesTheirListing("Sadler 34");
+        assertThat(dave.savedBoat("Sadler 34")).doesNotContain("No longer available");
+
+        dave.removesTheSavedBoat("Sadler 34");
+        assertThat(dave.savedBoats()).isEmpty();
+    }
 }

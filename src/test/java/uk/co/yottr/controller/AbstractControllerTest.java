@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
+import uk.co.yottr.service.SavedBoatsService;
 import uk.co.yottr.service.UserService;
 
 /**
@@ -36,4 +37,7 @@ public abstract class AbstractControllerTest {
 
     @MockitoBean
     LoggersEndpoint mockLoggersEndpoint;
+
+    @MockitoBean
+    SavedBoatsService mockSavedBoatsService;
 }

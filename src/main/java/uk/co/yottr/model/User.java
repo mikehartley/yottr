@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -82,6 +83,11 @@ public class User {
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("reference")
     private List<Boat> boatListings = new ArrayList<>();
+
+    // listings they've saved to come back to
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "saved_boats", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "boat_id"))
+    private Set<Boat> savedBoats = new HashSet<>();
 
     // the day they signed up; null for members from before it was recorded
     @Column(name = "joined")
@@ -203,6 +209,10 @@ public class User {
 
     public List<Boat> getBoatListings() {
         return boatListings; //TODO return immutable list
+    }
+
+    public Set<Boat> getSavedBoats() {
+        return savedBoats;
     }
 
     public LocalDate getJoined() {

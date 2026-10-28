@@ -223,6 +223,37 @@ class Person {
         show(click(title));
     }
 
+    /**
+     * Saves a listing from All Boats.
+     */
+    void savesTheListingFor(String makeAndModel) {
+        goesTo("Boats");
+        final HtmlButton save = listingCard(makeAndModel).getFirstByXPath(".//button[normalize-space()='Save']");
+        assertThat(save).as("the Save button on the " + makeAndModel + " listing").isNotNull();
+        show(click(save));
+    }
+
+    /**
+     * The make and model of each boat on Saved.
+     */
+    List<String> savedBoats() {
+        goesTo("Saved");
+        return makesOnThePage();
+    }
+
+    /**
+     * What Saved shows of one of the boats on it.
+     */
+    String savedBoat(String makeAndModel) {
+        goesTo("Saved");
+        return listingCard(makeAndModel).asNormalizedText();
+    }
+
+    void removesTheSavedBoat(String makeAndModel) {
+        goesTo("Saved");
+        show(click(listingCard(makeAndModel).getFirstByXPath(".//button[normalize-space()='Saved']")));
+    }
+
     // --- looking after members
 
     /**

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.form.BoatSearch;
@@ -22,6 +23,7 @@ import uk.co.yottr.model.User;
 import uk.co.yottr.security.Administrators;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
+import uk.co.yottr.service.SavedBoatsService;
 import uk.co.yottr.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,12 +41,15 @@ public class BoatController {
     private BoatService boatService;
     private UserService userService;
     private ReferenceDataService referenceDataService;
+    private SavedBoatsService savedBoatsService;
 
     @Autowired
-    public BoatController(BoatService boatService, UserService userService, ReferenceDataService referenceDataService) {
+    public BoatController(BoatService boatService, UserService userService, ReferenceDataService referenceDataService,
+                          SavedBoatsService savedBoatsService) {
         this.boatService = boatService;
         this.userService = userService;
         this.referenceDataService = referenceDataService;
+        this.savedBoatsService = savedBoatsService;
     }
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
@@ -88,13 +93,14 @@ public class BoatController {
     @RequestMapping(value = "/s/listings/all", method = RequestMethod.GET)
     public ModelAndView listBoats(@ModelAttribute("search") BoatSearch search,
                                   @SortDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                  HttpServletRequest request, HttpServletResponse response) {
+                                  HttpServletRequest request, HttpServletResponse response, Principal principal) {
         final boolean resultsOnly = Htmx.wantsPartOfPage(request, response);
         final ModelAndView modelAndView = new ModelAndView(resultsOnly ? "boatList :: results" : "boatList");
 
         final Page<Boat> boatPages = boatService.search(search, pageable);
         modelAndView.addObject("wrapper", new PageWrapper<>(boatPages));
         modelAndView.addObject("searchQuery", search.toQueryString());
+        modelAndView.addObject("savedReferences", savedBoatsService.savedReferences(principal.getName()));
         if (!resultsOnly) {
             addSearchReferenceData(modelAndView);
         }
@@ -126,7 +132,49 @@ public class BoatController {
         modelAndView.addObject("boat", boat);
         modelAndView.addObject("own", boat.getOwner().getUsername().equals(principal.getName()));
         modelAndView.addObject("administrator", administrator);
+        modelAndView.addObject("saved", savedBoatsService.savedReferences(principal.getName()).contains(boatReference));
         return modelAndView;
+    }
+
+    /**
+     * The listings the member has saved, including any that other members can no longer see.
+     */
+    @RequestMapping(value = "/s/listings/saved", method = RequestMethod.GET)
+    public ModelAndView savedBoats(Principal principal) {
+        final ModelAndView modelAndView = new ModelAndView("savedBoats");
+        modelAndView.addObject("boats", savedBoatsService.savedBoats(principal.getName()));
+        return modelAndView;
+    }
+
+    /**
+     * Saves a listing the member can see, and goes back to the page they saved it from.
+     */
+    @RequestMapping(value = "/s/listings/{boatReference}/save", method = RequestMethod.POST)
+    public String saveListing(@PathVariable String boatReference, @RequestParam(required = false) String next, Principal principal) {
+        boatService.findListingToView(boatReference, principal.getName(), Administrators.isAdministrator(principal))
+                .orElseThrow(() -> new ResourceNotFoundException("No listing with reference " + boatReference));
+
+        savedBoatsService.save(principal.getName(), boatReference);
+
+        return "redirect:" + sameSitePath(next);
+    }
+
+    /**
+     * Unsaves a listing, which works even if it can no longer be seen, so that it can be cleared from Saved.
+     */
+    @RequestMapping(value = "/s/listings/{boatReference}/unsave", method = RequestMethod.POST)
+    public String unsaveListing(@PathVariable String boatReference, @RequestParam(required = false) String next, Principal principal) {
+        savedBoatsService.unsave(principal.getName(), boatReference);
+
+        return "redirect:" + sameSitePath(next);
+    }
+
+    /**
+     * Where to go back to after saving: a members' page on this site, or Saved if it isn't one, so that the
+     * parameter can't send a member somewhere else.
+     */
+    static String sameSitePath(String next) {
+        return next != null && next.startsWith("/s/") && !next.contains("//") && !next.contains("\\") ? next : "/s/listings/saved";
     }
 
     // Changes are POSTs, which need the CSRF token, and redirect afterwards so that a refresh doesn't repeat them.

@@ -266,7 +266,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
         when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(boatPage);
 
-        mockMvc.perform(get("/s/listings/all").param("text", "solent").param("purpose", "RACING")
+        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").param("text", "solent").param("purpose", "RACING")
                         .param("sailingFrom", "2027-06-01").param("minLength", "30"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("boatList"))
@@ -288,7 +288,7 @@ public class BoatControllerTest extends AbstractControllerTest {
     public void testListBoatsForHtmxIsOnlyTheResults() throws Exception {
         when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(new PageImpl<>(new ArrayList<>()));
 
-        mockMvc.perform(get("/s/listings/all").header("HX-Request", "true"))
+        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").header("HX-Request", "true"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("boatList :: results"))
                 .andExpect(model().attributeDoesNotExist("sailingPurposes"))
@@ -302,7 +302,7 @@ public class BoatControllerTest extends AbstractControllerTest {
     public void testListBoatsForAnHtmxHistoryRestoreIsTheWholePage() throws Exception {
         when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(new PageImpl<>(new ArrayList<>()));
 
-        mockMvc.perform(get("/s/listings/all").header("HX-Request", "true").header("HX-History-Restore-Request", "true"))
+        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").header("HX-Request", "true").header("HX-History-Restore-Request", "true"))
                 .andExpect(view().name("boatList"));
 
         verify(mockBoatService).search(any(BoatSearch.class), eq(NEWEST_FIRST));
@@ -640,8 +640,9 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "crew"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("listingPage"))
-                .andExpect(model().size(3))
+                .andExpect(model().size(4))
                 .andExpect(model().attribute("boat", sameInstance(boat)))
+                .andExpect(model().attribute("saved", equalTo(false)))
                 .andExpect(model().attribute("own", equalTo(false)))
                 .andExpect(model().attribute("administrator", equalTo(false)))
                 .andExpect(content().string(containsString("Get in touch")))
@@ -677,6 +678,63 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(content().string(containsString("Put back")));
 
         verify(mockBoatService).findListingToView(boat.getReference(), "ada", true);
+    }
+
+    @Test
+    public void testSavingAListingGoesBackToThePageItWasSavedFrom() throws Exception {
+        final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
+        when(mockBoatService.findListingToView(boat.getReference(), "crew", false)).thenReturn(Optional.of(boat));
+
+        mockMvc.perform(post("/s/listings/" + boat.getReference() + "/save").principal(() -> "crew")
+                        .param("next", "/s/listings/all?text=solent"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/s/listings/all?text=solent"));
+
+        verify(mockBoatService).findListingToView(boat.getReference(), "crew", false);
+        verify(mockSavedBoatsService).save("crew", boat.getReference());
+    }
+
+    @Test
+    public void testAListingThatCannotBeSeenCannotBeSaved() throws Exception {
+        when(mockBoatService.findListingToView("hidden", "crew", false)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/s/listings/hidden/save").principal(() -> "crew"))
+                .andExpect(status().isNotFound());
+
+        verify(mockBoatService).findListingToView("hidden", "crew", false);
+        verify(mockSavedBoatsService, never()).save(any(), any());
+    }
+
+    @Test
+    public void testUnsavingWorksEvenForAListingThatCannotBeSeen() throws Exception {
+        mockMvc.perform(post("/s/listings/hidden/unsave").principal(() -> "crew"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/s/listings/saved"));
+
+        verify(mockSavedBoatsService).unsave("crew", "hidden");
+    }
+
+    @Test
+    public void testSavedBoats() throws Exception {
+        final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
+        when(mockSavedBoatsService.savedBoats("crew")).thenReturn(List.of(boat));
+
+        mockMvc.perform(get("/s/listings/saved").principal(() -> "crew"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("savedBoats"))
+                .andExpect(model().attribute("boats", List.of(boat)));
+
+        verify(mockSavedBoatsService).savedBoats("crew");
+    }
+
+    @Test
+    public void afterSavingOnlyAMembersPageOnThisSiteIsFollowed() {
+        assertEquals("/s/listings/all?text=x", BoatController.sameSitePath("/s/listings/all?text=x"));
+        assertEquals("/s/listings/saved", BoatController.sameSitePath(null));
+        assertEquals("/s/listings/saved", BoatController.sameSitePath("https://elsewhere.example/s/"));
+        assertEquals("/s/listings/saved", BoatController.sameSitePath("//elsewhere.example/s/"));
+        assertEquals("/s/listings/saved", BoatController.sameSitePath("/s//elsewhere.example"));
+        assertEquals("/s/listings/saved", BoatController.sameSitePath("/admin/users"));
     }
 
     @Test

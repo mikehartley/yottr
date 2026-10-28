@@ -53,5 +53,15 @@
     </footer>
 </article>
 
+<!--/* Saves the listing, or unsaves it if it's saved, then goes back to next. Call it as
+       saveButton(boat=${boat}, saved=..., next='/the/page'). */-->
+<form th:fragment="saveButton" class="inline-action" method="post"
+      th:action="@{/s/listings/{boatReference}/{action}(boatReference=${boat.reference},action=${saved} ? 'unsave' : 'save')}">
+    <input type="hidden" name="next" th:value="${next}"/>
+    <button type="submit" class="btn btn-sm" th:classappend="${saved} ? 'btn-primary' : 'btn-outline-primary'"
+            th:attr="aria-pressed=${saved}"><i class="bi" th:classappend="${saved} ? 'bi-bookmark-fill' : 'bi-bookmark'" aria-hidden="true"></i>
+        <span th:text="${saved} ? 'Saved' : 'Save'">Save</span></button>
+</form>
+
 </body>
 </html>

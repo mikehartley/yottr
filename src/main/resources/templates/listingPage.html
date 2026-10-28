@@ -84,6 +84,9 @@
                     <li class="mb-2"><i class="bi bi-envelope me-2" aria-hidden="true"></i><a th:href="'mailto:' + ${owner.email}" th:text="${owner.email}">ada@example.test</a></li>
                     <li><i class="bi bi-telephone me-2" aria-hidden="true"></i><a th:href="'tel:' + ${#strings.replace(owner.mobile, ' ', '')}" th:text="${owner.mobile}">07700 900123</a></li>
                 </ul>
+                <div class="mt-3">
+                    <form th:replace="~{listing :: saveButton(boat=${boat}, saved=${saved}, next='/s/listings/' + ${boat.reference})}">Save</form>
+                </div>
             </aside>
             <aside class="yottr-card p-4" th:if="${own}">
                 <h2 class="h5">Your listing</h2>
