@@ -153,6 +153,8 @@ class Person {
         form.<HtmlCheckBoxInput>getFirstByXPath(".//input[@name='frequency'][@value='WEEKENDS']").setChecked(true);
         form.getInputByName("dateRelevantTo").setValue("14/06/2027");
         form.getSelectByName("financialArrangement").setSelectedAttribute("SHARED_FIXED", true);
+        form.getInputByName("moneyAmount").setValue("40");
+        form.getSelectByName("moneyPeriod").setSelectedAttribute("DAY", true);
         submit(form);
     }
 

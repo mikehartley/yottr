@@ -80,7 +80,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("newListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(12))
+                .andExpect(model().size(13))
                 .andExpect(model().attributeExists("boat"))
                 .andExpect(model().attributeExists("allowedMoreListings"))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
@@ -107,6 +107,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         verify(mockReferenceDataService).smokingOptions();
         verify(mockReferenceDataService).travelExpenses();
         verify(mockReferenceDataService).courseLevels();
+        verify(mockReferenceDataService).moneyPeriods();
     }
 
     @Test
@@ -449,7 +450,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("editListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(12))
+                .andExpect(model().size(13))
                 .andExpect(model().attribute("boat", allOf(
                         instanceOf(ListingForm.class),
                         hasProperty("title", equalTo(boat.getTitle())),
@@ -596,6 +597,8 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param("description", "descriptionValue")
                         .param("sailingPurpose", "RACING")
                         .param("financialArrangement", "PAID")
+                        .param("moneyAmount", "120")
+                        .param("moneyPeriod", "DAY")
                         .param("vesselType", "SAIL")
                         .param("yearBuilt", "1995")
                         .param("roleRequired", "CREW")

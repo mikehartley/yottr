@@ -71,6 +71,8 @@ public class BoatControllerIT {
                         .param("dateRelevantTo", "14/06/2027")
                         .param("minimumRequiredLevelByRank", String.valueOf(RyaSailCruisingLevel.DAY_SKIPPER.getRank()))
                         .param("financialArrangement", "PAID")
+                        .param("moneyAmount", "120")
+                        .param("moneyPeriod", "DAY")
                         .param("smoking", "YES_OUTSIDE")
                         .param("travelExpenses", "PAID_BY_OWNER")
                         .param("numberOfCrewWanted", "2")
@@ -89,6 +91,8 @@ public class BoatControllerIT {
         assertEquals(LocalDate.of(2027, 6, 14), edited.getDateRelevantTo());
         assertEquals(RyaSailCruisingLevel.DAY_SKIPPER.getRank(), edited.getMinimumRequiredLevelByRank());
         assertEquals("PAID", edited.getFinancialArrangement().getName());
+        assertEquals(Integer.valueOf(120), edited.getMoneyAmount());
+        assertEquals(MoneyPeriod.DAY, edited.getMoneyPeriod());
         assertEquals(Smoking.YES_OUTSIDE, edited.getSmoking());
         assertEquals(TravelExpenses.PAID_BY_OWNER, edited.getTravelExpenses());
         assertEquals(Integer.valueOf(2), edited.getNumberOfCrewWanted());
@@ -114,7 +118,9 @@ public class BoatControllerIT {
                         .param("courseLevel", "DAY_SKIPPER")
                         .param("roleRequired", "CREW")
                         .param("frequency", "TRIP")
-                        .param("financialArrangement", "COMMERCIAL"))
+                        .param("financialArrangement", "COMMERCIAL")
+                        .param("moneyAmount", "650")
+                        .param("moneyPeriod", "COURSE"))
                 .andExpect(status().is3xxRedirection());
 
         assertEquals(CourseLevel.DAY_SKIPPER, boatService.findByReference(boat.getReference()).getCourseLevel());

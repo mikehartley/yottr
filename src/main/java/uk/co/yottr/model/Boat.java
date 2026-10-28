@@ -9,10 +9,12 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.UUID;
 
 @Entity
@@ -130,6 +132,14 @@ public class Boat {
     @JoinColumn(name = "financial_arrangement")
     @NotNull(message = REQUIRED_ERROR_MSG)
     private FinancialArrangement financialArrangement;
+
+    // in whole pounds; ListingForm requires it, with its period, unless there's no cost to crew
+    @Column(name = "money_amount")
+    private Integer moneyAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "money_period")
+    private MoneyPeriod moneyPeriod;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "course_level")
@@ -325,6 +335,36 @@ public class Boat {
 
     public void setFinancialArrangement(FinancialArrangement financialArrangement) {
         this.financialArrangement = financialArrangement;
+    }
+
+    public Integer getMoneyAmount() {
+        return moneyAmount;
+    }
+
+    public void setMoneyAmount(Integer moneyAmount) {
+        this.moneyAmount = moneyAmount;
+    }
+
+    public MoneyPeriod getMoneyPeriod() {
+        return moneyPeriod;
+    }
+
+    public void setMoneyPeriod(MoneyPeriod moneyPeriod) {
+        this.moneyPeriod = moneyPeriod;
+    }
+
+    /**
+     * The money as the listing shows it, such as "£40 per day", or "about £40 per day" for shared running costs,
+     * which can only be an estimate. Null if the listing doesn't say.
+     */
+    public String getMoney() {
+        if (moneyAmount == null || moneyPeriod == null) {
+            return null;
+        }
+        final String amount = NumberFormat.getCurrencyInstance(Locale.UK).format(moneyAmount).replace(".00", "");
+        final boolean estimate = financialArrangement != null
+                && FinancialArrangement.FinancialArrangementEnum.SHARED_VARIABLE.name().equals(financialArrangement.getName());
+        return (estimate ? "about " : "") + amount + " " + moneyPeriod.getDisplayName();
     }
 
     public CourseLevel getCourseLevel() {

@@ -283,6 +283,46 @@ public class FormsTest {
     }
 
     @Test
+    public void listingFormNeedsTheMoneyUnlessThereIsNoCostToCrew() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        assertEquals(Set.of(), validator.validate(form), "no cost to crew needs no amount");
+
+        form.setFinancialArrangement(FinancialArrangement.FinancialArrangementEnum.FOOD_ONLY);
+        Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("moneyGivenUnlessNoCost", violations.iterator().next().getPropertyPath().toString());
+
+        form.setMoneyAmount(25);
+        assertEquals(1, validator.validate(form).size(), "an amount without what it's for");
+
+        form.setMoneyPeriod(MoneyPeriod.WEEK);
+        assertEquals(Set.of(), validator.validate(form), "both");
+
+        form.setMoneyAmount(0);
+        violations = validator.validate(form);
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("moneyAmount", violations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
+    public void listingFormDropsTheMoneyWhenThereIsNoCostToCrew() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setMoneyAmount(25);
+        form.setMoneyPeriod(MoneyPeriod.WEEK);
+
+        final Boat boat = aBoat().withOwner(aUser().build()).build();
+        form.copyTo(boat);
+        assertNull(boat.getMoneyAmount());
+        assertNull(boat.getMoneyPeriod());
+
+        form.setFinancialArrangement(FinancialArrangement.FinancialArrangementEnum.PAID);
+        form.copyTo(boat);
+        assertEquals(Integer.valueOf(25), boat.getMoneyAmount());
+        assertEquals(MoneyPeriod.WEEK, boat.getMoneyPeriod());
+        assertEquals(form.getMoneyAmount(), ListingForm.from(boat).getMoneyAmount(), "and back to the form");
+    }
+
+    @Test
     public void listingFormRefusesAStartAfterTheEnd() {
         final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
         form.setWhenFrom(LocalDate.of(2027, 6, 28));

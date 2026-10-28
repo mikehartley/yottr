@@ -38,7 +38,7 @@
         </dd>
         <dt>Costs</dt>
         <dd>
-            <span th:text="${boat.financialArrangement.displayName}">Shared</span>;
+            <span th:text="${boat.financialArrangement.displayName}">Shared</span><span th:if="${boat.money != null}" th:text="', ' + ${boat.money}">, £40 per day</span>;
             travel <span th:text="${#strings.toLowerCase(boat.travelExpenses.displayName)}">paid by crew</span>
         </dd>
     </dl>

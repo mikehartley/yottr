@@ -12,6 +12,7 @@ import uk.co.yottr.model.CourseLevel;
 import uk.co.yottr.model.FinancialArrangement.FinancialArrangementEnum;
 import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.Frequency.FrequencyEnum;
+import uk.co.yottr.model.MoneyPeriod;
 import uk.co.yottr.model.RoleRequired;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingPurpose;
@@ -91,6 +92,13 @@ public class ListingForm {
     @Max(99)
     private Integer numberOfCrewWanted;
 
+    // needed unless there's no cost to crew, and ignored then (isMoneyGivenUnlessNoCost)
+    @Min(value = 1, message = "must be more than zero")
+    @Max(99999)
+    private Integer moneyAmount;
+
+    private MoneyPeriod moneyPeriod;
+
     // needed for a course, and ignored for anything else (isCourseLevelGivenForACourse)
     private CourseLevel courseLevel;
 
@@ -121,6 +129,8 @@ public class ListingForm {
         form.smoking = boat.getSmoking();
         form.travelExpenses = boat.getTravelExpenses();
         form.numberOfCrewWanted = boat.getNumberOfCrewWanted();
+        form.moneyAmount = boat.getMoneyAmount();
+        form.moneyPeriod = boat.getMoneyPeriod();
         form.courseLevel = boat.getCourseLevel();
         form.whenFrom = boat.getWhenFrom();
         form.whenTo = boat.getWhenTo();
@@ -146,6 +156,9 @@ public class ListingForm {
         boat.setSmoking(smoking);
         boat.setTravelExpenses(travelExpenses);
         boat.setNumberOfCrewWanted(numberOfCrewWanted);
+        final boolean money = financialArrangement != FinancialArrangementEnum.NO_CONTRIBUTION;
+        boat.setMoneyAmount(money ? moneyAmount : null);
+        boat.setMoneyPeriod(money ? moneyPeriod : null);
         boat.setCourseLevel(sailingPurpose == SailingPurpose.COURSE ? courseLevel : null);
         boat.setWhenFrom(whenFrom);
         boat.setWhenTo(whenTo);
@@ -159,6 +172,11 @@ public class ListingForm {
     @AssertTrue(message = "a course needs its level")
     public boolean isCourseLevelGivenForACourse() {
         return sailingPurpose != SailingPurpose.COURSE || courseLevel != null;
+    }
+
+    @AssertTrue(message = "say how much, and what it's for")
+    public boolean isMoneyGivenUnlessNoCost() {
+        return financialArrangement == FinancialArrangementEnum.NO_CONTRIBUTION || (moneyAmount != null && moneyPeriod != null);
     }
 
     /**
@@ -327,5 +345,21 @@ public class ListingForm {
 
     public void setWhenTo(LocalDate whenTo) {
         this.whenTo = whenTo;
+    }
+
+    public Integer getMoneyAmount() {
+        return moneyAmount;
+    }
+
+    public void setMoneyAmount(Integer moneyAmount) {
+        this.moneyAmount = moneyAmount;
+    }
+
+    public MoneyPeriod getMoneyPeriod() {
+        return moneyPeriod;
+    }
+
+    public void setMoneyPeriod(MoneyPeriod moneyPeriod) {
+        this.moneyPeriod = moneyPeriod;
     }
 }

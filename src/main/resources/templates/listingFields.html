@@ -96,6 +96,14 @@
             <div th:replace="~{fields :: selectField(name='smoking', label='Smoking', options=${smokingOptions})}"></div>
         </div>
     </div>
+    <div class="row g-3">
+        <div class="col-sm-5">
+            <div th:replace="~{fields :: textField(name='moneyAmount', label='Amount (£)', type='number', also='moneyGivenUnlessNoCost', hint='What crew pay, or are paid. Not needed when there is no cost to crew; for shared running costs, an estimate.')}"></div>
+        </div>
+        <div class="col-sm-4">
+            <div th:replace="~{fields :: selectField(name='moneyPeriod', label='For', options=${moneyPeriods}, blank='Choose')}"></div>
+        </div>
+    </div>
 
     <button type="submit" class="btn btn-primary">Save the listing</button>
 </fieldset>

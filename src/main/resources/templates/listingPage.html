@@ -55,6 +55,10 @@
                 <dl class="yottr-listing-facts">
                     <dt>Costs</dt>
                     <dd th:text="${boat.financialArrangement.displayName}">Shared</dd>
+                    <th:block th:if="${boat.money != null}">
+                        <dt>How much</dt>
+                        <dd th:text="${boat.money}">£40 per day</dd>
+                    </th:block>
                     <dt>Travel</dt>
                     <dd th:text="${boat.travelExpenses.displayName}">Paid by crew</dd>
                 </dl>

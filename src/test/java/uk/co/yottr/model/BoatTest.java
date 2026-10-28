@@ -331,4 +331,20 @@ public class BoatTest {
         owner.setEnabled(false);
         assertFalse(boat.isVisible(), "owner disabled");
     }
+
+    @Test
+    public void theMoneyReadsAsAnAmountAndWhatItsFor() {
+        final Boat boat = new Boat(aUser().build());
+        assertNull(boat.getMoney(), "none given");
+
+        boat.setFinancialArrangement(FinancialArrangement.PAID);
+        boat.setMoneyAmount(1500);
+        boat.setMoneyPeriod(MoneyPeriod.MONTH);
+        assertEquals("£1,500 per month", boat.getMoney());
+
+        boat.setFinancialArrangement(FinancialArrangement.SHARED_VARIABLE);
+        boat.setMoneyAmount(40);
+        boat.setMoneyPeriod(MoneyPeriod.DAY);
+        assertEquals("about £40 per day", boat.getMoney(), "running costs can only be estimated");
+    }
 }

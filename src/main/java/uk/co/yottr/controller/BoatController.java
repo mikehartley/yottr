@@ -253,6 +253,7 @@ public class BoatController {
         modelAndView.addObject("smokingOptions", referenceDataService.smokingOptions());
         modelAndView.addObject("travelExpensesOptions", referenceDataService.travelExpenses());
         modelAndView.addObject("courseLevels", referenceDataService.courseLevels());
+        modelAndView.addObject("moneyPeriods", referenceDataService.moneyPeriods());
     }
 
     private void addSearchReferenceData(ModelAndView modelAndView) {
