@@ -5,13 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import uk.co.yottr.form.MemberSearch;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
 import uk.co.yottr.model.UserRole;
 import uk.co.yottr.security.Role;
 import uk.co.yottr.testconfig.TestcontainersConfig;
 
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -147,5 +154,73 @@ public class UserServiceIT {
         assertEquals(postcode, savedUser.getPostcode(), "postcode");
         assertEquals(aboutMe, savedUser.getAboutMe(), "aboutMe");
         assertEquals(enabled, savedUser.isEnabled(), "enabled");
+    }
+
+    @Test
+    public void searchFindsTextInTheUsernameNameOrEmailIgnoringCase() {
+        final String token = secure().nextAlphabetic(12).toLowerCase(Locale.ROOT);
+        final User byUsername = saveMember("user" + token, u -> { });
+        final User byName = saveMember(secure().nextAlphanumeric(12), u -> u.setLastName("Mc" + token));
+        final User byEmail = saveMember(secure().nextAlphanumeric(12), u -> u.setEmail(token + "@example.test"));
+        saveMember(secure().nextAlphanumeric(12), u -> { });
+
+        assertEquals(Set.of(byUsername.getUsername(), byName.getUsername(), byEmail.getUsername()),
+                usernames(search(s -> s.setText(token.toUpperCase(Locale.ROOT)))));
+    }
+
+    @Test
+    public void searchFindsAFullName() {
+        final String token = secure().nextAlphabetic(12);
+        final User member = saveMember(secure().nextAlphanumeric(12), u -> {
+            u.setFirstName("Ann");
+            u.setLastName(token);
+        });
+
+        assertEquals(Set.of(member.getUsername()), usernames(search(s -> s.setText("ann " + token))));
+    }
+
+    @Test
+    public void searchNarrowsByTheDayJoinedIncludingTheEnds() {
+        // a year no other test uses, so the dates alone pick out these members
+        final User january = saveMember("joined" + secure().nextAlphanumeric(10), u -> u.setJoined(LocalDate.of(1999, 1, 1)));
+        final User june = saveMember("joined" + secure().nextAlphanumeric(10), u -> u.setJoined(LocalDate.of(1999, 6, 15)));
+        final User december = saveMember("joined" + secure().nextAlphanumeric(10), u -> u.setJoined(LocalDate.of(1999, 12, 31)));
+
+        final Consumer<MemberSearch> in1999 = s -> {
+            s.setJoinedFrom(LocalDate.of(1999, 1, 1));
+            s.setJoinedTo(LocalDate.of(1999, 12, 31));
+        };
+        assertEquals(Set.of(january.getUsername(), june.getUsername(), december.getUsername()), usernames(search(in1999)));
+        assertEquals(Set.of(june.getUsername(), december.getUsername()),
+                usernames(search(in1999.andThen(s -> s.setJoinedFrom(LocalDate.of(1999, 6, 15))))));
+        assertEquals(Set.of(june.getUsername()), usernames(search(s -> {
+            s.setJoinedFrom(LocalDate.of(1999, 2, 1));
+            s.setJoinedTo(LocalDate.of(1999, 6, 15));
+        })));
+    }
+
+    @Test
+    public void signUpRecordsTheDayJoined() {
+        final User member = userService.signUp(aUser().withUsername(secure().nextAlphanumeric(12)).build());
+
+        assertEquals(LocalDate.now(), userService.findById(member.getId()).orElseThrow().getJoined());
+    }
+
+    private User saveMember(String username, Consumer<User> details) {
+        final User user = aUser().withUsername(username).build();
+        details.accept(user);
+        return userService.save(user, true);
+    }
+
+    private Set<String> usernames(Iterable<User> users) {
+        final Set<String> usernames = new HashSet<>();
+        users.forEach(user -> usernames.add(user.getUsername()));
+        return usernames;
+    }
+
+    private Iterable<User> search(Consumer<MemberSearch> criteria) {
+        final MemberSearch search = new MemberSearch();
+        criteria.accept(search);
+        return userService.search(search, PageRequest.of(0, 30));
     }
 }

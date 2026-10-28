@@ -61,7 +61,7 @@ public class UserController {
         user.addRole(Role.FREE);
         user.setEnabled(true);
 
-        userService.save(user, true);
+        userService.signUp(user);
 
         LOG.info("Signed up new user {}", user.getUsername());
 

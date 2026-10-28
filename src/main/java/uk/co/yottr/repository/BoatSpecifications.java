@@ -7,14 +7,10 @@ import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.User;
 
-import java.util.Locale;
-
 /**
  * The listing queries, as specifications that a search combines.
  */
 public final class BoatSpecifications {
-
-    private static final char LIKE_ESCAPE = '\\';
 
     private BoatSpecifications() {
     }
@@ -65,18 +61,11 @@ public final class BoatSpecifications {
      * The text anywhere in the title, make and model or description, ignoring case, or the whole reference.
      */
     private static Specification<Boat> textMatches(String text) {
-        final String pattern = "%" + escapeLike(text.toLowerCase(Locale.ROOT)) + "%";
+        final String pattern = Like.containing(text);
         return (boat, query, cb) -> cb.or(
-                cb.like(cb.lower(boat.get("title")), pattern, LIKE_ESCAPE),
-                cb.like(cb.lower(boat.get("makeAndModel")), pattern, LIKE_ESCAPE),
-                cb.like(cb.lower(boat.get("description")), pattern, LIKE_ESCAPE),
+                cb.like(cb.lower(boat.get("title")), pattern, Like.ESCAPE),
+                cb.like(cb.lower(boat.get("makeAndModel")), pattern, Like.ESCAPE),
+                cb.like(cb.lower(boat.get("description")), pattern, Like.ESCAPE),
                 cb.equal(boat.get("reference"), text));
-    }
-
-    /**
-     * So that a % or _ the member typed is matched as itself.
-     */
-    static String escapeLike(String text) {
-        return text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 }

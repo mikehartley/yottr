@@ -5,15 +5,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import uk.co.yottr.form.MemberSearch;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.ConstantsForTests;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,6 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AdminControllerTest extends AbstractControllerTest {
 
     private static final Principal ADMINISTRATOR = () -> "ada";
+
+    private static final PageRequest BY_USERNAME = PageRequest.of(ConstantsForTests.DEFAULT_PAGE_REQUEST_PAGE,
+            ConstantsForTests.DEFAULT_PAGE_SIZE, Sort.by("username"));
 
     @Autowired
     private UserService mockUserService;
@@ -41,17 +51,35 @@ public class AdminControllerTest extends AbstractControllerTest {
         final ArrayList<User> userList = new ArrayList<>();
         userList.add(new User());
         PageImpl<User> userPage = new PageImpl<>(userList);
-        when(mockUserService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(userPage);
+        when(mockUserService.search(any(MemberSearch.class), eq(BY_USERNAME))).thenReturn(userPage);
 
-        final String viewName = "manageUsers";
-        mockMvc.perform(get("/admin/users").contentType(MediaType.TEXT_HTML))
+        mockMvc.perform(get("/admin/users").contentType(MediaType.TEXT_HTML)
+                        .param("text", "smith").param("joinedFrom", "2026-01-01").param("joinedTo", "2026-06-30"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(viewName))
+                .andExpect(view().name("manageUsers"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(1))
-                .andExpect(model().attributeExists("wrapper"));
+                .andExpect(model().attribute("search", allOf(
+                        hasProperty("text", equalTo("smith")),
+                        hasProperty("joinedFrom", equalTo(LocalDate.of(2026, 1, 1))),
+                        hasProperty("joinedTo", equalTo(LocalDate.of(2026, 6, 30))))))
+                .andExpect(model().attribute("searchQuery", equalTo("text=smith&joinedFrom=2026-01-01&joinedTo=2026-06-30")))
+                .andExpect(model().attributeExists("wrapper"))
+                .andExpect(header().string("Vary", containsString("HX-Request")));
 
-        verify(mockUserService).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockUserService).search(any(MemberSearch.class), eq(BY_USERNAME));
+    }
+
+    @Test
+    public void testGetUsersForHtmxIsOnlyTheResults() throws Exception {
+        when(mockUserService.search(any(MemberSearch.class), eq(BY_USERNAME))).thenReturn(new PageImpl<>(new ArrayList<>()));
+
+        mockMvc.perform(get("/admin/users").header("HX-Request", "true"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("manageUsers :: results"))
+                .andExpect(content().string(not(containsString("member-search-form"))))
+                .andExpect(content().string(containsString("No members match")));
+
+        verify(mockUserService).search(any(MemberSearch.class), eq(BY_USERNAME));
     }
 
     @Test

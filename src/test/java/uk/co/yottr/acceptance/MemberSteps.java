@@ -13,6 +13,8 @@ import uk.co.yottr.security.Role;
 import uk.co.yottr.service.UserService;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,6 +121,20 @@ public class MemberSteps {
         form.getInputByName("postcode").setValue("PO1 1AA");
         final HtmlButton signUp = form.getFirstByXPath(".//button[@type='submit']");
         browser.showing(signUp.click());
+    }
+
+    @When("I search the members for {string}'s username")
+    public void iSearchTheMembersFor(String name) throws IOException {
+        // what the search form sends without JavaScript; the username is unique, so the member is on the first page
+        browser.open("/admin/users?text=" + URLEncoder.encode(username(name), StandardCharsets.UTF_8));
+    }
+
+    @Then("the members found are {string}")
+    public void theMembersFoundAre(String name) {
+        final List<String> found = browser.page().<HtmlElement>getByXPath("//div[@id='results']//tbody/tr/td[1]").stream()
+                .map(HtmlElement::asNormalizedText)
+                .toList();
+        assertThat(found).containsExactly(username(name));
     }
 
     @Then("the menu shows I am in {string}")

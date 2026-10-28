@@ -7,8 +7,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.yottr.exception.ResourceNotFoundException;
+import uk.co.yottr.form.MemberSearch;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.repository.UserSpecifications;
 import uk.co.yottr.security.MemberSessions;
 
 import java.util.Optional;
@@ -20,12 +22,24 @@ public class UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private MemberSessions memberSessions;
+    private TemporalProvider temporalProvider;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, MemberSessions memberSessions) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, MemberSessions memberSessions,
+                       TemporalProvider temporalProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.memberSessions = memberSessions;
+        this.temporalProvider = temporalProvider;
+    }
+
+    /**
+     * Saves a new member, joined today, with their password encoded.
+     */
+    @Transactional
+    public User signUp(User user) {
+        user.setJoined(temporalProvider.today());
+        return save(user, true);
     }
 
     @Transactional
@@ -41,11 +55,11 @@ public class UserService {
     }
 
     /**
-     * A page of users, with their listings loaded for the page to count.
+     * A page of the members that match the search, with their listings loaded for the page to count.
      */
     @Transactional(readOnly = true)
-    public Page<User> findAll(Pageable pageable) {
-        final Page<User> users = userRepository.findAll(pageable);
+    public Page<User> search(MemberSearch search, Pageable pageable) {
+        final Page<User> users = userRepository.findAll(UserSpecifications.matching(search), pageable);
         users.forEach(user -> user.getBoatListings().size());
         return users;
     }

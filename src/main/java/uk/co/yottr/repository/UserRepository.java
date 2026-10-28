@@ -1,6 +1,7 @@
 package uk.co.yottr.repository;
 
 import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -8,7 +9,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import uk.co.yottr.model.User;
 
-public interface UserRepository extends PagingAndSortingRepository<User, Long>, CrudRepository<User, Long> {
+public interface UserRepository extends PagingAndSortingRepository<User, Long>, CrudRepository<User, Long>,
+        JpaSpecificationExecutor<User> {
     User findByUsername(String username);
 
     /**

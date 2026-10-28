@@ -5,16 +5,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.exception.IllegalOperationException;
 import uk.co.yottr.exception.ResourceNotFoundException;
+import uk.co.yottr.form.MemberSearch;
 import uk.co.yottr.model.User;
 import uk.co.yottr.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
 @Controller
@@ -27,12 +32,21 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+    /**
+     * The members, by username, narrowed by the search. htmx asks for this as the search changes, and gets back
+     * only the results.
+     */
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
-	public ModelAndView getUsers(Pageable pageable) {
+	public ModelAndView getUsers(@ModelAttribute("search") MemberSearch search, @SortDefault(sort = "username") Pageable pageable,
+                                 HttpServletRequest request, HttpServletResponse response) {
+        final boolean resultsOnly = Htmx.wantsPartOfPage(request, response);
+        final ModelAndView modelAndView = new ModelAndView(resultsOnly ? "manageUsers :: results" : "manageUsers");
 
-        LOG.info("landed in [get] users method");
+        final Page<User> userPages = userService.search(search, pageable);
+        modelAndView.addObject("wrapper", new PageWrapper<>(userPages));
+        modelAndView.addObject("searchQuery", search.toQueryString());
 
-        return modelAndViewForManageUsers(pageable);
+        return modelAndView;
 	}
 
     // Changes are POSTs, which need the CSRF token, and redirect afterwards so that a refresh doesn't repeat them.
@@ -72,12 +86,5 @@ public class AdminController {
         }
 
         return user;
-    }
-
-    private ModelAndView modelAndViewForManageUsers(Pageable pageable) {
-        ModelAndView modelAndView = new ModelAndView("manageUsers");
-        Page<User> userPages = userService.findAll(pageable);
-        modelAndView.addObject("wrapper", new PageWrapper<>(userPages));
-        return modelAndView;
     }
 }

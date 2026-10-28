@@ -9,12 +9,15 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.jpa.domain.Specification;
 import uk.co.yottr.exception.ResourceNotFoundException;
+import uk.co.yottr.form.MemberSearch;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.security.MemberSessions;
 import uk.co.yottr.testconfig.ConstantsForTests;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,11 +44,14 @@ public class UserServiceTest {
     @Mock
     private MemberSessions mockMemberSessions;
 
+    @Mock
+    private TemporalProvider mockTemporalProvider;
+
     private UserService userService;
 
     @BeforeEach
     public void init() {
-        userService = new UserService(mockUserRepository, passwordEncoder, mockMemberSessions);
+        userService = new UserService(mockUserRepository, passwordEncoder, mockMemberSessions, mockTemporalProvider);
     }
 
     @Test
@@ -76,20 +82,35 @@ public class UserServiceTest {
     }
 
     @Test
-    public void findAll() {
+    public void signUpRecordsTheDayTheMemberJoined() {
+        final LocalDate today = LocalDate.of(2026, 10, 28);
+        when(mockTemporalProvider.today()).thenReturn(today);
+        when(passwordEncoder.encode("plaintext")).thenReturn("encoded");
+        final User user = createUser("u1");
+        user.setPassword("plaintext");
+
+        userService.signUp(user);
+
+        assertEquals(today, user.getJoined());
+        assertEquals("encoded", user.getPassword());
+        verify(mockUserRepository).save(user);
+    }
+
+    @Test
+    public void search() {
         List<User> userList = new ArrayList<>();
         userList.add(createUser("u1"));
         userList.add(createUser("u2"));
-        when(mockUserRepository.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST)).thenReturn(new PageImpl<>(userList));
+        when(mockUserRepository.findAll(any(Specification.class), eq(ConstantsForTests.DEFAULT_PAGE_REQUEST))).thenReturn(new PageImpl<>(userList));
 
-        final Iterable<User> allUsers = userService.findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        final Iterable<User> allUsers = userService.search(new MemberSearch(), ConstantsForTests.DEFAULT_PAGE_REQUEST);
         final Iterator<User> userIterator = allUsers.iterator();
 
         assertEquals("u1", userIterator.next().getUsername());
         assertEquals("u2", userIterator.next().getUsername());
         assertFalse(userIterator.hasNext());
 
-        verify(mockUserRepository).findAll(ConstantsForTests.DEFAULT_PAGE_REQUEST);
+        verify(mockUserRepository).findAll(any(Specification.class), eq(ConstantsForTests.DEFAULT_PAGE_REQUEST));
         verifyNoMoreInteractions(mockUserRepository);
     }
 

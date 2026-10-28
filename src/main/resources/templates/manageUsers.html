@@ -5,47 +5,78 @@
 <body>
 <section layout:fragment="content" id="manage-users-content" class="container py-4">
     <h1 class="h2 mb-4">Members</h1>
-    <div class="table-responsive yottr-card">
-        <table class="table align-middle mb-0">
-            <thead>
-            <tr>
-                <th scope="col">Username</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Roles</th>
-                <th scope="col">Listings</th>
-                <th scope="col">Account</th>
-                <th scope="col"><span class="visually-hidden">Actions</span></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${wrapper.page}">
-                <td th:text="${user.username}">JimBob</td>
-                <td th:text="${user.firstName} + ' ' + ${user.lastName}">Jim Bob</td>
-                <td><a th:href="'mailto:' + ${user.email}" th:text="${user.email}">a@b.c</a></td>
-                <td th:text="${#strings.listJoin(user.userRoles.![role], ', ')}">FREE</td>
-                <td th:text="${user.boatListings.size()} + ' of ' + ${user.maxListings}">1 of 2</td>
-                <td>
-                    <span class="yottr-badge" th:if="${user.enabled}">Enabled</span>
-                    <span class="yottr-badge yottr-badge-warning" th:unless="${user.enabled}">Disabled</span>
-                </td>
-                <td class="text-end text-nowrap">
-                    <!--/* an administrator can't disable or delete their own account (AdminController refuses it too) */-->
-                    <th:block th:unless="${user.username == #authentication?.name}">
-                        <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">
-                            <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${user.enabled} ? 'Disable' : 'Enable'">Disable</button>
-                        </form>
-                        <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/delete(userid=${user.id})}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this member and their listings?')">Delete</button>
-                        </form>
-                    </th:block>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="mt-4">
-        <nav th:replace="~{pagination :: control(url='/admin/users')}">Pagination control goes here.</nav>
+
+    <!--/* A plain GET form, like the boat search: htmx updates the results in place, and the address keeps up. */-->
+    <form id="member-search-form" method="get" th:action="@{/admin/users}" th:object="${search}" class="yottr-card p-3 mb-4"
+          th:hx-get="@{/admin/users}" hx-target="#results" hx-swap="outerHTML" hx-push-url="true"
+          hx-trigger="change, input changed delay:400ms from:#text, submit">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-12 col-lg-6">
+                <label class="form-label small" for="text">Search</label>
+                <input type="search" class="form-control" th:field="*{text}" placeholder="Username, name or email"/>
+            </div>
+            <div class="col-6 col-lg-3">
+                <label class="form-label small" for="joinedFrom">Joined from</label>
+                <input type="date" class="form-control" th:field="*{joinedFrom}"/>
+            </div>
+            <div class="col-6 col-lg-3">
+                <label class="form-label small" for="joinedTo">Joined to</label>
+                <input type="date" class="form-control" th:field="*{joinedTo}"/>
+            </div>
+        </div>
+        <noscript><button type="submit" class="btn btn-primary mt-3">Search</button></noscript>
+    </form>
+
+    <div id="results" th:fragment="results" aria-live="polite">
+        <p class="text-body-secondary small mb-3"
+           th:text="${wrapper.page.totalElements} == 1 ? '1 member' : ${wrapper.page.totalElements} + ' members'">12 members</p>
+        <!--/* relative, so the hidden Actions heading stays inside the scrolling table instead of widening the page */-->
+        <div class="table-responsive yottr-card position-relative">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Joined</th>
+                    <th scope="col">Roles</th>
+                    <th scope="col">Listings</th>
+                    <th scope="col">Account</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${wrapper.page}">
+                    <td th:text="${user.username}">JimBob</td>
+                    <td th:text="${user.firstName} + ' ' + ${user.lastName}">Jim Bob</td>
+                    <td><a th:href="'mailto:' + ${user.email}" th:text="${user.email}">a@b.c</a></td>
+                    <td class="text-nowrap" th:text="${user.joined} ? ${#temporals.format(user.joined, 'd MMM yyyy')} : '-'">28 Oct 2026</td>
+                    <td th:text="${#strings.listJoin(user.userRoles.![role], ', ')}">FREE</td>
+                    <td th:text="${user.boatListings.size()} + ' of ' + ${user.maxListings}">1 of 2</td>
+                    <td>
+                        <span class="yottr-badge" th:if="${user.enabled}">Enabled</span>
+                        <span class="yottr-badge yottr-badge-warning" th:unless="${user.enabled}">Disabled</span>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <!--/* an administrator can't disable or delete their own account (AdminController refuses it too) */-->
+                        <th:block th:unless="${user.username == #authentication?.name}">
+                            <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/enabled/flip(userid=${user.id})}">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${user.enabled} ? 'Disable' : 'Enable'">Disable</button>
+                            </form>
+                            <form class="inline-action" method="post" th:action="@{/admin/user/{userid}/delete(userid=${user.id})}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this member and their listings?')">Delete</button>
+                            </form>
+                        </th:block>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p th:if="${wrapper.page.empty}" class="text-body-secondary mt-3">No members match.</p>
+        <!--/* page links keep the search, and htmx follows them in place, like the form */-->
+        <div class="mt-4" hx-boost="true" hx-target="#results" hx-swap="outerHTML">
+            <nav th:replace="~{pagination :: control(url=${searchQuery.isEmpty()} ? '/admin/users' : '/admin/users?' + ${searchQuery})}">Pagination control goes here.</nav>
+        </div>
     </div>
 </section>
 </body>

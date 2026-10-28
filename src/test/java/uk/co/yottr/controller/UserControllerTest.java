@@ -119,7 +119,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(userAttribute, hasProperty(postcodeProperty, equalTo(postcodeValue))))
                 .andExpect(model().attribute(userAttribute, hasProperty(aboutMeProperty, equalTo(aboutMeValue))));
 
-        verify(mockUserService).save(any(User.class), eq(true));
+        verify(mockUserService).signUp(any(User.class));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute(userAttribute, hasProperty(usernameProperty, nullValue())))
                 .andExpect(model().attributeExists("countries"));
 
-        verify(mockUserService, never()).save(any(User.class), eq(true));
+        verify(mockUserService, never()).signUp(any(User.class));
         // the form is shown again, so it needs the countries again
         verify(mockReferenceDataService).countries();
     }
