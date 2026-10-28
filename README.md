@@ -5,9 +5,8 @@ posts a listing for a boat, saying what kind of sailing it is (cruising, racing,
 course), who they're looking for, the qualifications wanted and how costs are shared. Crew can
 browse and search the listings.
 
-It started in 2014 and has recently been brought up to date. It isn't deployed anywhere. The
-listing fields still being worked out are in `design.txt`, and the wider wish list is in
-`TODO.txt`.
+It started in 2014 and has recently been brought up to date. It isn't deployed anywhere. Work
+still to do, including the listing fields being worked out, is tracked in the issues.
 
 ## Stack
 
