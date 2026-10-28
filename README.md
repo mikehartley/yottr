@@ -13,7 +13,7 @@ still to do, including the listing fields being worked out, is tracked in the is
 - Java 25, Spring Boot 4 (Spring MVC, Thymeleaf, Spring Security, Spring Data JPA)
 - Postgres, with the schema managed by Flyway
 - Micrometer and Prometheus for metrics, with a Grafana dashboard
-- JUnit, Testcontainers and Cucumber for tests
+- JUnit, Testcontainers and HtmlUnit for tests
 
 ## Prerequisites
 
@@ -32,8 +32,10 @@ alone. A plain `mvn` is stopped by an enforcer rule that says so.
 ./mvnw clean verify            # add -DskipITs to leave out the integration tests
 ```
 
-The Cucumber acceptance tests (`src/test/resources/features`) run with the integration tests,
-and their report is written to `target/cucumber-report.html`.
+The journey tests (`src/test/java/uk/co/yottr/journey`) run with the integration tests. They
+drive the real pages through a browser for each person, one class per area of the site, and
+cover what the lower-level tests can't see on their own: sessions, and what one person's
+actions mean for another. The rules themselves are tested in the unit and integration tests.
 
 ## Running locally
 

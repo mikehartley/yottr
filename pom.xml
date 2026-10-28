@@ -20,20 +20,7 @@
 		<java.version>25</java.version>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>dd-MM-yyyy HH:mm:ss</maven.build.timestamp.format>
-		<cucumber.version>8.0.4</cucumber.version>
 	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.cucumber</groupId>
-				<artifactId>cucumber-bom</artifactId>
-				<version>${cucumber.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -155,27 +142,7 @@
 			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Cucumber acceptance tests, driving the real pages with HtmlUnit -->
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-spring</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-junit-platform-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-suite</artifactId>
-			<scope>test</scope>
-		</dependency>
+		<!-- the journey tests drive the real pages with HtmlUnit -->
 		<dependency>
 			<groupId>org.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
