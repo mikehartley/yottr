@@ -18,12 +18,12 @@ public class FinancialArrangementTest {
 
     @Test
     public void testGetDisplayName() throws Exception {
-        assertEquals("No Contribution Required", FinancialArrangement.NO_CONTRIBUTION.getDisplayName());
-        assertEquals("Food Only (No Boat Costs)", FinancialArrangement.FOOD_ONLY.getDisplayName());
-        assertEquals("Shared Fixed", FinancialArrangement.SHARED_FIXED.getDisplayName());
-        assertEquals("Shared Variable", FinancialArrangement.SHARED_VARIABLE.getDisplayName());
-        assertEquals("Commercial", FinancialArrangement.COMMERCIAL.getDisplayName());
-        assertEquals("Paid Position", FinancialArrangement.PAID.getDisplayName());
+        assertEquals("No cost to crew", FinancialArrangement.NO_CONTRIBUTION.getDisplayName());
+        assertEquals("Crew share food only", FinancialArrangement.FOOD_ONLY.getDisplayName());
+        assertEquals("Crew pay a fixed share", FinancialArrangement.SHARED_FIXED.getDisplayName());
+        assertEquals("Crew share running costs", FinancialArrangement.SHARED_VARIABLE.getDisplayName());
+        assertEquals("Crew pay (charter, trip or course)", FinancialArrangement.COMMERCIAL.getDisplayName());
+        assertEquals("Crew are paid", FinancialArrangement.PAID.getDisplayName());
     }
 
     @Test

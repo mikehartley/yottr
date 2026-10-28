@@ -9,13 +9,15 @@ import jakarta.persistence.Table;
 @Table(name = "financial_arrangement")
 public class FinancialArrangement {
 
+    // Worded as what happens to the crew, which reads the same to an owner posting a listing and to crew searching.
+    // V7 changed the stored names to match.
     public enum FinancialArrangementEnum {
-        NO_CONTRIBUTION("No Contribution Required"),
-        FOOD_ONLY("Food Only (No Boat Costs)"),
-        SHARED_FIXED("Shared Fixed"),
-        SHARED_VARIABLE("Shared Variable"),
-        COMMERCIAL("Commercial"),
-        PAID("Paid Position");
+        NO_CONTRIBUTION("No cost to crew"),
+        FOOD_ONLY("Crew share food only"),
+        SHARED_FIXED("Crew pay a fixed share"),
+        SHARED_VARIABLE("Crew share running costs"),
+        COMMERCIAL("Crew pay (charter, trip or course)"),
+        PAID("Crew are paid");
 
         private String displayName;
 
