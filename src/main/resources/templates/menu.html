@@ -4,7 +4,7 @@
        Call it as menuLink(path='/s/listings/all', text='Boats'), with id=... if the link needs one. */-->
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<a th:fragment="menuLink" class="nav-link" th:href="@{${path}}" th:id="${id}" th:text="${text}"
+<a th:fragment="menuLink" class="nav-link text-nowrap" th:href="@{${path}}" th:id="${id}" th:text="${text}"
    th:classappend="${currentMenuItem == path} ? 'active'"
    th:attr="aria-current=${currentMenuItem == path} ? 'page'">Link</a>
 </body>

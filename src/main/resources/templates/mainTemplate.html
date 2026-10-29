@@ -25,7 +25,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark yottr-nav" aria-label="Main">
+<nav class="navbar navbar-expand-xl navbar-dark yottr-nav" aria-label="Main">
     <div class="container">
         <a class="navbar-brand yottr-brand" th:href="@{/}">
             <img th:src="@{/resources/images/logo.svg}" alt=""/>
@@ -36,7 +36,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="main-nav">
-            <ul class="navbar-nav ms-auto align-items-lg-center">
+            <ul class="navbar-nav ms-auto align-items-xl-center">
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/all', text='Boats')}">Boats</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/saved', text='Saved')}">Saved</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/crew', text='Crewing')}">Crewing</a></li>
@@ -47,10 +47,10 @@
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/logging', text='Logging', id='logging-link')}">Logging</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/blocked', text='Blocked')}">Blocked</a></li>
                 <li class="nav-item" sec:authorize="isAnonymous()"><a th:replace="~{menu :: menuLink(path='/signup', text='Join')}">Join</a></li>
-                <li class="nav-item ms-lg-2" sec:authorize="hasAuthority('FREE')">
+                <li class="nav-item ms-xl-2" sec:authorize="hasAuthority('FREE')">
                     <a class="btn btn-light btn-sm" th:href="@{/s/listings/new}" th:attr="aria-current=${currentMenuItem == '/s/listings/new'} ? 'page'"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a boat</a>
                 </li>
-                <li class="nav-item ms-lg-2" sec:authorize="isAuthenticated()">
+                <li class="nav-item ms-xl-2" sec:authorize="isAuthenticated()">
                     <form class="inline-action" method="post" th:action="@{/logout}">
                         <button type="submit" id="logout-link" class="btn btn-link nav-link">Sign out</button>
                     </form>
