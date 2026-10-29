@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--/* A placeholder (#52): the questions people actually ask will come once people use the site. */-->
+<html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="faq-content" class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="h2 mb-4">Questions</h1>
+
+            <div class="alert alert-info">This page will grow as people ask. Until then, these are the ones we expect.</div>
+
+            <h2 class="h5 mt-4">Does it cost anything?</h2>
+            <p>No. Joining, listing a boat and searching are all free.</p>
+
+            <h2 class="h5 mt-4">How do I get in touch with an owner?</h2>
+            <p>Each listing shows its owner's email address and phone number to signed-in members. Yottr doesn't pass
+                messages on.</p>
+
+            <h2 class="h5 mt-4">How many boats can I list?</h2>
+            <p>Two to begin with. An administrator can raise the limit.</p>
+
+            <h2 class="h5 mt-4">My listing has disappeared from the search</h2>
+            <p>It may be suspended: look on <a th:href="@{/s/listings/mine}">My Listings</a>. An administrator may also
+                have taken it down, in which case it says so there.</p>
+
+            <h2 class="h5 mt-4">Something else?</h2>
+            <p>See <a th:href="@{/about}">About</a>.</p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

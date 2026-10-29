@@ -25,5 +25,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // pages with nothing but their text
         registry.addViewController("/about").setViewName("about");
+        registry.addViewController("/faq").setViewName("faq");
+        registry.addViewController("/terms").setViewName("terms");
+        registry.addViewController("/privacy").setViewName("privacy");
     }
 }

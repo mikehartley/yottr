@@ -110,6 +110,9 @@ public class SecurityIT {
                 .andExpect(content().string(not(containsString("test-users"))));
         mockMvc.perform(get("/signup")).andExpect(status().isOk());
         mockMvc.perform(get("/about")).andExpect(status().isOk()).andExpect(content().string(containsString("Useful links")));
+        mockMvc.perform(get("/faq")).andExpect(status().isOk()).andExpect(content().string(containsString("Does it cost anything?")));
+        mockMvc.perform(get("/terms")).andExpect(status().isOk()).andExpect(content().string(containsString("placeholder")));
+        mockMvc.perform(get("/privacy")).andExpect(status().isOk()).andExpect(content().string(containsString("placeholder")));
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
     }
 

@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/s/**").hasAuthority("FREE")
                 .requestMatchers("/resources/**", "/webjars/**", "/favicon.ico").permitAll()
-                .requestMatchers("/", "/index", "/signup", "/about", "/error", "/error/**").permitAll()
+                .requestMatchers("/", "/index", "/signup", "/about", "/faq", "/terms", "/privacy", "/error", "/error/**").permitAll()
                 // for Prometheus; in production these belong on a management port that isn't public
                 .requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()
                 .requestMatchers("/actuator/loggers", "/actuator/loggers/**").hasAuthority("ADMIN")
