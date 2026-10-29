@@ -207,12 +207,40 @@ class Person {
     }
 
     /**
-     * The address of each picture shown on the listing's page they're looking at, first to last.
+     * The address of each picture in the gallery on the listing's page they're looking at, first to last: those in
+     * its strip of thumbnails, or the one picture, when there's only one and so no strip.
      */
     List<String> picturesOnTheListing() {
-        return page.<HtmlImage>getByXPath("//div[@id='pictures']//img").stream()
+        final List<String> thumbnails = page.<HtmlAnchor>getByXPath("//section[@id='gallery']//ol//a").stream()
+                .map(thumbnail -> thumbnail.getAttribute("data-picture"))
+                .toList();
+        if (!thumbnails.isEmpty()) {
+            return thumbnails;
+        }
+        return page.<HtmlImage>getByXPath("//section[@id='gallery']//img").stream()
                 .map(HtmlImage::getSrcAttribute)
                 .toList();
+    }
+
+    /**
+     * Which picture the gallery shows, as its counter says, such as "2 of 3".
+     */
+    String pictureShown() {
+        return page.<HtmlElement>getFirstByXPath("//span[contains(@class, 'yottr-gallery-counter')]").asNormalizedText();
+    }
+
+    /**
+     * Presses Next under the gallery, which without JavaScript loads the page showing the next picture.
+     */
+    void showsTheNextPicture() {
+        show(click(page.getFirstByXPath("//a[contains(@class, 'yottr-gallery-next')]")));
+    }
+
+    /**
+     * Picks a picture from the gallery's strip of thumbnails, counting from 1.
+     */
+    void picksPicture(int number) {
+        show(click(page.getFirstByXPath("//section[@id='gallery']//ol/li[" + number + "]/a")));
     }
 
     /**

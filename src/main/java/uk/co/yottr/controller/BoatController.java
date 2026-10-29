@@ -20,6 +20,7 @@ import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.form.ListingForm;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
+import uk.co.yottr.repository.ListingPictureRepository.PictureSummary;
 import uk.co.yottr.security.Administrators;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ListingPictureService;
@@ -31,6 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class BoatController {
@@ -126,7 +128,8 @@ public class BoatController {
      * to administrators, who also get the means to withdraw or delete it.
      */
     @RequestMapping(value = "/s/listings/{boatReference}", method = RequestMethod.GET)
-    public ModelAndView listingPage(@PathVariable String boatReference, Principal principal) {
+    public ModelAndView listingPage(@PathVariable String boatReference, @RequestParam(name = "picture", required = false) Long pictureId,
+                                    Principal principal) {
         final boolean administrator = Administrators.isAdministrator(principal);
         final Boat boat = boatService.findListingToView(boatReference, principal.getName(), administrator)
                 .orElseThrow(() -> new ResourceNotFoundException("No listing with reference " + boatReference));
@@ -136,8 +139,23 @@ public class BoatController {
         modelAndView.addObject("own", boat.getOwner().getUsername().equals(principal.getName()));
         modelAndView.addObject("administrator", administrator);
         modelAndView.addObject("saved", savedBoatsService.savedReferences(principal.getName()).contains(boatReference));
-        modelAndView.addObject("pictures", listingPictureService.pictures(boat));
+        final List<PictureSummary> pictures = listingPictureService.pictures(boat);
+        modelAndView.addObject("pictures", pictures);
+        modelAndView.addObject("shown", shownPicture(pictures, pictureId));
         return modelAndView;
+    }
+
+    /**
+     * Which of the pictures the gallery shows: the one asked for, which is how its buttons and thumbnails work
+     * without JavaScript, or else the first.
+     */
+    static int shownPicture(List<PictureSummary> pictures, Long pictureId) {
+        for (int i = 0; i < pictures.size(); i++) {
+            if (pictures.get(i).id().equals(pictureId)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     /**

@@ -46,6 +46,13 @@ class ListingABoatIT extends Journey {
         final List<String> pictures = dave.picturesOnTheListing();
         assertThat(pictures).hasSize(2);
         assertThat(dave.fetches(pictures.get(1))).isEqualTo("image/jpeg");
+        assertThat(dave.pictureShown()).isEqualTo("1 of 2");
+        dave.showsTheNextPicture();
+        assertThat(dave.pictureShown()).isEqualTo("2 of 2");
+        dave.showsTheNextPicture();
+        assertThat(dave.pictureShown()).as("round to the first").isEqualTo("1 of 2");
+        dave.picksPicture(2);
+        assertThat(dave.pictureShown()).isEqualTo("2 of 2");
 
         // dave's browser keeps the picture it has for a day, so this is the one it hasn't fetched
         alice.suspendsTheirListing("Nicholson 32");

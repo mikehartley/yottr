@@ -230,31 +230,48 @@ main {
     clear: both;
 }
 
-/* the pictures on a listing's page: the first across the top, the rest as thumbnails beneath */
-.yottr-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
-    gap: 0.5rem;
-}
-
-.yottr-gallery img {
+/* the pictures on a listing's page: one at a time, over a strip of them all that scrolls across */
+.yottr-gallery-stage img {
     display: block;
     width: 100%;
     height: auto;
+    /* the same shape for every picture, so the buttons below don't move */
     aspect-ratio: 4 / 3;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: var(--bs-tertiary-bg);
     border-radius: var(--bs-border-radius);
 }
 
-.yottr-gallery .yottr-gallery-first {
-    grid-column: 1 / -1;
+.yottr-gallery-thumbnails {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 3px;
+    scrollbar-width: thin;
 }
 
-.yottr-gallery .yottr-gallery-first img {
-    aspect-ratio: auto;
-    max-height: 36rem;
-    object-fit: contain;
-    background-color: var(--bs-tertiary-bg);
+.yottr-gallery-thumbnails a {
+    display: block;
+    border-radius: var(--bs-border-radius);
+    opacity: 0.7;
+}
+
+.yottr-gallery-thumbnails a:hover,
+.yottr-gallery-thumbnails a[aria-current="true"] {
+    opacity: 1;
+}
+
+.yottr-gallery-thumbnails a[aria-current="true"] {
+    outline: 3px solid var(--bs-link-color);
+}
+
+.yottr-gallery-thumbnails img {
+    display: block;
+    width: 6rem;
+    height: 4.5rem;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
 }
 
 /* the owner's Pictures page */

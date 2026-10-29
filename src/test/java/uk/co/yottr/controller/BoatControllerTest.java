@@ -19,6 +19,7 @@ import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.RoleRequired;
 import uk.co.yottr.model.SailingPurpose;
 import uk.co.yottr.model.User;
+import uk.co.yottr.repository.ListingPictureRepository.PictureSummary;
 import uk.co.yottr.model.VesselType;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ReferenceDataService;
@@ -644,7 +645,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "crew"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("listingPage"))
-                .andExpect(model().size(5))
+                .andExpect(model().size(6))
                 .andExpect(model().attribute("boat", sameInstance(boat)))
                 .andExpect(model().attribute("saved", equalTo(false)))
                 .andExpect(model().attribute("own", equalTo(false)))
@@ -655,6 +656,35 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(content().string(not(containsString("Moderation"))));
 
         verify(mockBoatService).findListingToView(boat.getReference(), "crew", false);
+    }
+
+    @Test
+    public void testListingPageShowsThePictureAskedFor() throws Exception {
+        final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
+        when(mockBoatService.findListingToView(boat.getReference(), "crew", false)).thenReturn(Optional.of(boat));
+        when(mockListingPictureService.pictures(boat)).thenReturn(List.of(
+                new PictureSummary(7L, 1600, 1200, 480, 360), new PictureSummary(8L, 1200, 1600, 360, 480), new PictureSummary(9L, 1600, 1200, 480, 360)));
+        final String page = "/s/listings/" + boat.getReference();
+
+        mockMvc.perform(get(page).param("picture", "8").principal(() -> "crew"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("shown", 1))
+                .andExpect(content().string(containsString("2 of 3")))
+                .andExpect(content().string(containsString("href=\"" + page + "?picture=7#gallery\"")))
+                .andExpect(content().string(containsString("href=\"" + page + "?picture=9#gallery\"")))
+                .andExpect(content().string(containsString("<a class=\"yottr-gallery-stage\" href=\"" + page + "/pictures/8\"")));
+
+        verify(mockBoatService).findListingToView(boat.getReference(), "crew", false);
+    }
+
+    @Test
+    public void theGalleryShowsTheFirstPictureUnlessAskedForOneOnTheListing() {
+        final List<PictureSummary> pictures = List.of(new PictureSummary(7L, 1, 1, 1, 1), new PictureSummary(8L, 1, 1, 1, 1));
+
+        assertEquals(0, BoatController.shownPicture(pictures, null));
+        assertEquals(1, BoatController.shownPicture(pictures, 8L));
+        assertEquals(0, BoatController.shownPicture(pictures, 99L));
+        assertEquals(0, BoatController.shownPicture(List.of(), 7L));
     }
 
     @Test
