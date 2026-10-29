@@ -1,6 +1,7 @@
 package uk.co.yottr.model;
 
 import jakarta.validation.constraints.NotEmpty;
+import org.hibernate.annotations.Formula;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.co.yottr.validator.YearBuilt;
 
@@ -171,6 +172,10 @@ public class Boat {
     // taken down by an administrator; only an administrator can put it back
     @Column(name = "withdrawn", nullable = false)
     private boolean withdrawn;
+
+    // the first of its pictures, for the cards, or null if it has none (see ListingPicture)
+    @Formula("(select p.id from listing_pictures p where p.boat_id = id order by p.position, p.id limit 1)")
+    private Long coverPictureId;
 
     /**
      * For Hibernate.
@@ -426,6 +431,10 @@ public class Boat {
 
     public void setSuspended(boolean suspended) {
         this.suspended = suspended;
+    }
+
+    public Long getCoverPictureId() {
+        return coverPictureId;
     }
 
     public User getOwner() {

@@ -4,18 +4,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.ListingPictureService;
+import uk.co.yottr.service.PictureProcessor;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.SavedBoatsService;
 import uk.co.yottr.service.UserService;
 
 /**
- * Controllers with mocked services and no security filters, as the old ControllerTestConfig set up.
+ * Controllers with mocked services and no security filters, as the old ControllerTestConfig set up. The picture
+ * processor is the real one, which needs nothing else.
  */
 @WebMvcTest
+@Import(PictureProcessor.class)
 @AutoConfigureMockMvc(addFilters = false)
 public abstract class AbstractControllerTest {
 
@@ -40,4 +45,7 @@ public abstract class AbstractControllerTest {
 
     @MockitoBean
     SavedBoatsService mockSavedBoatsService;
+
+    @MockitoBean
+    ListingPictureService mockListingPictureService;
 }

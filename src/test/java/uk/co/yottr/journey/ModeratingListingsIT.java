@@ -3,6 +3,7 @@ package uk.co.yottr.journey;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.co.yottr.builder.TestPictures.jpeg;
 
 /**
  * Administrators taking down listings that shouldn't be on the site.
@@ -33,6 +34,21 @@ class ModeratingListingsIT extends Journey {
         ada.opensTheListingOf(alice, "Hallberg-Rassy 42");
         ada.putsTheListingBack();
         assertThat(dave.searchesTheBoatsFor("Hallberg-Rassy 42")).contains("Hallberg-Rassy 42");
+    }
+
+    @Test
+    void anAdministratorTakesDownAPicture() {
+        final Person alice = member("alice");
+        final Person ada = administrator("ada");
+        alice.signsIn();
+        alice.postsAListingFor("Rival 34");
+        alice.addsPicturesToTheirListing("Rival 34", jpeg(800, 600), jpeg(800, 600));
+        ada.signsIn();
+
+        ada.opensTheListingFor("Rival 34");
+        ada.takesDownPicture(1);
+
+        assertThat(ada.picturesOnTheListing()).hasSize(1);
     }
 
     @Test

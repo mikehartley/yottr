@@ -644,11 +644,12 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "crew"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("listingPage"))
-                .andExpect(model().size(4))
+                .andExpect(model().size(5))
                 .andExpect(model().attribute("boat", sameInstance(boat)))
                 .andExpect(model().attribute("saved", equalTo(false)))
                 .andExpect(model().attribute("own", equalTo(false)))
                 .andExpect(model().attribute("administrator", equalTo(false)))
+                .andExpect(model().attribute("pictures", empty()))
                 .andExpect(content().string(containsString("Get in touch")))
                 .andExpect(content().string(containsString("hx-post=\"/s/listings/" + boat.getReference() + "/save\"")))
                 .andExpect(content().string(not(containsString("Moderation"))));

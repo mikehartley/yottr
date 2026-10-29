@@ -1,18 +1,24 @@
 package uk.co.yottr.journey;
 
+import org.htmlunit.Page;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlFileInput;
 import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlImage;
 import org.htmlunit.html.HtmlPage;
 import uk.co.yottr.model.Country;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -181,6 +187,56 @@ class Person {
     }
 
     /**
+     * Adds pictures to their listing from its Pictures page, as files named picture-1.jpg and so on.
+     */
+    void addsPicturesToTheirListing(String makeAndModel, byte[]... pictures) {
+        show(click(onMyListing(makeAndModel, "//a[normalize-space()='Pictures']")));
+        final File[] files = new File[pictures.length];
+        try {
+            final Path folder = Files.createTempDirectory("pictures");
+            for (int i = 0; i < pictures.length; i++) {
+                files[i] = Files.write(folder.resolve("picture-" + (i + 1) + ".jpg"), pictures[i]).toFile();
+                files[i].deleteOnExit();
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        final HtmlForm form = form("add-pictures-form");
+        form.<HtmlFileInput>getInputByName("pictures").setFiles(files);
+        submit(form);
+    }
+
+    /**
+     * The address of each picture shown on the listing's page they're looking at, first to last.
+     */
+    List<String> picturesOnTheListing() {
+        return page.<HtmlImage>getByXPath("//div[@id='pictures']//img").stream()
+                .map(HtmlImage::getSrcAttribute)
+                .toList();
+    }
+
+    /**
+     * Whether the listing's card in Boats shows a picture.
+     */
+    boolean seesAPictureOnTheCardFor(String makeAndModel) {
+        goesTo("Boats");
+        return listingCard(makeAndModel).getFirstByXPath(".//a[@class='yottr-listing-cover']/img") != null;
+    }
+
+    /**
+     * Fetches a picture as their browser would, and returns its content type, or the status if it isn't there.
+     */
+    String fetches(String path) {
+        try {
+            final Page picture = browser.getPage(site + path);
+            final int status = picture.getWebResponse().getStatusCode();
+            return status == 200 ? picture.getWebResponse().getContentType() : String.valueOf(status);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
      * The make and model of each of their listings, on My Listings.
      */
     List<String> myListings() {
@@ -321,6 +377,13 @@ class Person {
 
     void deletesTheListing() {
         moderates("Delete");
+    }
+
+    /**
+     * Takes down a picture on the listing they're looking at, counting from 1.
+     */
+    void takesDownPicture(int number) {
+        moderates("Take down " + number);
     }
 
     private void moderates(String action) {

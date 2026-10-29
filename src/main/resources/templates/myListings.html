@@ -20,6 +20,7 @@
     <div th:remove="all">
         <div th:fragment="listingActions" class="d-flex gap-2">
             <a class="btn btn-sm btn-outline-primary" th:href="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}">Edit</a>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/s/listings/{boatReference}/pictures(boatReference=${boat.reference})}">Pictures</a>
             <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/suspended/flip(boatReference=${boat.reference})}">
                 <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${boat.suspended} ? 'Re-enable' : 'Suspend'">Suspend</button>
             </form>

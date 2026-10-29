@@ -25,6 +25,17 @@
                     </div>
                 </header>
 
+                <div class="yottr-gallery mb-3" id="pictures" th:unless="${pictures.isEmpty()}">
+                    <!--/* the first picture large, the rest as thumbnails; each links to the picture itself */-->
+                    <a th:each="picture, status : ${pictures}" th:classappend="${status.first} ? 'yottr-gallery-first'"
+                       th:with="url=@{/s/listings/{boatReference}/pictures/{pictureId}(boatReference=${boat.reference},pictureId=${picture.id})}"
+                       th:href="${url}"><img
+                       th:src="${status.first} ? ${url} : ${url} + '/thumbnail'"
+                       th:width="${status.first} ? ${picture.width} : ${picture.thumbnailWidth}"
+                       th:height="${status.first} ? ${picture.height} : ${picture.thumbnailHeight}"
+                       th:alt="'Picture ' + ${status.count} + ' of ' + ${status.size}" alt="Picture 1 of 3"/></a>
+                </div>
+
                 <p class="yottr-prose" th:text="${boat.description}">The boat, the plans and the people.</p>
 
                 <h2 class="h6 mt-4">The sailing</h2>
@@ -98,6 +109,7 @@
                 <p class="text-body-secondary small">Other members see your name, email and mobile here, so they can get in touch.</p>
                 <p class="text-body-secondary small" th:if="${boat.withdrawn}">An administrator has withdrawn it, so other members can't see it.</p>
                 <a class="btn btn-outline-primary" th:href="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}">Edit</a>
+                <a class="btn btn-outline-primary" th:href="@{/s/listings/{boatReference}/pictures(boatReference=${boat.reference})}">Pictures</a>
             </aside>
             <aside class="yottr-card p-4 mt-4" id="moderation" th:if="${administrator}">
                 <h2 class="h5">Moderation</h2>
@@ -110,6 +122,21 @@
                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this listing for good?')">Delete</button>
                     </form>
                 </div>
+                <th:block th:unless="${pictures.isEmpty()}">
+                    <h3 class="h6 mt-4">Pictures</h3>
+                    <p class="text-body-secondary small">Taking a picture down removes it for good.</p>
+                    <ul class="list-unstyled d-flex flex-wrap gap-3 mb-0" id="moderation-pictures">
+                        <li th:each="picture, status : ${pictures}">
+                            <img class="yottr-moderation-thumbnail d-block mb-1" th:alt="'Picture ' + ${status.count}" alt="Picture 1"
+                                 th:src="@{/s/listings/{boatReference}/pictures/{pictureId}/thumbnail(boatReference=${boat.reference},pictureId=${picture.id})}"/>
+                            <form class="inline-action" method="post"
+                                  th:action="@{/admin/listings/{boatReference}/pictures/{pictureId}/delete(boatReference=${boat.reference},pictureId=${picture.id})}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Take this picture down for good?')"
+                                        th:text="'Take down ' + ${status.count}">Take down 1</button>
+                            </form>
+                        </li>
+                    </ul>
+                </th:block>
             </aside>
         </div>
     </div>

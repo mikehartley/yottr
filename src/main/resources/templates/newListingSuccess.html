@@ -9,7 +9,8 @@
             <h1 class="h2">Boat Saved Successfully.</h1>
             <p class="text-body-secondary">This is how your listing looks to other members.</p>
             <article th:replace="~{listing :: card(boat=${boat}, actions=null)}">The listing.</article>
-            <a class="btn btn-primary" th:href="@{/s/listings/all}">See all the boats</a>
+            <a class="btn btn-primary" th:href="@{/s/listings/{boatReference}/pictures(boatReference=${boat.reference})}">Add pictures</a>
+            <a class="btn btn-outline-primary" th:href="@{/s/listings/all}">See all the boats</a>
             <a class="btn btn-link" th:href="@{/s/listings/mine}">My Listings</a>
         </div>
     </div>

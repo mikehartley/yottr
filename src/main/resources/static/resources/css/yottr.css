@@ -204,6 +204,82 @@ main {
     color: var(--yottr-coral);
 }
 
+/* a listing's first picture, beside it on the card, or above it on a phone */
+.yottr-listing-cover {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.yottr-listing-cover img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
+}
+
+@media (min-width: 576px) {
+    .yottr-listing-cover {
+        float: right;
+        width: 12rem;
+        margin: 0 0 1rem 1.5rem;
+    }
+}
+
+.yottr-listing > footer {
+    clear: both;
+}
+
+/* the pictures on a listing's page: the first across the top, the rest as thumbnails beneath */
+.yottr-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+    gap: 0.5rem;
+}
+
+.yottr-gallery img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
+}
+
+.yottr-gallery .yottr-gallery-first {
+    grid-column: 1 / -1;
+}
+
+.yottr-gallery .yottr-gallery-first img {
+    aspect-ratio: auto;
+    max-height: 36rem;
+    object-fit: contain;
+    background-color: var(--bs-tertiary-bg);
+}
+
+/* the owner's Pictures page */
+.yottr-pictures {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: 1rem;
+}
+
+.yottr-pictures img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
+}
+
+.yottr-moderation-thumbnail {
+    width: 6rem;
+    height: 4.5rem;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
+}
+
 /* forms that sit inline beside other actions, such as Suspend and Delete on a listing */
 .inline-action {
     display: inline;

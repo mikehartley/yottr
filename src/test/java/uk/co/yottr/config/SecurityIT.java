@@ -10,10 +10,16 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
 import uk.co.yottr.security.Role;
+import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.ListingPictureService;
+import uk.co.yottr.service.PictureProcessor;
 import uk.co.yottr.service.UserService;
 import uk.co.yottr.testconfig.TestcontainersConfig;
+
+import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static org.hamcrest.Matchers.containsString;
@@ -25,6 +31,8 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.co.yottr.builder.BoatBuilder.aBoat;
+import static uk.co.yottr.builder.TestPictures.jpeg;
 import static uk.co.yottr.builder.UserBuilder.aUser;
 
 /**
@@ -40,6 +48,15 @@ public class SecurityIT {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private BoatService boatService;
+
+    @Autowired
+    private ListingPictureService listingPictureService;
+
+    @Autowired
+    private PictureProcessor pictureProcessor;
 
     private static final SimpleGrantedAuthority ADMIN = new SimpleGrantedAuthority(Role.ADMIN.name());
     private static final SimpleGrantedAuthority FREE = new SimpleGrantedAuthority(Role.FREE.name());
@@ -104,6 +121,25 @@ public class SecurityIT {
                 .andExpect(status().isForbidden());
         mockMvc.perform(get("/actuator/loggers").with(user("alice").authorities(FREE)))
                 .andExpect(status().isForbidden());
+        mockMvc.perform(post("/admin/listings/any/pictures/1/delete").with(user("alice").authorities(FREE)).with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void aMembersBrowserMayKeepAPictureButNothingSharedMay() throws Exception {
+        // Spring Security says not to cache anything, unless the response has said otherwise
+        final User owner = userService.save(aUser().withUsername("owner" + secure().nextAlphanumeric(8)).build(), true);
+        final Boat boat = boatService.save(aBoat().withOwner(owner).build());
+        listingPictureService.add(boat, List.of(pictureProcessor.process(jpeg(40, 30))));
+        final long pictureId = listingPictureService.pictures(boat).get(0).id();
+
+        mockMvc.perform(get("/s/listings/" + boat.getReference() + "/pictures/" + pictureId + "/thumbnail")
+                        .with(user("alice").authorities(FREE)))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Cache-Control", "max-age=86400, private"))
+                .andExpect(header().doesNotExist("Pragma"));
+        mockMvc.perform(get("/s/listings/" + boat.getReference() + "/pictures/" + pictureId + "/thumbnail"))
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test

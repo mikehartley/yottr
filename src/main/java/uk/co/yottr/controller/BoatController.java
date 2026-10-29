@@ -22,6 +22,7 @@ import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
 import uk.co.yottr.security.Administrators;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.ListingPictureService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.SavedBoatsService;
 import uk.co.yottr.service.UserService;
@@ -42,14 +43,16 @@ public class BoatController {
     private UserService userService;
     private ReferenceDataService referenceDataService;
     private SavedBoatsService savedBoatsService;
+    private ListingPictureService listingPictureService;
 
     @Autowired
     public BoatController(BoatService boatService, UserService userService, ReferenceDataService referenceDataService,
-                          SavedBoatsService savedBoatsService) {
+                          SavedBoatsService savedBoatsService, ListingPictureService listingPictureService) {
         this.boatService = boatService;
         this.userService = userService;
         this.referenceDataService = referenceDataService;
         this.savedBoatsService = savedBoatsService;
+        this.listingPictureService = listingPictureService;
     }
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
@@ -133,6 +136,7 @@ public class BoatController {
         modelAndView.addObject("own", boat.getOwner().getUsername().equals(principal.getName()));
         modelAndView.addObject("administrator", administrator);
         modelAndView.addObject("saved", savedBoatsService.savedReferences(principal.getName()).contains(boatReference));
+        modelAndView.addObject("pictures", listingPictureService.pictures(boat));
         return modelAndView;
     }
 

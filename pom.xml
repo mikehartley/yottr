@@ -84,6 +84,24 @@
 			<artifactId>webjars-locator-lite</artifactId>
 		</dependency>
 
+		<!-- Pictures on listings: Thumbnailator resizes them, turning phone photos the right way up, and the
+		     TwelveMonkeys plugins let ImageIO read WebP and more kinds of JPEG -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.21</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-webp</artifactId>
+			<version>3.15.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-jpeg</artifactId>
+			<version>3.15.3</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

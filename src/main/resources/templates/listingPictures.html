@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="listing-pictures-content" class="container py-4">
+    <a class="small" th:href="@{/s/listings/{boatReference}(boatReference=${boat.reference})}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Your listing</a>
+
+    <div class="row justify-content-center mt-1">
+        <div class="col-lg-9">
+            <h1 class="h2">Pictures</h1>
+            <p class="text-body-secondary" th:text="${boat.title}">Weekends in the Solent</p>
+
+            <div class="alert alert-success" id="pictures-added-msg" th:if="${added != null and added > 0}"
+                 th:text="${added} == 1 ? 'Added 1 picture.' : 'Added ' + ${added} + ' pictures.'">Added 2 pictures.</div>
+            <div class="alert alert-warning" id="pictures-problems" th:if="${problems != null and !problems.isEmpty()}">
+                <p class="mb-0" th:each="problem : ${problems}" th:text="${problem}">holiday.heic isn't a JPEG, PNG or WebP picture.</p>
+            </div>
+
+            <p th:if="${pictures.isEmpty()}" class="text-body-secondary">Your listing has no pictures yet.</p>
+            <ol class="yottr-pictures list-unstyled" id="pictures" th:unless="${pictures.isEmpty()}">
+                <li th:each="picture, status : ${pictures}" class="yottr-card p-2" th:id="'picture-' + ${picture.id}">
+                    <img th:src="@{/s/listings/{boatReference}/pictures/{pictureId}/thumbnail(boatReference=${boat.reference},pictureId=${picture.id})}"
+                         th:width="${picture.thumbnailWidth}" th:height="${picture.thumbnailHeight}"
+                         th:alt="'Picture ' + ${status.count}" alt="Picture 1"/>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <span class="yottr-badge" th:if="${status.first}">On the card</span>
+                        <form class="inline-action" method="post" th:unless="${status.first}"
+                              th:action="@{/s/listings/{boatReference}/pictures/{pictureId}/first(boatReference=${boat.reference},pictureId=${picture.id})}">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Make first</button>
+                        </form>
+                        <form class="inline-action" method="post"
+                              th:action="@{/s/listings/{boatReference}/pictures/{pictureId}/delete(boatReference=${boat.reference},pictureId=${picture.id})}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                    </div>
+                </li>
+            </ol>
+
+            <form method="post" enctype="multipart/form-data" class="yottr-card p-4 mt-4" id="add-pictures-form"
+                  th:action="@{/s/listings/{boatReference}/pictures(boatReference=${boat.reference})}" th:if="${room > 0}">
+                <h2 class="h5">Add pictures</h2>
+                <p class="text-body-secondary small">
+                    JPEG, PNG or WebP, up to 10 MB each. A listing can have up to <span th:text="${maxPictures}">6</span>
+                    pictures, and there's room for <span th:text="${room}">4</span> more. The first is the one on your
+                    listing's card.
+                </p>
+                <p class="small">Only add pictures you took yourself, or have permission to use.</p>
+                <div class="mb-3">
+                    <label for="pictures-input" class="form-label">Pictures</label>
+                    <input class="form-control" type="file" id="pictures-input" name="pictures" multiple="multiple"
+                           accept="image/jpeg,image/png,image/webp"/>
+                </div>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+            <p class="mt-4 text-body-secondary" th:unless="${room > 0}" id="no-room-msg">
+                Your listing has <span th:text="${maxPictures}">6</span> pictures, which is as many as it can have.
+                Remove one to add another.
+            </p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -5,6 +5,10 @@
 <body>
 
 <article th:fragment="card" class="yottr-card yottr-listing p-4 mb-4">
+    <!--/* the first picture, beside the listing; the title is the link that's read out and tabbed to */-->
+    <a class="yottr-listing-cover" th:if="${boat.coverPictureId != null}" tabindex="-1" aria-hidden="true"
+       th:href="@{/s/listings/{boatReference}(boatReference=${boat.reference})}"><img alt="" loading="lazy"
+       th:src="@{/s/listings/{boatReference}/pictures/{pictureId}/thumbnail(boatReference=${boat.reference},pictureId=${boat.coverPictureId})}"/></a>
     <header class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
         <div>
             <h2 class="h5 mb-1"><a th:href="@{/s/listings/{boatReference}(boatReference=${boat.reference})}" th:text="${boat.title}">Weekends in the Solent</a></h2>
