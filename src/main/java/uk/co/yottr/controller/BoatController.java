@@ -147,26 +147,43 @@ public class BoatController {
     }
 
     /**
-     * Saves a listing the member can see, and goes back to the page they saved it from.
+     * Saves a listing the member can see, and goes back to the page they saved it from. htmx gets back only the
+     * changed button, so the page doesn't move.
      */
     @RequestMapping(value = "/s/listings/{boatReference}/save", method = RequestMethod.POST)
-    public String saveListing(@PathVariable String boatReference, @RequestParam(required = false) String next, Principal principal) {
+    public ModelAndView saveListing(@PathVariable String boatReference, @RequestParam(required = false) String next,
+                                    HttpServletRequest request, HttpServletResponse response, Principal principal) {
         boatService.findListingToView(boatReference, principal.getName(), Administrators.isAdministrator(principal))
                 .orElseThrow(() -> new ResourceNotFoundException("No listing with reference " + boatReference));
 
         savedBoatsService.save(principal.getName(), boatReference);
 
-        return "redirect:" + sameSitePath(next);
+        return afterSaving(boatReference, true, next, request, response);
     }
 
     /**
      * Unsaves a listing, which works even if it can no longer be seen, so that it can be cleared from Saved.
      */
     @RequestMapping(value = "/s/listings/{boatReference}/unsave", method = RequestMethod.POST)
-    public String unsaveListing(@PathVariable String boatReference, @RequestParam(required = false) String next, Principal principal) {
+    public ModelAndView unsaveListing(@PathVariable String boatReference, @RequestParam(required = false) String next,
+                                      HttpServletRequest request, HttpServletResponse response, Principal principal) {
         savedBoatsService.unsave(principal.getName(), boatReference);
 
-        return "redirect:" + sameSitePath(next);
+        return afterSaving(boatReference, false, next, request, response);
+    }
+
+    private static ModelAndView afterSaving(String boatReference, boolean saved, String next,
+                                            HttpServletRequest request, HttpServletResponse response) {
+        if (!Htmx.wantsPartOfPage(request, response)) {
+            return new ModelAndView("redirect:" + sameSitePath(next));
+        }
+
+        final ModelAndView modelAndView = new ModelAndView("listing :: saveButton");
+        modelAndView.addObject("reference", boatReference);
+        modelAndView.addObject("saved", saved);
+        modelAndView.addObject("next", sameSitePath(next));
+        modelAndView.addObject("inPlace", true);
+        return modelAndView;
     }
 
     /**

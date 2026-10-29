@@ -90,7 +90,7 @@
                     <li><i class="bi bi-telephone me-2" aria-hidden="true"></i><a th:href="'tel:' + ${#strings.replace(owner.mobile, ' ', '')}" th:text="${owner.mobile}">07700 900123</a></li>
                 </ul>
                 <div class="mt-3">
-                    <form th:replace="~{listing :: saveButton(boat=${boat}, saved=${saved}, next='/s/listings/' + ${boat.reference})}">Save</form>
+                    <form th:replace="~{listing :: saveButton(reference=${boat.reference}, saved=${saved}, next='/s/listings/' + ${boat.reference}, inPlace=true)}">Save</form>
                 </div>
             </aside>
             <aside class="yottr-card p-4" th:if="${own}">

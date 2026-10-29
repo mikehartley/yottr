@@ -650,6 +650,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute("own", equalTo(false)))
                 .andExpect(model().attribute("administrator", equalTo(false)))
                 .andExpect(content().string(containsString("Get in touch")))
+                .andExpect(content().string(containsString("hx-post=\"/s/listings/" + boat.getReference() + "/save\"")))
                 .andExpect(content().string(not(containsString("Moderation"))));
 
         verify(mockBoatService).findListingToView(boat.getReference(), "crew", false);
@@ -699,6 +700,34 @@ public class BoatControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testSavingWithHtmxAnswersWithTheChangedButtonInPlaceOfGoingBack() throws Exception {
+        final Boat boat = aUser().withUsername("owner").withBoat().build().getBoatListings().get(0);
+        when(mockBoatService.findListingToView(boat.getReference(), "crew", false)).thenReturn(Optional.of(boat));
+
+        mockMvc.perform(post("/s/listings/" + boat.getReference() + "/save").principal(() -> "crew")
+                        .header("HX-Request", "true").param("next", "/s/listings/all?text=solent"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listing :: saveButton"))
+                .andExpect(content().string(containsString("hx-post=\"/s/listings/" + boat.getReference() + "/unsave\"")))
+                .andExpect(content().string(containsString("Saved")))
+                .andExpect(content().string(not(containsString("<html"))));
+
+        verify(mockBoatService).findListingToView(boat.getReference(), "crew", false);
+        verify(mockSavedBoatsService).save("crew", boat.getReference());
+    }
+
+    @Test
+    public void testUnsavingWithHtmxAnswersWithTheChangedButton() throws Exception {
+        mockMvc.perform(post("/s/listings/hidden/unsave").principal(() -> "crew").header("HX-Request", "true")
+                        .param("next", "/s/listings/all"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listing :: saveButton"))
+                .andExpect(content().string(containsString("hx-post=\"/s/listings/hidden/save\"")));
+
+        verify(mockSavedBoatsService).unsave("crew", "hidden");
+    }
+
+    @Test
     public void testAListingThatCannotBeSeenCannotBeSaved() throws Exception {
         when(mockBoatService.findListingToView("hidden", "crew", false)).thenReturn(Optional.empty());
 
@@ -726,7 +755,10 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/s/listings/saved").principal(() -> "crew"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("savedBoats"))
-                .andExpect(model().attribute("boats", List.of(boat)));
+                .andExpect(model().attribute("boats", List.of(boat)))
+                // unsaving here goes back to Saved, which takes the listing off it
+                .andExpect(content().string(containsString("action=\"/s/listings/" + boat.getReference() + "/unsave\"")))
+                .andExpect(content().string(not(containsString("hx-post"))));
 
         verify(mockSavedBoatsService).savedBoats("crew");
     }

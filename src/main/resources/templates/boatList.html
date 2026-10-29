@@ -92,7 +92,7 @@
     <!--/* the Save button at the foot of each listing, given to the card above; it comes back to this search */-->
     <div th:remove="all">
         <div th:fragment="saveAction" th:with="next=${searchQuery.isEmpty()} ? '/s/listings/all' : '/s/listings/all?' + ${searchQuery}">
-            <form th:replace="~{listing :: saveButton(boat=${boat}, saved=${savedReferences.contains(boat.reference)}, next=${next})}">Save</form>
+            <form th:replace="~{listing :: saveButton(reference=${boat.reference}, saved=${savedReferences.contains(boat.reference)}, next=${next}, inPlace=true)}">Save</form>
         </div>
     </div>
 </section>

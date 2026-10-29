@@ -24,7 +24,7 @@
 
     <div th:remove="all">
         <div th:fragment="savedAction">
-            <form th:replace="~{listing :: saveButton(boat=${boat}, saved=true, next='/s/listings/saved')}">Saved</form>
+            <form th:replace="~{listing :: saveButton(reference=${boat.reference}, saved=true, next='/s/listings/saved')}">Saved</form>
         </div>
     </div>
 </section>
