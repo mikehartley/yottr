@@ -97,6 +97,13 @@ public class SecurityIT {
     public void membersCannotOpenAdministratorsPages() throws Exception {
         mockMvc.perform(get("/admin/users").with(user("alice").authorities(FREE)))
                 .andExpect(status().isForbidden());
+        mockMvc.perform(get("/admin/logging").with(user("alice").authorities(FREE)))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/admin/logging").param("name", "uk.co.yottr").param("level", "DEBUG")
+                        .with(user("alice").authorities(FREE)).with(csrf()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/actuator/loggers").with(user("alice").authorities(FREE)))
+                .andExpect(status().isForbidden());
     }
 
     @Test
