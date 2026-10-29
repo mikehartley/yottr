@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="crewing-content" class="container py-4">
+    <h1 class="h2 mb-4">Boats I crew on</h1>
+    <p th:if="${places.empty}" class="text-body-secondary">None yet. On a boat's listing, ask to join its crew; once the
+        owner accepts, the boat is here.</p>
+    <ul class="list-unstyled" id="crewing">
+        <li class="yottr-card p-3 mb-3 d-flex flex-wrap justify-content-between align-items-center gap-2" th:each="place : ${places}"
+            th:with="boat=${place.boat}">
+            <div>
+                <h2 class="h5 mb-1">
+                    <a th:if="${boat.visible}" th:href="@{/s/listings/{boatReference}(boatReference=${boat.reference})}" th:text="${boat.title}">Weekends in the Solent</a>
+                    <span th:unless="${boat.visible}" class="text-body-secondary" th:text="${boat.title}">Weekends in the Solent</span>
+                </h2>
+                <span class="text-body-secondary"><span class="yottr-listing-make" th:text="${boat.makeAndModel}">Sigma 33</span>,
+                    <span th:text="${boat.owner.firstName} + ' ' + ${boat.owner.lastName}">Ada Lovelace</span>'s boat</span>
+                <span class="yottr-badge ms-1" th:if="${place.onBoard}"
+                      th:text="'In the crew since ' + ${#temporals.format(place.joinedOn, 'd MMM yyyy')}">In the crew since 1 Jun 2027</span>
+                <span class="yottr-badge yottr-badge-warning ms-1" th:unless="${place.onBoard}">Asked to join</span>
+                <span class="yottr-badge yottr-badge-warning ms-1" th:unless="${boat.visible}">Listing no longer available</span>
+            </div>
+            <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/crew/leave(boatReference=${boat.reference})}">
+                <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${place.onBoard} ? 'Leave the crew' : 'Withdraw'">Leave the crew</button>
+            </form>
+        </li>
+    </ul>
+</section>
+</body>
+</html>

@@ -162,6 +162,59 @@
                 <a class="btn btn-outline-primary" th:href="@{/s/listings/{boatReference}/edit(boatReference=${boat.reference})}">Edit</a>
                 <a class="btn btn-outline-primary" th:href="@{/s/listings/{boatReference}/pictures(boatReference=${boat.reference})}">Pictures</a>
             </aside>
+            <!--/* The boat's crew (#38). Other members can ask to join; the owner sees who has asked, and accepts or turns
+                   them down, and everyone in the crew sees who else is in it. */-->
+            <aside class="yottr-card p-4 mt-4" id="crew" th:with="onBoard=${placeInCrew != null and placeInCrew.onBoard}">
+                <h2 class="h5">Crew</h2>
+                <th:block th:unless="${own}">
+                    <th:block th:if="${placeInCrew == null}">
+                        <p class="text-body-secondary small">Sail on this boat? Ask to join its crew, and once the owner accepts,
+                            it's among the boats you crew on.</p>
+                        <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/crew(boatReference=${boat.reference})}">
+                            <button type="submit" class="btn btn-sm btn-outline-primary" id="ask-to-join">Ask to join the crew</button>
+                        </form>
+                    </th:block>
+                    <th:block th:if="${placeInCrew != null}">
+                        <p class="small" th:text="${onBoard} ? 'You\'re in the crew.' : 'You\'ve asked to join the crew. The owner hasn\'t answered yet.'">You're in the crew.</p>
+                        <form class="inline-action" method="post" th:action="@{/s/listings/{boatReference}/crew/leave(boatReference=${boat.reference})}">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" id="leave-crew" th:text="${onBoard} ? 'Leave the crew' : 'Withdraw'">Leave the crew</button>
+                        </form>
+                    </th:block>
+                </th:block>
+                <th:block th:if="${own or onBoard}" th:with="aboard=${crew.?[onBoard]}, asking=${crew.?[!onBoard]}">
+                    <p class="text-body-secondary small mt-3 mb-2" th:if="${aboard.isEmpty() and (!own or asking.isEmpty())}">No crew yet.</p>
+                    <ul class="list-unstyled mb-0 mt-3" id="crew-on-board" th:unless="${aboard.isEmpty()}">
+                        <li class="d-flex justify-content-between align-items-center gap-2 mb-2" th:each="place : ${aboard}">
+                            <span th:text="${place.member.firstName} + ' ' + ${place.member.lastName}">Dave Jones</span>
+                            <form class="inline-action" method="post" th:if="${own}"
+                                  th:action="@{/s/listings/{boatReference}/crew/{id}/remove(boatReference=${boat.reference},id=${place.id})}">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Remove</button>
+                            </form>
+                        </li>
+                    </ul>
+                    <th:block th:if="${own and !asking.isEmpty()}">
+                        <h3 class="h6 mt-3">Asking to join</h3>
+                        <ul class="list-unstyled mb-0" id="crew-asking">
+                            <li class="mb-2" th:each="place : ${asking}">
+                                <div th:text="${place.member.firstName} + ' ' + ${place.member.lastName}">Dave Jones</div>
+                                <div class="small text-body-secondary">
+                                    <a th:href="'mailto:' + ${place.member.email}" th:text="${place.member.email}">dave@example.test</a>
+                                </div>
+                                <div class="d-flex gap-2 mt-1">
+                                    <form class="inline-action" method="post"
+                                          th:action="@{/s/listings/{boatReference}/crew/{id}/accept(boatReference=${boat.reference},id=${place.id})}">
+                                        <button type="submit" class="btn btn-sm btn-primary">Accept</button>
+                                    </form>
+                                    <form class="inline-action" method="post"
+                                          th:action="@{/s/listings/{boatReference}/crew/{id}/remove(boatReference=${boat.reference},id=${place.id})}">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">Turn down</button>
+                                    </form>
+                                </div>
+                            </li>
+                        </ul>
+                    </th:block>
+                </th:block>
+            </aside>
             <aside class="yottr-card p-4 mt-4" id="moderation" th:if="${administrator}">
                 <h2 class="h5">Moderation</h2>
                 <p class="text-body-secondary small" th:text="${boat.withdrawn} ? 'Withdrawn: only its owner and administrators can see it.' : 'Withdrawing hides it from other members until an administrator puts it back. Its owner can see that it was withdrawn.'">Withdrawing hides it.</p>

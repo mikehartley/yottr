@@ -26,6 +26,7 @@ import uk.co.yottr.model.User;
 import uk.co.yottr.repository.ListingPictureRepository.PictureSummary;
 import uk.co.yottr.security.Administrators;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.CrewService;
 import uk.co.yottr.service.ListingPictureService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.SavedBoatsService;
@@ -49,17 +50,19 @@ public class BoatController {
     private ReferenceDataService referenceDataService;
     private SavedBoatsService savedBoatsService;
     private ListingPictureService listingPictureService;
+    private CrewService crewService;
     private TestUsers testUsers;
 
     @Autowired
     public BoatController(BoatService boatService, UserService userService, ReferenceDataService referenceDataService,
                           SavedBoatsService savedBoatsService, ListingPictureService listingPictureService,
-                          TestUsers testUsers) {
+                          CrewService crewService, TestUsers testUsers) {
         this.boatService = boatService;
         this.userService = userService;
         this.referenceDataService = referenceDataService;
         this.savedBoatsService = savedBoatsService;
         this.listingPictureService = listingPictureService;
+        this.crewService = crewService;
         this.testUsers = testUsers;
     }
 
@@ -166,6 +169,8 @@ public class BoatController {
         final List<PictureSummary> pictures = listingPictureService.pictures(boat);
         modelAndView.addObject("pictures", pictures);
         modelAndView.addObject("shown", shownPicture(pictures, pictureId));
+        modelAndView.addObject("crew", crewService.crewOf(boat));
+        modelAndView.addObject("placeInCrew", crewService.placeIn(boat, principal.getName()).orElse(null));
         return modelAndView;
     }
 

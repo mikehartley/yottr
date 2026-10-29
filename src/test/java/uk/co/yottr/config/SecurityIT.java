@@ -86,6 +86,10 @@ public class SecurityIT {
                 .andExpect(status().isMethodNotAllowed());
         mockMvc.perform(get("/s/deleteMe").with(user("alice").authorities(FREE)))
                 .andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(get("/s/listings/ref/crew/1/accept").with(user("alice").authorities(FREE)))
+                .andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(get("/s/listings/ref/crew/leave").with(user("alice").authorities(FREE)))
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test

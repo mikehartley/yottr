@@ -53,6 +53,10 @@ class Person {
         browser.getOptions().setThrowExceptionOnFailingStatusCode(false);
     }
 
+    String name() {
+        return name;
+    }
+
     String username() {
         return username;
     }
@@ -328,6 +332,42 @@ class Person {
     String cardOnAllBoats(String makeAndModel) {
         goesTo("Boats");
         return listingCard(makeAndModel).asNormalizedText();
+    }
+
+    // --- crewing
+
+    /**
+     * Asks, from its listing, to join the crew of a boat.
+     */
+    void asksToJoinTheCrewOf(String makeAndModel) {
+        opensTheListingFor(makeAndModel);
+        show(click(page.getHtmlElementById("ask-to-join")));
+    }
+
+    /**
+     * What the crew panel on a listing says to them.
+     */
+    String crewPanelOf(String makeAndModel) {
+        opensTheListingFor(makeAndModel);
+        return page.getHtmlElementById("crew").asNormalizedText();
+    }
+
+    /**
+     * As the owner, presses a button (Accept, Turn down, Remove) beside a member in their listing's crew panel.
+     */
+    void answersCrew(String makeAndModel, Person member, String button) {
+        opensTheListingFor(makeAndModel);
+        final HtmlElement crewMember = page.getFirstByXPath("//aside[@id='crew']//li[contains(normalize-space(), '" + member.name + " Sailor')]");
+        assertThat(crewMember).as(member.name + " in the crew panel").isNotNull();
+        show(click(crewMember.getFirstByXPath(".//button[normalize-space()='" + button + "']")));
+    }
+
+    /**
+     * The boats they crew on, or have asked to, as Crewing lists them.
+     */
+    String boatsTheyCrewOn() {
+        goesTo("Crewing");
+        return page.getHtmlElementById("crewing-content").asNormalizedText();
     }
 
     /**

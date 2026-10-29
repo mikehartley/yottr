@@ -672,7 +672,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/s/listings/" + boat.getReference()).principal(() -> "crew"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("listingPage"))
-                .andExpect(model().size(6))
+                .andExpect(model().size(8))
                 .andExpect(model().attribute("boat", sameInstance(boat)))
                 .andExpect(model().attribute("saved", equalTo(false)))
                 .andExpect(model().attribute("own", equalTo(false)))

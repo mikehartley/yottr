@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.co.yottr.config.TestUsers;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.CrewService;
 import uk.co.yottr.service.ListingPictureService;
 import uk.co.yottr.service.PictureProcessor;
 import uk.co.yottr.service.ReferenceDataService;
@@ -49,4 +50,7 @@ public abstract class AbstractControllerTest {
 
     @MockitoBean
     ListingPictureService mockListingPictureService;
+
+    @MockitoBean
+    CrewService mockCrewService;
 }
