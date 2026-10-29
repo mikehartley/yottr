@@ -44,4 +44,23 @@ class CrewingIT extends Journey {
 
         assertThat(alice.crewPanelOf("Moody 31")).contains("No crew yet").doesNotContain("Ask to join");
     }
+
+    @Test
+    void ownersFindCrewWhoHaveAProfile() {
+        final Person alice = member("alice");
+        final Person dave = member("dave");
+        final Person erin = member("erin");
+        dave.signsIn();
+        erin.signsIn();
+        alice.signsIn();
+
+        dave.makesACrewProfile("West Country", "Weekends", "Three seasons out of Falmouth.");
+        erin.makesACrewProfile("Solent and South Coast", "Holidays", "Day Skipper, keen to do a delivery.");
+
+        assertThat(alice.findsCrewIn("West Country")).containsExactly(dave.name() + " Sailor");
+        assertThat(alice.findsCrewIn(null)).contains(dave.name() + " Sailor", erin.name() + " Sailor");
+
+        dave.removesTheirCrewProfile();
+        assertThat(alice.findsCrewIn("West Country")).isEmpty();
+    }
 }

@@ -40,6 +40,7 @@
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/all', text='Boats')}">Boats</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/saved', text='Saved')}">Saved</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/crew', text='Crewing')}">Crewing</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/crew/find', text='Find crew')}">Find crew</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/mine', text='My Listings')}">My Listings</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/myDetails', text='My Details')}">My Details</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/users', text='Members')}">Members</a></li>

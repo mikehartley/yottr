@@ -4,7 +4,9 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
 <section layout:fragment="content" id="crewing-content" class="container py-4">
-    <h1 class="h2 mb-4">Boats I crew on</h1>
+    <h1 class="h2 mb-2">Boats I crew on</h1>
+    <p class="text-body-secondary mb-4">Looking for a boat? A <a th:href="@{/s/crewProfile}" id="crew-profile-link">crew profile</a>
+        lets owners find you.</p>
     <p th:if="${places.empty}" class="text-body-secondary">None yet. On a boat's listing, ask to join its crew; once the
         owner accepts, the boat is here.</p>
     <ul class="list-unstyled" id="crewing">

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="find-crew-content" class="container py-4">
+    <h1 class="h2 mb-2">Crew looking for a boat</h1>
+    <p class="text-body-secondary mb-4">Members who've made a <a th:href="@{/s/crewProfile}">crew profile</a> so owners can find them.</p>
+
+    <form id="crew-search-form" method="get" th:action="@{/s/crew/find}" th:object="${search}" class="yottr-card p-3 mb-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small" for="region">Where</label>
+                <select class="form-select" th:field="*{region}">
+                    <option value="">Anywhere</option>
+                    <optgroup th:each="group : ${sailingRegions}" th:label="${group.key}">
+                        <option th:each="option : ${group.value}" th:value="${option}" th:text="${option.displayName}">West Country</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small" for="minLevel">At least</label>
+                <select class="form-select" th:field="*{minLevel}">
+                    <option value="">Any level</option>
+                    <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.rank}" th:text="${level.displayName}">Day Skipper</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small" for="when">When</label>
+                <select class="form-select" th:field="*{when}">
+                    <option value="">Any</option>
+                    <option th:each="option : ${frequencies}" th:value="${option}" th:text="${option.displayName}">Weekends</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100" id="find-crew-button">Find</button>
+            </div>
+        </div>
+    </form>
+
+    <p class="text-body-secondary small mb-3" th:text="${profiles.size()} == 1 ? '1 sailor' : ${profiles.size()} + ' sailors'">3 sailors</p>
+    <p th:if="${profiles.empty}" class="text-body-secondary">No crew match. Try fewer filters.</p>
+    <article class="yottr-card p-4 mb-3 yottr-crew-profile" th:each="profile : ${profiles}" th:with="member=${profile.member}">
+        <header class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+            <div>
+                <h2 class="h5 mb-1 yottr-crew-name" th:text="${member.firstName} + ' ' + ${member.lastName}">Dave Jones</h2>
+                <div class="text-body-secondary">
+                    <span th:text="${profile.region.displayName}">West Country</span> ·
+                    <span th:text="${profile.when}">Weekends</span>
+                </div>
+            </div>
+            <span class="yottr-badge" th:text="${profile.levelName}">Day Skipper</span>
+        </header>
+        <p class="mb-2 yottr-prose" th:text="${profile.experience}">Three seasons on the south coast.</p>
+        <footer class="small">
+            <i class="bi bi-envelope me-1" aria-hidden="true"></i><a th:href="'mailto:' + ${member.email}" th:text="${member.email}">dave@example.test</a>
+            <span class="ms-3"><i class="bi bi-telephone me-1" aria-hidden="true"></i><a th:href="'tel:' + ${#strings.replace(member.mobile, ' ', '')}" th:text="${member.mobile}">07700 900123</a></span>
+        </footer>
+    </article>
+</section>
+</body>
+</html>

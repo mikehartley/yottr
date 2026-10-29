@@ -371,6 +371,40 @@ class Person {
     }
 
     /**
+     * Makes or changes their crew profile, with the region and when given by name.
+     */
+    void makesACrewProfile(String region, String when, String experience) {
+        open("/s/crewProfile");
+        final HtmlForm form = form("crew-profile-form");
+        final HtmlSelect where = form.getSelectByName("region");
+        where.setSelectedAttribute(where.getOptionByText(region), true);
+        form.<HtmlCheckBoxInput>getFirstByXPath(".//input[@name='availability'][following-sibling::label[normalize-space()='" + when + "']]").setChecked(true);
+        form.getTextAreaByName("experience").setText(experience);
+        submit(form);
+    }
+
+    void removesTheirCrewProfile() {
+        open("/s/crewProfile");
+        show(click(page.getHtmlElementById("remove-crew-profile")));
+    }
+
+    /**
+     * The names of the crew Find crew shows for the region, given by name, or anywhere if it's null.
+     */
+    List<String> findsCrewIn(String region) {
+        goesTo("Find crew");
+        if (region != null) {
+            final HtmlForm form = form("crew-search-form");
+            final HtmlSelect where = form.getSelectByName("region");
+            where.setSelectedAttribute(where.getOptionByText(region), true);
+            submit(form);
+        }
+        return page.<HtmlElement>getByXPath("//h2[contains(@class, 'yottr-crew-name')]").stream()
+                .map(HtmlElement::asNormalizedText)
+                .toList();
+    }
+
+    /**
      * Opens a listing from All Boats, which shows the newest first.
      */
     void opensTheListingFor(String makeAndModel) {

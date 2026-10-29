@@ -11,6 +11,7 @@ import uk.co.yottr.config.TestUsers;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.service.BlockedAddressService;
 import uk.co.yottr.service.BoatService;
+import uk.co.yottr.service.CrewProfileService;
 import uk.co.yottr.service.CrewService;
 import uk.co.yottr.service.ListingPictureService;
 import uk.co.yottr.service.PictureProcessor;
@@ -57,4 +58,7 @@ public abstract class AbstractControllerTest {
 
     @MockitoBean
     BlockedAddressService mockBlockedAddressService;
+
+    @MockitoBean
+    CrewProfileService mockCrewProfileService;
 }
