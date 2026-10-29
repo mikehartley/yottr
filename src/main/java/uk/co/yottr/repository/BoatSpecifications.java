@@ -42,6 +42,10 @@ public final class BoatSpecifications {
         if (search.getText() != null && !search.getText().isBlank()) {
             specification = specification.and(textMatches(search.getText().trim()));
         }
+        if (search.getRegion() != null) {
+            specification = specification.and((boat, query, cb) ->
+                    cb.or(cb.equal(boat.get("fromRegion"), search.getRegion()), cb.equal(boat.get("toRegion"), search.getRegion())));
+        }
         if (search.getPurpose() != null) {
             specification = specification.and((boat, query, cb) -> cb.equal(boat.get("sailingPurpose"), search.getPurpose()));
         }
@@ -96,7 +100,7 @@ public final class BoatSpecifications {
     }
 
     /**
-     * The text anywhere in the title, make and model or description, ignoring case, or the whole reference.
+     * The text anywhere in the title, make and model, description or places, ignoring case, or the whole reference.
      */
     private static Specification<Boat> textMatches(String text) {
         final String pattern = Like.containing(text);
@@ -104,6 +108,8 @@ public final class BoatSpecifications {
                 cb.like(cb.lower(boat.get("title")), pattern, Like.ESCAPE),
                 cb.like(cb.lower(boat.get("makeAndModel")), pattern, Like.ESCAPE),
                 cb.like(cb.lower(boat.get("description")), pattern, Like.ESCAPE),
+                cb.like(cb.lower(boat.get("fromPlace")), pattern, Like.ESCAPE),
+                cb.like(cb.lower(boat.get("toPlace")), pattern, Like.ESCAPE),
                 cb.equal(boat.get("reference"), text));
     }
 }

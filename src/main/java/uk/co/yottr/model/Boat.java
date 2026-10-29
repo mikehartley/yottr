@@ -152,6 +152,22 @@ public class Boat {
     // ListingForm requires it for a course or tuition, and leaves it out otherwise
     private CourseLevel courseLevel;
 
+    // ListingForm requires where from, and where to for a trip or a delivery; a listing posted before they were
+    // asked for has neither until it's next edited
+    @Enumerated(EnumType.STRING)
+    @Column(name = "from_region")
+    private SailingRegion fromRegion;
+
+    @Column(name = "from_place", length = 60)
+    private String fromPlace;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "to_region")
+    private SailingRegion toRegion;
+
+    @Column(name = "to_place", length = 60)
+    private String toPlace;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "travel_expenses", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
@@ -391,6 +407,59 @@ public class Boat {
 
     public void setCourseLevel(CourseLevel courseLevel) {
         this.courseLevel = courseLevel;
+    }
+
+    public SailingRegion getFromRegion() {
+        return fromRegion;
+    }
+
+    public void setFromRegion(SailingRegion fromRegion) {
+        this.fromRegion = fromRegion;
+    }
+
+    public String getFromPlace() {
+        return fromPlace;
+    }
+
+    public void setFromPlace(String fromPlace) {
+        this.fromPlace = fromPlace;
+    }
+
+    public SailingRegion getToRegion() {
+        return toRegion;
+    }
+
+    public void setToRegion(SailingRegion toRegion) {
+        this.toRegion = toRegion;
+    }
+
+    public String getToPlace() {
+        return toPlace;
+    }
+
+    public void setToPlace(String toPlace) {
+        this.toPlace = toPlace;
+    }
+
+    /**
+     * Where the listing sails from as it's shown, such as "Hamble, Solent and South Coast", or null if it doesn't say.
+     */
+    public String getWhereFrom() {
+        return where(fromPlace, fromRegion);
+    }
+
+    /**
+     * Where the listing sails to as it's shown, or null if it doesn't say.
+     */
+    public String getWhereTo() {
+        return where(toPlace, toRegion);
+    }
+
+    private static String where(String place, SailingRegion region) {
+        if (region == null) {
+            return null;
+        }
+        return place == null ? region.getDisplayName() : place + ", " + region.getDisplayName();
     }
 
     public TravelExpenses getTravelExpenses() {

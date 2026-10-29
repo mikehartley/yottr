@@ -26,6 +26,20 @@ class FindingABoatIT extends Journey {
     }
 
     @Test
+    void crewFindABoatByWhereItSails() {
+        final Person alice = member("alice");
+        final Person dave = member("dave");
+        alice.signsIn();
+        alice.postsAListingFrom("Moody 31", "SOUTH_COAST", "Hamble");
+        alice.postsAListingFrom("Westerly Konsort", "WEST_SCOTLAND", "Oban");
+        dave.signsIn();
+
+        assertThat(dave.searchesTheBoatsIn("West of Scotland")).contains("Westerly Konsort").doesNotContain("Moody 31");
+        assertThat(dave.searchesTheBoatsFor("hamble")).contains("Moody 31").doesNotContain("Westerly Konsort");
+        assertThat(dave.cardOnAllBoats("Westerly Konsort")).contains("Oban, West of Scotland");
+    }
+
+    @Test
     void anOwnerSeesTheirOwnListingAsTheirs() {
         final Person alice = member("alice");
         alice.signsIn();

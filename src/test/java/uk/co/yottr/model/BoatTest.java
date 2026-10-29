@@ -347,4 +347,19 @@ public class BoatTest {
         boat.setMoneyPeriod(MoneyPeriod.DAY);
         assertEquals("about £40 per day", boat.getMoney(), "running costs can only be estimated");
     }
+
+    @Test
+    public void whereFromAndToAreThePlaceAndItsRegion() {
+        assertNull(boat.getWhereFrom(), "posted before listings said where");
+
+        boat.setFromRegion(SailingRegion.SOUTH_COAST);
+        assertEquals("Solent and South Coast", boat.getWhereFrom(), "no place");
+        boat.setFromPlace("Hamble");
+        assertEquals("Hamble, Solent and South Coast", boat.getWhereFrom());
+
+        assertNull(boat.getWhereTo());
+        boat.setToRegion(SailingRegion.CHANNEL_ISLANDS);
+        boat.setToPlace("St Peter Port");
+        assertEquals("St Peter Port, Channel Islands", boat.getWhereTo());
+    }
 }

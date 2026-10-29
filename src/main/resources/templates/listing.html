@@ -36,6 +36,11 @@
                 to <span th:text="${boat.whenTo != null} ? ${#temporals.format(boat.whenTo, 'd MMM yyyy')} : 'open-ended'">28 Jun 2027</span>)
             </span>
         </dd>
+        <th:block th:if="${boat.whereFrom != null}">
+            <dt>Where</dt>
+            <dd><span th:text="${boat.whereFrom}">Hamble, Solent and South Coast</span><th:block th:if="${boat.whereTo != null}">
+                to <span th:text="${boat.whereTo}">Falmouth, West Country</span></th:block></dd>
+        </th:block>
         <dt>Looking for</dt>
         <dd>
             <span th:text="${boat.roleRequired.displayName}">Crew</span><span th:if="${boat.numberOfCrewWanted != null}" th:text="' (' + ${boat.numberOfCrewWanted} + ')'"> (2)</span>,

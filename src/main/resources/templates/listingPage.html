@@ -83,6 +83,14 @@
 
                 <h2 class="h6 mt-4">The sailing</h2>
                 <dl class="yottr-listing-facts">
+                    <th:block th:if="${boat.whereFrom != null}">
+                        <dt>From</dt>
+                        <dd th:text="${boat.whereFrom}">Hamble, Solent and South Coast</dd>
+                    </th:block>
+                    <th:block th:if="${boat.whereTo != null}">
+                        <dt>To</dt>
+                        <dd th:text="${boat.whereTo}">Falmouth, West Country</dd>
+                    </th:block>
                     <dt>When</dt>
                     <dd th:text="${#strings.listJoin(boat.frequency.![displayName], ', ')}">Weekends</dd>
                     <dt>Dates</dt>

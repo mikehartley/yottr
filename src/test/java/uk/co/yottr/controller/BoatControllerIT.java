@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.secure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -77,7 +78,11 @@ public class BoatControllerIT {
                         .param("travelExpenses", "PAID_BY_OWNER")
                         .param("numberOfCrewWanted", "2")
                         .param("whenFrom", "14/06/2027")
-                        .param("whenTo", "28/06/2027"))
+                        .param("whenTo", "28/06/2027")
+                        .param("fromRegion", "SOUTH_COAST")
+                        .param("fromPlace", " Hamble ")
+                        .param("toRegion", "CHANNEL_ISLANDS")
+                        .param("toPlace", ""))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/s/listings/mine?updated"));
 
@@ -98,6 +103,10 @@ public class BoatControllerIT {
         assertEquals(Integer.valueOf(2), edited.getNumberOfCrewWanted());
         assertEquals(LocalDate.of(2027, 6, 14), edited.getWhenFrom());
         assertEquals(LocalDate.of(2027, 6, 28), edited.getWhenTo());
+        assertEquals(SailingRegion.SOUTH_COAST, edited.getFromRegion());
+        assertEquals("Hamble", edited.getFromPlace(), "trimmed");
+        assertEquals(SailingRegion.CHANNEL_ISLANDS, edited.getToRegion());
+        assertNull(edited.getToPlace(), "a blank place is none");
         assertTrue(edited.isSuspended(), "editing must not change whether the listing is suspended");
     }
 
@@ -118,6 +127,8 @@ public class BoatControllerIT {
                         .param("courseLevel", "DAY_SKIPPER")
                         .param("roleRequired", "CREW")
                         .param("frequency", "TRIP")
+                        .param("fromRegion", "SOUTH_COAST")
+                        .param("toRegion", "SOUTH_COAST")
                         .param("financialArrangement", "COMMERCIAL")
                         .param("moneyAmount", "650")
                         .param("moneyPeriod", "COURSE")

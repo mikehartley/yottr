@@ -300,6 +300,7 @@ public class BoatController {
         modelAndView.addObject("courseLevels", referenceDataService.courseLevels());
         modelAndView.addObject("moneyPeriods", referenceDataService.moneyPeriods());
         modelAndView.addObject("commercialOfferings", referenceDataService.commercialOfferings());
+        modelAndView.addObject("sailingRegions", referenceDataService.sailingRegions());
     }
 
     private void addSearchReferenceData(ModelAndView modelAndView) {
@@ -307,6 +308,7 @@ public class BoatController {
         modelAndView.addObject("frequencies", referenceDataService.frequencies());
         modelAndView.addObject("financialArrangements", referenceDataService.financialArrangements());
         modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        modelAndView.addObject("sailingRegions", referenceDataService.sailingRegions());
         modelAndView.addObject("postedWithinDays", BoatSearch.POSTED_WITHIN_DAYS);
     }
 

@@ -11,8 +11,8 @@
     and, depending on the fragment:
         type     textField: the input type, text by default
         options  selectField and checkboxField: the choices; each is written as its toString() and shown by its
-                 getDisplayName()
-        blank    selectField: text for an empty first choice, if there is one
+                 getDisplayName(). groupedSelectField: a map from each group's heading to its choices
+        blank    selectField and groupedSelectField: text for an empty first choice, if there is one
         rows     textArea: its height, 4 by default
 
     The names aren't element names: a fragment selector also matches elements, so ~{fields :: input} would bring
@@ -40,6 +40,18 @@
             th:classappend="${also != null and #fields.hasErrors(also)} ? 'is-invalid'" th:errorclass="is-invalid">
         <option th:if="${blank != null}" value="" th:text="${blank}">Choose</option>
         <option th:each="option : ${options}" th:value="${option}" th:text="${option.displayName}">Option</option>
+    </select>
+    <div th:replace="~{fields :: feedback}"></div>
+</div>
+
+<div th:fragment="groupedSelectField" class="mb-3">
+    <label class="form-label" th:for="${name}" th:text="${label}">Label</label>
+    <select class="form-select" th:field="*{__${name}__}"
+            th:classappend="${also != null and #fields.hasErrors(also)} ? 'is-invalid'" th:errorclass="is-invalid">
+        <option th:if="${blank != null}" value="" th:text="${blank}">Choose</option>
+        <optgroup th:each="group : ${options}" th:label="${group.key}">
+            <option th:each="option : ${group.value}" th:value="${option}" th:text="${option.displayName}">Option</option>
+        </optgroup>
     </select>
     <div th:replace="~{fields :: feedback}"></div>
 </div>

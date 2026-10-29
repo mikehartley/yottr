@@ -6,7 +6,9 @@ import uk.co.yottr.model.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReferenceDataServiceImpl implements ReferenceDataService {
@@ -132,6 +134,14 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     @Override
     public List<CommercialOffering> commercialOfferings() {
         return List.of(CommercialOffering.values());
+    }
+
+    @Override
+    public Map<String, List<SailingRegion>> sailingRegions() {
+        final Map<String, List<SailingRegion>> regions = new LinkedHashMap<>();
+        regions.put("UK and Ireland", SailingRegion.ukAndIreland());
+        regions.put("Further afield", SailingRegion.furtherAfield());
+        return regions;
     }
 
 

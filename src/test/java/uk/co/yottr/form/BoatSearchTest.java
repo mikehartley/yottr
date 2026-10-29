@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import uk.co.yottr.model.FinancialArrangement.FinancialArrangementEnum;
 import uk.co.yottr.model.Frequency.FrequencyEnum;
 import uk.co.yottr.model.SailingPurpose;
+import uk.co.yottr.model.SailingRegion;
 
 import java.time.LocalDate;
 
@@ -28,12 +29,13 @@ public class BoatSearchTest {
     public void theQueryHasEveryCriterionGiven() {
         final BoatSearch search = new BoatSearch();
         search.setText(" Solent ");
+        search.setRegion(SailingRegion.WEST_COUNTRY);
         search.setPurpose(SailingPurpose.CRUISING);
         search.setWhen(FrequencyEnum.WEEKENDS);
         search.setCosts(FinancialArrangementEnum.SHARED_FIXED);
         search.setMyLevel(300);
 
-        assertEquals("text=Solent&purpose=CRUISING&when=WEEKENDS&costs=SHARED_FIXED&myLevel=300", search.toQueryString());
+        assertEquals("text=Solent&region=WEST_COUNTRY&purpose=CRUISING&when=WEEKENDS&costs=SHARED_FIXED&myLevel=300", search.toQueryString());
     }
 
     @Test

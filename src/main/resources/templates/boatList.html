@@ -49,6 +49,15 @@
         </div>
         <div class="row g-2 align-items-end mt-1">
             <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small" for="region">Where</label>
+                <select class="form-select" th:field="*{region}">
+                    <option value="">Anywhere</option>
+                    <optgroup th:each="group : ${sailingRegions}" th:label="${group.key}">
+                        <option th:each="option : ${group.value}" th:value="${option}" th:text="${option.displayName}">West Country</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
                 <label class="form-label small" for="postedWithin">Posted</label>
                 <select class="form-select" th:field="*{postedWithin}">
                     <option value="">Any time</option>

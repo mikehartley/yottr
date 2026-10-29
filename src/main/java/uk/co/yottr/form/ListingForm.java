@@ -17,6 +17,7 @@ import uk.co.yottr.model.MoneyPeriod;
 import uk.co.yottr.model.RoleRequired;
 import uk.co.yottr.model.RyaSailCruisingLevel;
 import uk.co.yottr.model.SailingPurpose;
+import uk.co.yottr.model.SailingRegion;
 import uk.co.yottr.model.Smoking;
 import uk.co.yottr.model.TravelExpenses;
 import uk.co.yottr.model.VesselType;
@@ -106,6 +107,18 @@ public class ListingForm {
     // needed for a course or for tuition, and ignored for anything else (isCourseLevelGivenWhenNeeded)
     private CourseLevel courseLevel;
 
+    @NotNull(message = REQUIRED_ERROR_MSG)
+    private SailingRegion fromRegion;
+
+    @Size(max = 60)
+    private String fromPlace;
+
+    // needed for a trip or a delivery, or with a place (isWhereToGivenWhenNeeded)
+    private SailingRegion toRegion;
+
+    @Size(max = 60)
+    private String toPlace;
+
     // either may be left out, and no end means open-ended (isWhenFromNotAfterWhenTo)
     @DateTimeFormat(pattern = Boat.DATE_PATTERN)
     private LocalDate whenFrom;
@@ -137,6 +150,10 @@ public class ListingForm {
         form.moneyPeriod = boat.getMoneyPeriod();
         form.commercialOffering = boat.getCommercialOffering();
         form.courseLevel = boat.getCourseLevel();
+        form.fromRegion = boat.getFromRegion();
+        form.fromPlace = boat.getFromPlace();
+        form.toRegion = boat.getToRegion();
+        form.toPlace = boat.getToPlace();
         form.whenFrom = boat.getWhenFrom();
         form.whenTo = boat.getWhenTo();
         return form;
@@ -166,8 +183,16 @@ public class ListingForm {
         boat.setMoneyPeriod(money ? moneyPeriod : null);
         boat.setCommercialOffering(isCommercial() ? commercialOffering : null);
         boat.setCourseLevel(isCourseLevelNeeded() ? courseLevel : null);
+        boat.setFromRegion(fromRegion);
+        boat.setFromPlace(placeOrNull(fromPlace));
+        boat.setToRegion(toRegion);
+        boat.setToPlace(toRegion == null ? null : placeOrNull(toPlace));
         boat.setWhenFrom(whenFrom);
         boat.setWhenTo(whenTo);
+    }
+
+    private static String placeOrNull(String place) {
+        return place == null || place.isBlank() ? null : place.strip();
     }
 
     @AssertTrue(message = "unknown level")
@@ -199,6 +224,16 @@ public class ListingForm {
     @AssertTrue(message = "say how much, and what it's for")
     public boolean isMoneyGivenUnlessNoCost() {
         return financialArrangement == FinancialArrangementEnum.NO_CONTRIBUTION || (moneyAmount != null && moneyPeriod != null);
+    }
+
+    /**
+     * A trip or a delivery goes somewhere, so it says where; and a place needs its region, which is what's searched.
+     */
+    @AssertTrue(message = "needed for a trip or a delivery, or with a place")
+    public boolean isWhereToGivenWhenNeeded() {
+        final boolean needed = (frequency != null && frequency.contains(FrequencyEnum.TRIP)) || sailingPurpose == SailingPurpose.DELIVERY
+                || placeOrNull(toPlace) != null;
+        return !needed || toRegion != null;
     }
 
     /**
@@ -351,6 +386,38 @@ public class ListingForm {
 
     public void setCourseLevel(CourseLevel courseLevel) {
         this.courseLevel = courseLevel;
+    }
+
+    public SailingRegion getFromRegion() {
+        return fromRegion;
+    }
+
+    public void setFromRegion(SailingRegion fromRegion) {
+        this.fromRegion = fromRegion;
+    }
+
+    public String getFromPlace() {
+        return fromPlace;
+    }
+
+    public void setFromPlace(String fromPlace) {
+        this.fromPlace = fromPlace;
+    }
+
+    public SailingRegion getToRegion() {
+        return toRegion;
+    }
+
+    public void setToRegion(SailingRegion toRegion) {
+        this.toRegion = toRegion;
+    }
+
+    public String getToPlace() {
+        return toPlace;
+    }
+
+    public void setToPlace(String toPlace) {
+        this.toPlace = toPlace;
     }
 
     public LocalDate getWhenFrom() {

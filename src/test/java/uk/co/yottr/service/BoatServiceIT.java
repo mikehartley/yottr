@@ -149,6 +149,10 @@ public class BoatServiceIT {
         boat.setVesselType(vesselType);
         boat.setRoleRequired(roleRequired);
         boat.setTravelExpenses(travelExpenses);
+        boat.setFromRegion(SailingRegion.WEST_SCOTLAND);
+        boat.setFromPlace("Oban");
+        boat.setToRegion(SailingRegion.IRELAND);
+        boat.setToPlace("Bangor");
 
         final Boat savedBoat = boatService.save(boat);
 
@@ -174,6 +178,10 @@ public class BoatServiceIT {
         assertEquals(vesselType, savedBoat.getVesselType(), "vesselType");
         assertEquals(roleRequired, savedBoat.getRoleRequired(), "roleRequired");
         assertEquals(travelExpenses, savedBoat.getTravelExpenses(), "travelExpenses");
+        assertEquals(SailingRegion.WEST_SCOTLAND, savedBoat.getFromRegion(), "fromRegion");
+        assertEquals("Oban", savedBoat.getFromPlace(), "fromPlace");
+        assertEquals(SailingRegion.IRELAND, savedBoat.getToRegion(), "toRegion");
+        assertEquals("Bangor", savedBoat.getToPlace(), "toPlace");
     }
 
     @Test
@@ -286,6 +294,27 @@ public class BoatServiceIT {
         boatService.save(aBoat().withOwner(owner).withDescription("Clyde cruising").build());
 
         assertEquals(Set.of(byTitle.getReference(), byMake.getReference(), byDescription.getReference()), references(search(s -> s.setText("Solent"))));
+    }
+
+    @Test
+    public void searchFindsAPlaceSailedFromOrTo() throws Exception {
+        final Boat from = boatService.save(aBoat().withOwner(owner).from(SailingRegion.SOUTH_COAST, "Hamble").to(null, null).build());
+        final Boat to = boatService.save(aBoat().withOwner(owner).from(SailingRegion.SOUTH_COAST, "Lymington").to(SailingRegion.SOUTH_COAST, "Hamble").build());
+        boatService.save(aBoat().withOwner(owner).from(SailingRegion.SOUTH_COAST, "Chichester").to(null, null).build());
+
+        assertEquals(Set.of(from.getReference(), to.getReference()), references(search(s -> s.setText("hamble"))));
+    }
+
+    @Test
+    public void searchByRegionFindsListingsSailingFromOrToIt() throws Exception {
+        final Boat from = boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_COUNTRY, "Falmouth").to(null, null).build());
+        final Boat to = boatService.save(aBoat().withOwner(owner).from(SailingRegion.SOUTH_COAST, "Hamble").to(SailingRegion.WEST_COUNTRY, null).build());
+        boatService.save(aBoat().withOwner(owner).from(SailingRegion.SOUTH_COAST, "Hamble").to(SailingRegion.CHANNEL_ISLANDS, null).build());
+        // posted before listings said where
+        boatService.save(aBoat().withOwner(owner).from(null, null).to(null, null).build());
+
+        assertEquals(Set.of(from.getReference(), to.getReference()), references(search(s -> s.setRegion(SailingRegion.WEST_COUNTRY))));
+        assertEquals(4, search(s -> {}).getTotalElements(), "and with no region, all of them");
     }
 
     @Test

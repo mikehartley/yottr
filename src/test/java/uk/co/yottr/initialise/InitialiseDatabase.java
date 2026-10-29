@@ -130,6 +130,8 @@ public class InitialiseDatabase {
         boat.setYearBuilt(1998);
         boat.setVesselType(VesselType.SAIL);
         boat.setRoleRequired(RoleRequired.CREW);
+        boat.setFromRegion(SailingRegion.SOUTH_COAST);
+        boat.setFromPlace("Lymington");
 
         final int rank = RyaSailCruisingLevel.YACHTMASTER_COASTAL.getRank();
         final RyaSailCruisingLevel level = ryaSailCruisingLevelRepository.findByRank(rank);

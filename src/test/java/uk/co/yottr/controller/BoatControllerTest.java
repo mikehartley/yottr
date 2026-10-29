@@ -18,6 +18,7 @@ import uk.co.yottr.model.FinancialArrangement;
 import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.RoleRequired;
 import uk.co.yottr.model.SailingPurpose;
+import uk.co.yottr.model.SailingRegion;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.ListingPictureRepository.PictureSummary;
 import uk.co.yottr.model.VesselType;
@@ -81,7 +82,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("newListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(14))
+                .andExpect(model().size(15))
                 .andExpect(model().attributeExists("boat"))
                 .andExpect(model().attributeExists("allowedMoreListings"))
                 .andExpect(model().attributeExists("ryaSailCruisingLevels"))
@@ -110,6 +111,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         verify(mockReferenceDataService).courseLevels();
         verify(mockReferenceDataService).moneyPeriods();
         verify(mockReferenceDataService).commercialOfferings();
+        verify(mockReferenceDataService).sailingRegions();
     }
 
     @Test
@@ -181,6 +183,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param("yearBuilt", "1995")
                         .param("roleRequired", "CREW")
                         .param("frequency", "WEEKENDS")
+                        .param("fromRegion", "SOUTH_COAST")
         )
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
@@ -256,6 +259,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param("yearBuilt", "1995")
                         .param("roleRequired", "CREW")
                         .param("frequency", "WEEKENDS")
+                        .param("fromRegion", "SOUTH_COAST")
         )
                 .andExpect(status().isForbidden());
 
@@ -269,18 +273,19 @@ public class BoatControllerTest extends AbstractControllerTest {
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
         when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(boatPage);
 
-        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").param("text", "solent").param("purpose", "RACING")
+        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").param("text", "solent").param("region", "WEST_COUNTRY").param("purpose", "RACING")
                         .param("sailingFrom", "2027-06-01").param("minLength", "30"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("boatList"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attribute("search", allOf(
                         hasProperty("text", equalTo("solent")),
+                        hasProperty("region", equalTo(SailingRegion.WEST_COUNTRY)),
                         hasProperty("purpose", equalTo(SailingPurpose.RACING)),
                         hasProperty("sailingFrom", equalTo(LocalDate.of(2027, 6, 1))),
                         hasProperty("minLength", equalTo(30)))))
-                .andExpect(model().attribute("searchQuery", equalTo("text=solent&purpose=RACING&sailingFrom=2027-06-01&minLength=30")))
-                .andExpect(model().attributeExists("wrapper", "sailingPurposes", "frequencies", "financialArrangements", "ryaSailCruisingLevels", "postedWithinDays"))
+                .andExpect(model().attribute("searchQuery", equalTo("text=solent&region=WEST_COUNTRY&purpose=RACING&sailingFrom=2027-06-01&minLength=30")))
+                .andExpect(model().attributeExists("wrapper", "sailingPurposes", "frequencies", "financialArrangements", "ryaSailCruisingLevels", "sailingRegions", "postedWithinDays"))
                 .andExpect(header().string("Vary", containsString("HX-Request")));
 
         verify(mockBoatService).search(any(BoatSearch.class), eq(NEWEST_FIRST));
@@ -320,6 +325,7 @@ public class BoatControllerTest extends AbstractControllerTest {
         verify(mockReferenceDataService).frequencies();
         verify(mockReferenceDataService).financialArrangements();
         verify(mockReferenceDataService).ryaSailCruisingLevels();
+        verify(mockReferenceDataService).sailingRegions();
     }
 
     @Test
@@ -453,7 +459,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("editListing"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(14))
+                .andExpect(model().size(15))
                 .andExpect(model().attribute("boat", allOf(
                         instanceOf(ListingForm.class),
                         hasProperty("title", equalTo(boat.getTitle())),
@@ -487,7 +493,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param("title", "titleValueEdited"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editListing"))
-                .andExpect(model().attributeHasFieldErrors("boat", "makeAndModel", "vesselType", "yearBuilt", "roleRequired", "frequency"))
+                .andExpect(model().attributeHasFieldErrors("boat", "makeAndModel", "vesselType", "yearBuilt", "roleRequired", "frequency", "fromRegion"))
                 .andExpect(model().attribute("boatReference", equalTo(originalBoat.getReference())))
                 .andExpect(model().attributeExists("vesselTypes"))
                 .andExpect(model().attributeExists("rolesRequired"))
@@ -551,6 +557,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param("yearBuilt", "1995")
                         .param("roleRequired", "CREW")
                         .param("frequency", "WEEKENDS")
+                        .param("fromRegion", "SOUTH_COAST")
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().hasNoErrors())
@@ -606,6 +613,7 @@ public class BoatControllerTest extends AbstractControllerTest {
                         .param("yearBuilt", "1995")
                         .param("roleRequired", "CREW")
                         .param("frequency", "WEEKENDS")
+                        .param("fromRegion", "SOUTH_COAST")
                         // not on the form
                         .param("suspended", "false")
                         .param("owner.username", "someone-else")

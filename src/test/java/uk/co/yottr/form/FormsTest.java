@@ -366,6 +366,81 @@ public class FormsTest {
     }
 
     @Test
+    public void listingFormNeedsWhereFrom() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setFromRegion(null);
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("fromRegion", violations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
+    public void listingFormNeedsWhereToForATripOrADelivery() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).to(null, null).build());
+        form.setSailingPurpose(SailingPurpose.DELIVERY);
+
+        Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("whereToGivenWhenNeeded", violations.iterator().next().getPropertyPath().toString());
+
+        form.setSailingPurpose(SailingPurpose.CRUISING);
+        assertEquals(Set.of(), validator.validate(form), "cruising needn't go anywhere");
+
+        form.setFrequency(List.of(Frequency.FrequencyEnum.WEEKENDS, Frequency.FrequencyEnum.TRIP));
+        assertEquals(1, validator.validate(form).size(), "a trip goes somewhere");
+
+        form.setToRegion(SailingRegion.CHANNEL_ISLANDS);
+        assertEquals(Set.of(), validator.validate(form));
+    }
+
+    @Test
+    public void aPlaceToNeedsItsRegion() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).to(null, null).build());
+        form.setSailingPurpose(SailingPurpose.CRUISING);
+        form.setToPlace("St Peter Port");
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("whereToGivenWhenNeeded", violations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
+    public void listingFormRoundTripsWhereFromAndTo() {
+        final Boat boat = aBoat().withOwner(aUser().build())
+                .from(SailingRegion.WEST_SCOTLAND, "Oban").to(SailingRegion.IRELAND, "Bangor").build();
+
+        final ListingForm form = ListingForm.from(boat);
+        assertEquals(Set.of(), validator.validate(form));
+        final Boat copy = aBoat().withOwner(aUser().build()).build();
+        form.copyTo(copy);
+
+        assertEquals(SailingRegion.WEST_SCOTLAND, copy.getFromRegion());
+        assertEquals("Oban", copy.getFromPlace());
+        assertEquals(SailingRegion.IRELAND, copy.getToRegion());
+        assertEquals("Bangor", copy.getToPlace());
+
+        form.setFromPlace("  ");
+        form.setToPlace(" Belfast ");
+        form.copyTo(copy);
+        assertNull(copy.getFromPlace(), "a blank place is none");
+        assertEquals("Belfast", copy.getToPlace(), "trimmed");
+    }
+
+    @Test
+    public void listingFormLimitsTheLengthOfAPlace() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setFromPlace("x".repeat(61));
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("fromPlace", violations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
     public void listingFormRefusesAStartAfterTheEnd() {
         final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
         form.setWhenFrom(LocalDate.of(2027, 6, 28));

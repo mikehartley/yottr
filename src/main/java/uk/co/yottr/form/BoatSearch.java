@@ -5,6 +5,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.yottr.model.FinancialArrangement.FinancialArrangementEnum;
 import uk.co.yottr.model.Frequency.FrequencyEnum;
 import uk.co.yottr.model.SailingPurpose;
+import uk.co.yottr.model.SailingRegion;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,8 +21,11 @@ public class BoatSearch {
      */
     public static final List<Integer> POSTED_WITHIN_DAYS = List.of(7, 30, 90);
 
-    // matched against the title, make and model and description, or the whole reference
+    // matched against the title, make and model, description and places, or the whole reference
     private String text;
+
+    // a listing sailing from or to it
+    private SailingRegion region;
 
     private SailingPurpose purpose;
 
@@ -54,6 +58,9 @@ public class BoatSearch {
         final UriComponentsBuilder query = UriComponentsBuilder.newInstance();
         if (text != null && !text.isBlank()) {
             query.queryParam("text", text.trim());
+        }
+        if (region != null) {
+            query.queryParam("region", region.name());
         }
         if (purpose != null) {
             query.queryParam("purpose", purpose.name());
@@ -92,6 +99,14 @@ public class BoatSearch {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public SailingRegion getRegion() {
+        return region;
+    }
+
+    public void setRegion(SailingRegion region) {
+        this.region = region;
     }
 
     public SailingPurpose getPurpose() {

@@ -63,6 +63,22 @@
             <div th:replace="~{fields :: textField(name='dateRelevantTo', label='Listing ends', hint='dd/mm/yyyy, optional')}"></div>
         </div>
     </div>
+    <div class="row g-3">
+        <div class="col-sm-6">
+            <div th:replace="~{fields :: groupedSelectField(name='fromRegion', label='Sailing from', options=${sailingRegions}, blank='Choose')}"></div>
+        </div>
+        <div class="col-sm-6">
+            <div th:replace="~{fields :: textField(name='fromPlace', label='Where in it', hint='Such as Hamble or Falmouth, optional')}"></div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-sm-6">
+            <div th:replace="~{fields :: groupedSelectField(name='toRegion', label='Sailing to', options=${sailingRegions}, blank='Not going anywhere in particular', also='whereToGivenWhenNeeded', hint='Needed for a trip or a delivery.')}"></div>
+        </div>
+        <div class="col-sm-6">
+            <div th:replace="~{fields :: textField(name='toPlace', label='Where in it', hint='Optional')}"></div>
+        </div>
+    </div>
 
     <h3 class="h5 mt-2">The crew</h3>
     <div class="row g-3">

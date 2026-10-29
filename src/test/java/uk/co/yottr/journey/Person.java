@@ -10,6 +10,7 @@ import org.htmlunit.html.HtmlFileInput;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlImage;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
 import uk.co.yottr.model.Country;
 
 import java.io.File;
@@ -146,6 +147,13 @@ class Person {
     }
 
     void postsAListingFor(String makeAndModel) {
+        postsAListingFrom(makeAndModel, "SOUTH_COAST", "Hamble");
+    }
+
+    /**
+     * Posts a listing sailing from the place in the region, given as a SailingRegion name.
+     */
+    void postsAListingFrom(String makeAndModel, String region, String place) {
         startsANewListing();
         final HtmlForm form = form("listing-form");
         form.getInputByName("title").setValue("Crew wanted for a " + makeAndModel);
@@ -158,6 +166,8 @@ class Person {
         form.getSelectByName("roleRequired").setSelectedAttribute("CREW", true);
         form.<HtmlCheckBoxInput>getFirstByXPath(".//input[@name='frequency'][@value='WEEKENDS']").setChecked(true);
         form.getInputByName("dateRelevantTo").setValue("14/06/2027");
+        form.getSelectByName("fromRegion").setSelectedAttribute(region, true);
+        form.getInputByName("fromPlace").setValue(place);
         form.getSelectByName("financialArrangement").setSelectedAttribute("SHARED_FIXED", true);
         form.getInputByName("moneyAmount").setValue("40");
         form.getSelectByName("moneyPeriod").setSelectedAttribute("DAY", true);
@@ -298,6 +308,26 @@ class Person {
         form.getInputByName("text").setValue(text);
         submit(form);
         return makesOnThePage();
+    }
+
+    /**
+     * Searches All Boats for those sailing from or to the region, chosen by the name the search shows.
+     */
+    List<String> searchesTheBoatsIn(String region) {
+        goesTo("Boats");
+        final HtmlForm form = form("search-form");
+        final HtmlSelect where = form.getSelectByName("region");
+        where.setSelectedAttribute(where.getOptionByText(region), true);
+        submit(form);
+        return makesOnThePage();
+    }
+
+    /**
+     * What a listing's card on All Boats says.
+     */
+    String cardOnAllBoats(String makeAndModel) {
+        goesTo("Boats");
+        return listingCard(makeAndModel).asNormalizedText();
     }
 
     /**

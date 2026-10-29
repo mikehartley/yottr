@@ -24,6 +24,11 @@ public class BoatBuilder {
     private Integer yearBuilt = 2015;
     private VesselType vesselType = VesselType.SAIL;
     private RoleRequired roleRequired = RoleRequired.MATE;
+    // a delivery goes somewhere
+    private SailingRegion fromRegion = SailingRegion.SOUTH_COAST;
+    private String fromPlace = "Hamble";
+    private SailingRegion toRegion = SailingRegion.WEST_COUNTRY;
+    private String toPlace = "Falmouth";
 
     {
         frequencies.add(Frequency.HOLIDAYS);
@@ -48,6 +53,18 @@ public class BoatBuilder {
 
     public BoatBuilder withOwner(User owner) {
         this.owner = owner;
+        return this;
+    }
+
+    public BoatBuilder from(SailingRegion region, String place) {
+        this.fromRegion = region;
+        this.fromPlace = place;
+        return this;
+    }
+
+    public BoatBuilder to(SailingRegion region, String place) {
+        this.toRegion = region;
+        this.toPlace = place;
         return this;
     }
 
@@ -83,6 +100,10 @@ public class BoatBuilder {
         boat.setYearBuilt(yearBuilt);
         boat.setVesselType(vesselType);
         boat.setRoleRequired(roleRequired);
+        boat.setFromRegion(fromRegion);
+        boat.setFromPlace(fromPlace);
+        boat.setToRegion(toRegion);
+        boat.setToPlace(toPlace);
 
         return boat;
     }
