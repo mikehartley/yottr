@@ -69,17 +69,27 @@ in the project root is ignored by git. Nothing reads it.
 
 ### Test users
 
-To sign in as different members with one click, list them in `test-users.properties` in the project
-root, which is ignored by git. With the `dev` profile, the home page shows each one under the sign-in
-box, as a button that signs in with their details:
+To try the site as different members, run with the `test-users` profile as well:
 
-```properties
-yottr.test-users[0].username=alice
-yottr.test-users[0].password=<her password>
-yottr.test-users[0].description=Owns listings with pictures
+```sh
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev,test-users
 ```
 
-The members must already exist. Without the file, or without the `dev` profile, nothing is shown.
+It reads test users from `test-users.properties` in the project root, which is ignored by git, and
+the home page shows each under the sign-in box, as a button that signs in as them:
+
+```properties
+yottr.test-users[0].username=tester-admin
+yottr.test-users[0].password=<a password>
+yottr.test-users[0].description=Administrator
+yottr.test-users[0].roles=FREE,ADMIN
+```
+
+`roles` is optional, and is `FREE` (every member) if left out. When the site starts it makes any test
+user that doesn't exist yet, with the `TESTER` role as well as these, and sets the password of any
+that does. Only accounts with the `TESTER` role are touched or offered: a name that belongs to a real
+member's account is left alone, with a warning in the log. Without the profile, nothing is read or
+shown.
 
 ## Database
 
