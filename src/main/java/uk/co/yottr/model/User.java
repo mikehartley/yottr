@@ -79,6 +79,13 @@ public class User {
     @Size(max = 400)
     private String aboutMe;
 
+    // what they're on Yottr as, at least one of the two: the site shows them what's relevant (MemberSides)
+    @Column(name = "crew", nullable = false)
+    private boolean crew = true;
+
+    @Column(name = "owner", nullable = false)
+    private boolean owner = true;
+
     // deleting a member deletes their listings, which can't exist without an owner
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("reference")
@@ -191,6 +198,22 @@ public class User {
 
     public void setPostcode(String postcode) {
         this.postcode = postcode;
+    }
+
+    public boolean isCrew() {
+        return crew;
+    }
+
+    public void setCrew(boolean crew) {
+        this.crew = crew;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
     }
 
     public String getAboutMe() {

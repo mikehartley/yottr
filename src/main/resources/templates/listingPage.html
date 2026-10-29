@@ -164,7 +164,8 @@
             </aside>
             <!--/* The boat's crew (#38). Other members can ask to join; the owner sees who has asked, and accepts or turns
                    them down, and everyone in the crew sees who else is in it. */-->
-            <aside class="yottr-card p-4 mt-4" id="crew" th:with="onBoard=${placeInCrew != null and placeInCrew.onBoard}">
+            <aside class="yottr-card p-4 mt-4" id="crew" th:with="onBoard=${placeInCrew != null and placeInCrew.onBoard}"
+                   th:if="${own or placeInCrew != null or (sides != null and sides.crew)}">
                 <h2 class="h5">Crew</h2>
                 <th:block th:unless="${own}">
                     <th:block th:if="${placeInCrew == null}">

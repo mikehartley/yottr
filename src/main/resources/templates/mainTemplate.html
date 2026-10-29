@@ -36,18 +36,19 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="main-nav">
+            <!--/* crew's and owners' items only for members who are on Yottr as such (MemberSides puts "sides" in the request) */-->
             <ul class="navbar-nav ms-auto align-items-xl-center">
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/all', text='Boats')}">Boats</a></li>
-                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/saved', text='Saved')}">Saved</a></li>
-                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/crew', text='Crewing')}">Crewing</a></li>
-                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/crew/find', text='Find crew')}">Find crew</a></li>
-                <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/listings/mine', text='My Listings')}">My Listings</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')" th:if="${sides != null and sides.crew}"><a th:replace="~{menu :: menuLink(path='/s/listings/saved', text='Saved')}">Saved</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')" th:if="${sides != null and sides.crew}"><a th:replace="~{menu :: menuLink(path='/s/crew', text='Crewing')}">Crewing</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')" th:if="${sides != null and sides.owner}"><a th:replace="~{menu :: menuLink(path='/s/crew/find', text='Find crew')}">Find crew</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('FREE')" th:if="${sides != null and sides.owner}"><a th:replace="~{menu :: menuLink(path='/s/listings/mine', text='My Listings')}">My Listings</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/myDetails', text='My Details')}">My Details</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/users', text='Members')}">Members</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/logging', text='Logging', id='logging-link')}">Logging</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/blocked', text='Blocked')}">Blocked</a></li>
                 <li class="nav-item" sec:authorize="isAnonymous()"><a th:replace="~{menu :: menuLink(path='/signup', text='Join')}">Join</a></li>
-                <li class="nav-item ms-xl-2" sec:authorize="hasAuthority('FREE')">
+                <li class="nav-item ms-xl-2" sec:authorize="hasAuthority('FREE')" th:if="${sides != null and sides.owner}">
                     <a class="btn btn-light btn-sm" th:href="@{/s/listings/new}" th:attr="aria-current=${currentMenuItem == '/s/listings/new'} ? 'page'"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a boat</a>
                 </li>
                 <li class="nav-item ms-xl-2" sec:authorize="isAuthenticated()">

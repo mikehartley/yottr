@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import uk.co.yottr.model.Sides;
 import uk.co.yottr.model.User;
 
 public interface UserRepository extends PagingAndSortingRepository<User, Long>, CrudRepository<User, Long>,
@@ -21,6 +22,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long>, 
     /**
      * The user, with their row locked until the transaction ends.
      */
+    /**
+     * What the member is on Yottr as, without loading the rest of them, since every page asks (MemberSides).
+     */
+    @Query("select new uk.co.yottr.model.Sides(u.crew, u.owner) from User u where u.username = :username")
+    Sides findSides(@Param("username") String username);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select u from User u where u.username = :username")
     User findByUsernameForUpdate(@Param("username") String username);

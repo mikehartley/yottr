@@ -55,7 +55,8 @@ public class UserControllerIT {
                 .param("email", "new@example.test")
                 .param("mobile", "07700 900123")
                 .param("country", "UK")
-                .param("postcode", "PO1 1AA");
+                .param("postcode", "PO1 1AA")
+                .param("crew", "true");
     }
 
     @Test
@@ -116,7 +117,8 @@ public class UserControllerIT {
                         .param("email", "changed@example.test")
                         .param("mobile", "07700 900456")
                         .param("country", "UK")
-                        .param("postcode", "PO1 1AA"))
+                        .param("postcode", "PO1 1AA")
+                        .param("crew", "true"))
                 .andExpect(redirectedUrl("myDetails?updated"));
 
         final User saved = userService.findByUsername(username).orElseThrow();

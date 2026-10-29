@@ -5,7 +5,7 @@
 <body>
 <section layout:fragment="content" id="find-crew-content" class="container py-4">
     <h1 class="h2 mb-2">Crew looking for a boat</h1>
-    <p class="text-body-secondary mb-4">Members who've made a <a th:href="@{/s/crewProfile}">crew profile</a> so owners can find them.</p>
+    <p class="text-body-secondary mb-4">Crew who've made a crew profile so owners can find them.</p>
 
     <form id="crew-search-form" method="get" th:action="@{/s/crew/find}" th:object="${search}" class="yottr-card p-3 mb-4">
         <div class="row g-2 align-items-end">

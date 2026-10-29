@@ -191,6 +191,7 @@ public class AdminControllerTest extends AbstractControllerTest {
         mockMvc.perform(post("/admin/user/4/edit")
                         .param("firstName", "Alice").param("lastName", "Jones").param("email", "alice@example.test")
                         .param("mobile", "07700 900123").param("country", "UK").param("postcode", "PO1 1AA")
+                        .param("crew", "true")
                         .param("maxListings", "5"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/users"))

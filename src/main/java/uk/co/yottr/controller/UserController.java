@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import uk.co.yottr.form.CrewProfileForm;
 import uk.co.yottr.form.MyDetailsForm;
 import uk.co.yottr.form.SignupForm;
+import uk.co.yottr.model.CrewProfile;
 import uk.co.yottr.model.User;
 import uk.co.yottr.security.Role;
+import uk.co.yottr.service.CrewProfileService;
 import uk.co.yottr.service.ReferenceDataService;
 import uk.co.yottr.service.UserService;
 
@@ -21,6 +24,7 @@ import jakarta.validation.Valid;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -29,11 +33,13 @@ public class UserController {
 
     private UserService userService;
     private ReferenceDataService referenceDataService;
+    private CrewProfileService crewProfileService;
 
     @Autowired
-    public UserController(UserService userService, ReferenceDataService referenceDataService) {
+    public UserController(UserService userService, ReferenceDataService referenceDataService, CrewProfileService crewProfileService) {
         this.userService = userService;
         this.referenceDataService = referenceDataService;
+        this.crewProfileService = crewProfileService;
     }
 
     // The forms bind to SignupForm and MyDetailsForm, never to User, so a request can't set the id, roles,
@@ -69,14 +75,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "/s/myDetails*", method = RequestMethod.GET)
-    public ModelAndView myDetails(Principal principal) {
+    public ModelAndView myDetails(Principal principal, Model model) {
 
         final String currentUsername = principal.getName();
         LOG.info("current username is: {}", currentUsername);
 
         final User currentUser = userService.findMember(currentUsername);
 
-        return modelAndViewForMyDetails(MyDetailsForm.from(currentUser), currentUser);
+        return modelAndViewForMyDetails(MyDetailsForm.from(currentUser), currentUser, model);
     }
 
     @RequestMapping(value = "/s/myDetails", method = RequestMethod.POST)
@@ -87,7 +93,7 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             LOG.info("Errors from myDetails: {}", bindingResult.getAllErrors());
-            return modelAndViewForMyDetails(myDetailsForm, userForUpdate);
+            return modelAndViewForMyDetails(myDetailsForm, userForUpdate, null);
         }
 
         myDetailsForm.applyTo(userForUpdate);
@@ -105,13 +111,29 @@ public class UserController {
         return new ModelAndView("redirect:myDetails?updated");
     }
 
-    private ModelAndView modelAndViewForMyDetails(MyDetailsForm myDetailsForm, User user) {
+    /**
+     * My Details, with the member's crew profile below if they're on Yottr as crew. A crew profile that wasn't
+     * saved comes back from CrewProfileController as the flash attribute "profile", with its errors, and is shown
+     * in place of the stored one.
+     */
+    private ModelAndView modelAndViewForMyDetails(MyDetailsForm myDetailsForm, User user, Model model) {
         ModelAndView modelAndView = new ModelAndView("myDetails");
         modelAndView.addObject("user", myDetailsForm);
         modelAndView.addObject("username", user.getUsername());
         modelAndView.addObject("listingCount", user.getBoatListings().size());
         modelAndView.addObject("maxListings", user.getMaxListings());
         modelAndView.addObject("countries", referenceDataService.countries());
+        modelAndView.addObject("crewSide", user.isCrew());
+        if (user.isCrew()) {
+            final Optional<CrewProfile> profile = crewProfileService.profileOf(user.getUsername());
+            if (model == null || !model.containsAttribute("profile")) {
+                modelAndView.addObject("profile", profile.map(CrewProfileForm::from).orElseGet(CrewProfileForm::new));
+            }
+            modelAndView.addObject("profileExists", profile.isPresent());
+            modelAndView.addObject("sailingRegions", referenceDataService.sailingRegions());
+            modelAndView.addObject("frequencies", referenceDataService.frequencies());
+            modelAndView.addObject("ryaSailCruisingLevels", referenceDataService.ryaSailCruisingLevels());
+        }
         return modelAndView;
     }
 

@@ -1,5 +1,6 @@
 package uk.co.yottr.form;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -49,6 +50,11 @@ public abstract class PersonalDetailsForm {
     @NotNull
     private String postcode;
 
+    // what they're on Yottr as: at least one (isCrewOrOwner)
+    private boolean crew;
+
+    private boolean owner;
+
     @Size(max = 400)
     @Inoffensive
     private String aboutMe;
@@ -62,6 +68,8 @@ public abstract class PersonalDetailsForm {
         country = user.getCountry();
         postcode = user.getPostcode();
         aboutMe = user.getAboutMe();
+        crew = user.isCrew();
+        owner = user.isOwner();
     }
 
     void copyTo(User user) {
@@ -73,6 +81,29 @@ public abstract class PersonalDetailsForm {
         user.setCountry(country);
         user.setPostcode(postcode);
         user.setAboutMe(aboutMe);
+        user.setCrew(crew);
+        user.setOwner(owner);
+    }
+
+    @AssertTrue(message = "Tick at least one.")
+    public boolean isCrewOrOwner() {
+        return crew || owner;
+    }
+
+    public boolean isCrew() {
+        return crew;
+    }
+
+    public void setCrew(boolean crew) {
+        this.crew = crew;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
     }
 
     public String getTitle() {

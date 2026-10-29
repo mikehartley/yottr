@@ -40,4 +40,22 @@ class MyAccountIT extends Journey {
 
         assertThat(dave.searchesTheBoatsFor("Rival 34")).doesNotContain("Rival 34");
     }
+
+    @Test
+    void aMemberSeesOnlyWhatsRelevantToCrewOrOwnersAsTheySay() {
+        final Person dave = member("dave");
+        dave.signsIn();
+        assertThat(dave.menu()).contains("Saved", "Crewing", "My Listings", "Find crew", "Add a boat");
+
+        dave.saysTheyAre(true, false);
+        assertThat(dave.menu()).contains("Boats", "Saved", "Crewing", "My Details").doesNotContain("My Listings", "Find crew", "Add a boat");
+        assertThat(dave.sees()).contains("My crew profile");
+
+        dave.saysTheyAre(false, true);
+        assertThat(dave.menu()).contains("Boats", "My Listings", "Find crew", "Add a boat").doesNotContain("Saved", "Crewing");
+        assertThat(dave.sees()).doesNotContain("My crew profile");
+
+        dave.saysTheyAre(false, false);
+        assertThat(dave.sees()).contains("Tick at least one.");
+    }
 }

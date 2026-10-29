@@ -49,6 +49,7 @@ public class FormsTest {
         form.setCountry(Country.UK);
         form.setPostcode("PO1 1AA");
         form.setAboutMe("Keen.");
+        form.setCrew(true);
         return form;
     }
 
@@ -450,6 +451,25 @@ public class FormsTest {
         assertEquals(1, violations.size(), "should be one violation: " + violations);
         assertEquals("description", violations.iterator().next().getPropertyPath().toString());
         assertEquals("has a word that isn't allowed here: \"wank\"", violations.iterator().next().getMessage());
+    }
+
+    @Test
+    public void aMemberIsCrewOrAnOwnerOrBoth() {
+        final SignupForm form = aSignupForm();
+        form.setCrew(false);
+
+        final Set<ConstraintViolation<SignupForm>> violations = validator.validate(form);
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("crewOrOwner", violations.iterator().next().getPropertyPath().toString());
+
+        form.setOwner(true);
+        assertEquals(Set.of(), validator.validate(form), "an owner");
+        form.setCrew(true);
+        assertEquals(Set.of(), validator.validate(form), "both");
+
+        final User user = form.toUser();
+        assertTrue(user.isCrew());
+        assertTrue(user.isOwner());
     }
 
     @Test

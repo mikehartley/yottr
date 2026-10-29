@@ -1,44 +1,40 @@
 <!DOCTYPE html>
-<html layout:decorate="~{mainTemplate}"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<!--/* A member's crew profile, as a section of My Details for members on Yottr as crew. Include it where the model has
+       "profile" (a CrewProfileForm), "profileExists", and the regions, frequencies and levels (UserController). */-->
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
-<section layout:fragment="content" id="crew-profile-content" class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="h2">My crew profile</h1>
-            <p class="text-body-secondary">With a crew profile, owners looking for crew can find you, and see your name,
-                email and mobile so they can get in touch. Remove it whenever you like.</p>
-            <div class="alert alert-success" id="crew-profile-saved" th:if="${param.saved != null}">Your crew profile is saved, and owners can find you.</div>
-            <div class="alert alert-success" id="crew-profile-removed" th:if="${param.removed != null}">Your crew profile is removed, and owners can no longer find you.</div>
+<section th:fragment="section" id="crew-profile" class="mt-5">
+    <h2 class="h4">My crew profile</h2>
+    <p class="text-body-secondary">With a crew profile, owners looking for crew can find you, and see your name,
+        email and mobile so they can get in touch. Remove it whenever you like.</p>
+    <div class="alert alert-success" id="crew-profile-saved" th:if="${param.profileSaved != null}">Your crew profile is saved, and owners can find you.</div>
+    <div class="alert alert-success" id="crew-profile-removed" th:if="${param.profileRemoved != null}">Your crew profile is removed, and owners can no longer find you.</div>
 
-            <form method="post" th:action="@{/s/crewProfile}" th:object="${profile}" id="crew-profile-form" class="yottr-card p-4" novalidate="novalidate">
-                <div class="row g-3">
-                    <div class="col-sm-6">
-                        <div class="mb-3">
-                            <label class="form-label" for="levelRank">My level</label>
-                            <select class="form-select" th:field="*{levelRank}" th:classappend="${#fields.hasErrors('levelKnown')} ? 'is-invalid'">
-                                <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.rank}" th:text="${level.displayName}">None</option>
-                            </select>
-                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('levelKnown')}" th:errors="*{levelKnown}">Unknown level</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div th:replace="~{fields :: groupedSelectField(name='region', label='Where I want to sail', options=${sailingRegions}, blank='Choose')}"></div>
-                    </div>
+    <form method="post" th:action="@{/s/crewProfile}" th:object="${profile}" id="crew-profile-form" class="yottr-card p-4" novalidate="novalidate">
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label class="form-label" for="levelRank">My highest level</label>
+                    <select class="form-select" th:field="*{levelRank}" th:classappend="${#fields.hasErrors('levelKnown')} ? 'is-invalid'">
+                        <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.rank}" th:text="${level.displayName}">None</option>
+                    </select>
+                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('levelKnown')}" th:errors="*{levelKnown}">Unknown level</div>
                 </div>
-                <div th:replace="~{fields :: checkboxField(name='availability', label='When I can sail', options=${frequencies})}"></div>
-                <div th:replace="~{fields :: textArea(name='experience', label='My experience', rows=6, hint='Where you have sailed, what you want to do next, and anything an owner should know. Up to 1000 characters.')}"></div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <button type="submit" class="btn btn-primary" th:text="${exists} ? 'Save' : 'Let owners find me'">Save</button>
-                    <button type="submit" form="remove-crew-profile-form" class="btn btn-outline-danger" th:if="${exists}"
-                            id="remove-crew-profile">Remove my profile</button>
-                </div>
-            </form>
-            <form id="remove-crew-profile-form" method="post" th:action="@{/s/crewProfile/delete}" th:if="${exists}"></form>
+            </div>
+            <div class="col-sm-6">
+                <div th:replace="~{fields :: groupedSelectField(name='region', label='Where I want to sail', options=${sailingRegions}, blank='Choose')}"></div>
+            </div>
         </div>
-    </div>
+        <div th:replace="~{fields :: checkboxField(name='availability', label='When I can sail', options=${frequencies})}"></div>
+        <div th:replace="~{fields :: textArea(name='experience', label='My experience', rows=6, hint='Where you have sailed, what you want to do next, and anything an owner should know. Up to 1000 characters.')}"></div>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <button type="submit" class="btn btn-primary" id="save-crew-profile" th:text="${profileExists} ? 'Save my crew profile' : 'Let owners find me'">Save</button>
+            <button type="submit" form="remove-crew-profile-form" class="btn btn-outline-danger" th:if="${profileExists}"
+                    id="remove-crew-profile">Remove my crew profile</button>
+        </div>
+    </form>
+    <form id="remove-crew-profile-form" method="post" th:action="@{/s/crewProfile/delete}" th:if="${profileExists}"></form>
 </section>
 </body>
 </html>

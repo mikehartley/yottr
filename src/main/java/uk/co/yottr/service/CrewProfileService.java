@@ -63,13 +63,14 @@ public class CrewProfileService {
     }
 
     /**
-     * The profiles of enabled members that match the search, with their members.
+     * The profiles of enabled members, on Yottr as crew, that match the search, with their members. A member who
+     * stops being crew keeps their profile, unseen, for if they start again.
      */
     @Transactional(readOnly = true)
     public List<CrewProfile> search(CrewSearch search) {
         Specification<CrewProfile> specification = (profile, query, cb) -> {
             final Join<CrewProfile, User> member = profile.join("member");
-            return cb.isTrue(member.get("enabled"));
+            return cb.and(cb.isTrue(member.get("enabled")), cb.isTrue(member.get("crew")));
         };
         if (search.getRegion() != null) {
             specification = specification.and((profile, query, cb) -> cb.equal(profile.get("region"), search.getRegion()));

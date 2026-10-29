@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import uk.co.yottr.exception.ResourceNotFoundException;
+import uk.co.yottr.form.CrewProfileForm;
 import uk.co.yottr.form.MyDetailsForm;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
@@ -102,7 +103,8 @@ public class UserControllerTest extends AbstractControllerTest {
                 .param(mobileProperty, mobileValue)
                 .param(countryProperty, countryValue)
                 .param(postcodeProperty, postcodeValue)
-                .param(aboutMeProperty, aboutMeValue))
+                .param(aboutMeProperty, aboutMeValue)
+                .param("crew", "true"))
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("signupSuccess"))
@@ -133,6 +135,7 @@ public class UserControllerTest extends AbstractControllerTest {
                         .param("mobile", "07700 900123")
                         .param("country", "UK")
                         .param("postcode", "PO1 1AA")
+                        .param("crew", "true")
                         .param("website", "http://spam.example.test"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("signup"))
@@ -177,18 +180,46 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("myDetails"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(5))
+                .andExpect(model().size(11))
                 .andExpect(model().attribute("user", allOf(
                         instanceOf(MyDetailsForm.class),
                         hasProperty("firstName", equalTo(user.getFirstName())),
+                        hasProperty("crew", equalTo(true)),
                         hasProperty("password", nullValue()))))
                 .andExpect(model().attribute("username", equalTo(username)))
                 .andExpect(model().attribute("listingCount", equalTo(1)))
                 .andExpect(model().attribute("maxListings", equalTo(user.getMaxListings())))
-                .andExpect(model().attributeExists("countries"));
+                .andExpect(model().attribute("crewSide", equalTo(true)))
+                .andExpect(model().attribute("profile", instanceOf(CrewProfileForm.class)))
+                .andExpect(model().attribute("profileExists", equalTo(false)))
+                .andExpect(model().attributeExists("countries"))
+                .andExpect(content().string(containsString("id=\"crew-profile-form\"")));
 
         verify(mockUserService).findMember(username);
+        verifyMyDetailsReferenceDataFetched();
+    }
+
+    @Test
+    public void myDetailsHasNoCrewProfileForAnOwnerWhoIsntCrew() throws Exception {
+        final User user = aUser().withUsername("olive").build();
+        user.setCrew(false);
+        when(mockUserService.findMember("olive")).thenReturn(user);
+
+        mockMvc.perform(get("/s/myDetails").principal(() -> "olive"))
+                .andExpect(status().isOk())
+                .andExpect(model().size(6))
+                .andExpect(model().attribute("crewSide", equalTo(false)))
+                .andExpect(content().string(not(containsString("id=\"crew-profile-form\""))));
+
+        verify(mockUserService).findMember("olive");
         verify(mockReferenceDataService).countries();
+    }
+
+    private void verifyMyDetailsReferenceDataFetched() {
+        verify(mockReferenceDataService).countries();
+        verify(mockReferenceDataService).sailingRegions();
+        verify(mockReferenceDataService).frequencies();
+        verify(mockReferenceDataService).ryaSailCruisingLevels();
     }
 
     @Test
@@ -249,7 +280,8 @@ public class UserControllerTest extends AbstractControllerTest {
                 .param(mobileProperty, mobileValue)
                 .param(countryProperty, countryValue)
                 .param(postcodeProperty, postcodeValue)
-                .param(aboutMeProperty, aboutMeValue))
+                .param(aboutMeProperty, aboutMeValue)
+                .param("crew", "true"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:myDetails?updated"));
 

@@ -29,6 +29,9 @@
                 </div>
             </form>
             <form id="delete-me-form" method="post" th:action="@{/s/deleteMe}"></form>
+
+            <!--/* th:replace runs before th:if, so the check is on a block around it */-->
+            <th:block th:if="${crewSide}"><section th:replace="~{crewProfile :: section}">My crew profile</section></th:block>
         </div>
     </div>
 </section>

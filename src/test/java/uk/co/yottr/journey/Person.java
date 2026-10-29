@@ -95,7 +95,31 @@ class Person {
         form.getInputByName("mobile").setValue("07700 900123");
         form.getSelectByName("country").setSelectedAttribute(Country.UK.name(), true);
         form.getInputByName("postcode").setValue("PO1 1AA");
+        // as both, like the members the journeys make directly
+        form.getInputByName("crew").setChecked(true);
+        form.getInputByName("owner").setChecked(true);
         submit(form);
+    }
+
+    /**
+     * Changes what they're on Yottr as, in My Details.
+     */
+    void saysTheyAre(boolean crew, boolean owner) {
+        goesTo("My Details");
+        final HtmlForm form = form("signup-form");
+        form.getInputByName("crew").setChecked(crew);
+        form.getInputByName("owner").setChecked(owner);
+        submit(form);
+    }
+
+    /**
+     * The items in the main menu, by their text.
+     */
+    List<String> menu() {
+        return page.<HtmlElement>getByXPath("//nav[@aria-label='Main']//a | //nav[@aria-label='Main']//button").stream()
+                .map(HtmlElement::asNormalizedText)
+                .filter(text -> !text.isBlank())
+                .toList();
     }
 
     void signsIn() {
@@ -373,7 +397,7 @@ class Person {
      * Makes or changes their crew profile, with the region and when given by name.
      */
     void makesACrewProfile(String region, String when, String experience) {
-        open("/s/crewProfile");
+        goesTo("My Details");
         final HtmlForm form = form("crew-profile-form");
         final HtmlSelect where = form.getSelectByName("region");
         where.setSelectedAttribute(where.getOptionByText(region), true);
@@ -383,7 +407,7 @@ class Person {
     }
 
     void removesTheirCrewProfile() {
-        open("/s/crewProfile");
+        goesTo("My Details");
         show(click(page.getHtmlElementById("remove-crew-profile")));
     }
 
