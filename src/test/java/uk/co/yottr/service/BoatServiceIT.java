@@ -322,7 +322,7 @@ public class BoatServiceIT {
         // posted before listings said where
         boatService.save(aBoat().withOwner(owner).from(null, null).to(null, null).build());
 
-        assertEquals(Set.of(from.getReference(), to.getReference()), references(search(s -> s.setRegion(SailingRegion.WEST_COUNTRY))));
+        assertEquals(Set.of(from.getReference(), to.getReference()), references(search(s -> s.setRegion(List.of(SailingRegion.WEST_COUNTRY)))));
         assertEquals(4, search(s -> {}).getTotalElements(), "and with no region, all of them");
     }
 
@@ -353,12 +353,39 @@ public class BoatServiceIT {
         // the defaults: a delivery, in the holidays, with no contribution, needing Coastal Skipper
         boatService.save(aBoat().withOwner(owner).build());
 
-        assertEquals(Set.of(matchReference), references(search(s -> s.setPurpose(SailingPurpose.CRUISING))));
-        assertEquals(Set.of(matchReference), references(search(s -> s.setWhen(Frequency.FrequencyEnum.WEEKENDS))));
-        assertEquals(Set.of(matchReference), references(search(s -> s.setCosts(FinancialArrangement.FinancialArrangementEnum.SHARED_FIXED))));
+        assertEquals(Set.of(matchReference), references(search(s -> s.setPurpose(List.of(SailingPurpose.CRUISING)))));
+        assertEquals(Set.of(matchReference), references(search(s -> s.setWhen(List.of(Frequency.FrequencyEnum.WEEKENDS)))));
+        assertEquals(Set.of(matchReference), references(search(s -> s.setCosts(List.of(FinancialArrangement.FinancialArrangementEnum.SHARED_FIXED)))));
         assertEquals(Set.of(matchReference), references(search(s -> s.setMyLevel(RyaSailCruisingLevel.DAY_SKIPPER.getRank()))),
                 "a Day Skipper can't join a boat that needs a Coastal Skipper");
         assertEquals(2, search(s -> s.setMyLevel(RyaSailCruisingLevel.COASTAL_SKIPPER.getRank())).getTotalElements(), "a Coastal Skipper can join both");
+    }
+
+    @Test
+    public void severalChoicesFindListingsMatchingAnyOfThem() throws Exception {
+        final Boat cruising = aBoat().withOwner(owner).build();
+        cruising.setSailingPurpose(SailingPurpose.CRUISING);
+        final Boat racing = aBoat().withOwner(owner).build();
+        racing.setSailingPurpose(SailingPurpose.RACING);
+        final String cruisingReference = boatService.save(cruising).getReference();
+        final String racingReference = boatService.save(racing).getReference();
+        // a delivery
+        boatService.save(aBoat().withOwner(owner).build());
+
+        assertEquals(Set.of(cruisingReference, racingReference),
+                references(search(s -> s.setPurpose(List.of(SailingPurpose.CRUISING, SailingPurpose.RACING)))));
+    }
+
+    @Test
+    public void aWholeGroupOfRegionsFindsListingsInAnyOfIt() throws Exception {
+        final Boat oban = boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_SCOTLAND, "Oban").to(null, null).build());
+        final Boat falmouth = boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_COUNTRY, "Falmouth").to(null, null).build());
+        final Boat antigua = boatService.save(aBoat().withOwner(owner).from(SailingRegion.CARIBBEAN, "Antigua").to(null, null).build());
+
+        assertEquals(Set.of(oban.getReference(), falmouth.getReference()),
+                references(search(s -> s.setRegionGroup(List.of(SailingRegion.Group.UK_AND_IRELAND)))));
+        assertEquals(Set.of(oban.getReference(), antigua.getReference()),
+                references(search(s -> s.setRegion(List.of(SailingRegion.WEST_SCOTLAND, SailingRegion.CARIBBEAN)))));
     }
 
     @Test
@@ -367,7 +394,7 @@ public class BoatServiceIT {
         boat.setFrequency(new ArrayList<>(List.of(Frequency.WEEKENDS, Frequency.HOLIDAYS)));
         boatService.save(boat);
 
-        final Page<Boat> found = search(s -> s.setWhen(Frequency.FrequencyEnum.HOLIDAYS));
+        final Page<Boat> found = search(s -> s.setWhen(List.of(Frequency.FrequencyEnum.HOLIDAYS)));
 
         assertEquals(1, found.getTotalElements(), "counted once");
         assertEquals(1, found.getContent().size(), "listed once");

@@ -320,8 +320,7 @@ class Person {
     List<String> searchesTheBoatsIn(String region) {
         goesTo("Boats");
         final HtmlForm form = form("search-form");
-        final HtmlSelect where = form.getSelectByName("region");
-        where.setSelectedAttribute(where.getOptionByText(region), true);
+        form.<HtmlCheckBoxInput>getFirstByXPath(".//input[@name='region'][following-sibling::label[normalize-space()='" + region + "']]").setChecked(true);
         submit(form);
         return makesOnThePage();
     }

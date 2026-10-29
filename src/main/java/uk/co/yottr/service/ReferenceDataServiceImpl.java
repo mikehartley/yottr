@@ -137,10 +137,11 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     }
 
     @Override
-    public Map<String, List<SailingRegion>> sailingRegions() {
-        final Map<String, List<SailingRegion>> regions = new LinkedHashMap<>();
-        regions.put("UK and Ireland", SailingRegion.ukAndIreland());
-        regions.put("Further afield", SailingRegion.furtherAfield());
+    public Map<SailingRegion.Group, List<SailingRegion>> sailingRegions() {
+        final Map<SailingRegion.Group, List<SailingRegion>> regions = new LinkedHashMap<>();
+        for (SailingRegion.Group group : SailingRegion.Group.values()) {
+            regions.put(group, group.getRegions());
+        }
         return regions;
     }
 

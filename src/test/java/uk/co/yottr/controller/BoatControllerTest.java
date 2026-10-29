@@ -273,18 +273,18 @@ public class BoatControllerTest extends AbstractControllerTest {
         final PageImpl<Boat> boatPage = new PageImpl<>(boatList);
         when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(boatPage);
 
-        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").param("text", "solent").param("region", "WEST_COUNTRY").param("purpose", "RACING")
+        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").param("text", "solent").param("region", "WEST_COUNTRY").param("purpose", "RACING", "CRUISING")
                         .param("sailingFrom", "2027-06-01").param("minLength", "30"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("boatList"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attribute("search", allOf(
                         hasProperty("text", equalTo("solent")),
-                        hasProperty("region", equalTo(SailingRegion.WEST_COUNTRY)),
-                        hasProperty("purpose", equalTo(SailingPurpose.RACING)),
+                        hasProperty("region", equalTo(List.of(SailingRegion.WEST_COUNTRY))),
+                        hasProperty("purpose", equalTo(List.of(SailingPurpose.RACING, SailingPurpose.CRUISING))),
                         hasProperty("sailingFrom", equalTo(LocalDate.of(2027, 6, 1))),
                         hasProperty("minLength", equalTo(30)))))
-                .andExpect(model().attribute("searchQuery", equalTo("text=solent&region=WEST_COUNTRY&purpose=RACING&sailingFrom=2027-06-01&minLength=30")))
+                .andExpect(model().attribute("searchQuery", equalTo("text=solent&region=WEST_COUNTRY&purpose=RACING&purpose=CRUISING&sailingFrom=2027-06-01&minLength=30")))
                 .andExpect(model().attributeExists("wrapper", "sailingPurposes", "frequencies", "financialArrangements", "ryaSailCruisingLevels", "sailingRegions", "postedWithinDays"))
                 .andExpect(header().string("Vary", containsString("HX-Request")));
 
@@ -307,7 +307,21 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$[0].latitude").value(SailingRegion.WEST_COUNTRY.getCentre().latitude()))
                 .andExpect(jsonPath("$[0].longitude").value(SailingRegion.WEST_COUNTRY.getCentre().longitude()));
 
-        verify(mockBoatService).searchForMap(argThat(search -> search.getRegion() == SailingRegion.WEST_COUNTRY));
+        verify(mockBoatService).searchForMap(argThat(search -> search.getRegion().equals(List.of(SailingRegion.WEST_COUNTRY))));
+    }
+
+    @Test
+    public void testASearchThatMakesNoSenseSaysWhyInPlaceOfResults() throws Exception {
+        mockMvc.perform(get("/s/listings/all").principal(() -> "crew").header("HX-Request", "true")
+                        .param("minLength", "40").param("maxLength", "30").param("purpose", "SUNBATHING"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("boatList :: results"))
+                .andExpect(content().string(containsString("id=\"search-problems\"")))
+                .andExpect(content().string(containsString("Length from is more than length to.")))
+                .andExpect(content().string(containsString("That purpose isn&#39;t one the search understands.")))
+                .andExpect(content().string(not(containsString("No boats match"))));
+
+        verify(mockSavedBoatsService).savedReferences("crew");
     }
 
     @Test

@@ -10,6 +10,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -105,13 +106,16 @@ public class BoatController {
      * and gets back only the results.
      */
     @RequestMapping(value = "/s/listings/all", method = RequestMethod.GET)
-    public ModelAndView listBoats(@ModelAttribute("search") BoatSearch search,
+    public ModelAndView listBoats(@Valid @ModelAttribute("search") BoatSearch search, BindingResult bindingResult,
                                   @SortDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                   HttpServletRequest request, HttpServletResponse response, Principal principal) {
         final boolean resultsOnly = Htmx.wantsPartOfPage(request, response);
         final ModelAndView modelAndView = new ModelAndView(resultsOnly ? "boatList :: results" : "boatList");
 
-        final Page<Boat> boatPages = boatService.search(search, pageable);
+        // a search that makes no sense, such as a length from more than the length to, says why in place of results
+        final List<String> problems = searchProblems(bindingResult);
+        modelAndView.addObject("problems", problems);
+        final Page<Boat> boatPages = problems.isEmpty() ? boatService.search(search, pageable) : Page.empty(pageable);
         modelAndView.addObject("wrapper", new PageWrapper<>(boatPages));
         modelAndView.addObject("searchQuery", search.toQueryString());
         modelAndView.addObject("savedReferences", savedBoatsService.savedReferences(principal.getName()));
@@ -122,12 +126,24 @@ public class BoatController {
         return modelAndView;
     }
 
+    private static List<String> searchProblems(BindingResult bindingResult) {
+        return bindingResult.getAllErrors().stream()
+                .map(error -> error instanceof FieldError fieldError && fieldError.isBindingFailure()
+                        ? "That " + fieldError.getField() + " isn't one the search understands."
+                        : error.getDefaultMessage())
+                .distinct()
+                .toList();
+    }
+
     /**
      * Where the boats that match the search sail from, for the map on the list of boats (map.js).
      */
     @RequestMapping(value = "/s/listings/map", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<MapListing> mapOfBoats(@ModelAttribute("search") BoatSearch search) {
+    public List<MapListing> mapOfBoats(@Valid @ModelAttribute("search") BoatSearch search, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return List.of();
+        }
         return boatService.searchForMap(search).stream()
                 .map(boat -> new MapListing(boat.getReference(), boat.getTitle(), boat.getMakeAndModel(), boat.getWhereFrom(),
                         boat.getMapPosition().latitude(), boat.getMapPosition().longitude()))

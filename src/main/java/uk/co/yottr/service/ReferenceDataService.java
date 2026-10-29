@@ -16,9 +16,9 @@ public interface ReferenceDataService {
     List<CommercialOffering> commercialOfferings();
 
     /**
-     * The sailing regions in groups, each under its heading, in the order the choices list them.
+     * The sailing regions in their groups, in the order the choices list them.
      */
-    Map<String, List<SailingRegion>> sailingRegions();
+    Map<SailingRegion.Group, List<SailingRegion>> sailingRegions();
     List<FinancialArrangement> financialArrangements();
     List<VesselType> vesselTypes();
     List<RoleRequired> rolesRequired();

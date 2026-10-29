@@ -13,7 +13,7 @@
                 <label class="form-label small" for="region">Where</label>
                 <select class="form-select" th:field="*{region}">
                     <option value="">Anywhere</option>
-                    <optgroup th:each="group : ${sailingRegions}" th:label="${group.key}">
+                    <optgroup th:each="group : ${sailingRegions}" th:label="${group.key.displayName}">
                         <option th:each="option : ${group.value}" th:value="${option}" th:text="${option.displayName}">West Country</option>
                     </optgroup>
                 </select>

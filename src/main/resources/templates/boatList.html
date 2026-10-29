@@ -9,53 +9,88 @@
          th:text="'Deleted the listing ' + ${deleted} + '.'">Deleted the listing Weekends in the Solent.</div>
 
     <!--/* A plain GET form, which works without JavaScript. With htmx, the results update as the search changes and
-           the address keeps up, so a search can be bookmarked or shared. */-->
+           the address keeps up, so a search can be bookmarked or shared. Where, Purpose, When and Costs take several
+           choices each, as tick boxes in a <details> drop-down, which opens without JavaScript; search.js keeps each
+           one's summary up to date and closes them when done with. The lengths and dates have no min attributes:
+           htmx wouldn't send a search the browser thinks invalid, and the server says what's wrong instead. */-->
     <form id="search-form" method="get" th:action="@{/s/listings/all}" th:object="${search}" class="yottr-card p-3 mb-4"
           th:hx-get="@{/s/listings/all}" hx-target="#results" hx-swap="outerHTML" hx-push-url="true"
           hx-trigger="change, input changed delay:400ms from:#text, input changed delay:400ms from:#minLength, input changed delay:400ms from:#maxLength, submit">
         <div class="row g-2 align-items-end">
             <div class="col-md-12 col-lg-4">
                 <label class="form-label small" for="text">Search</label>
-                <input type="search" class="form-control" th:field="*{text}" placeholder="Boat, place or reference"/>
+                <input type="search" class="form-control" th:field="*{text}" placeholder="Boat, place, area or reference"/>
             </div>
             <div class="col-6 col-md-3 col-lg-2">
-                <label class="form-label small" for="purpose">Purpose</label>
-                <select class="form-select" th:field="*{purpose}">
-                    <option value="">Any</option>
-                    <option th:each="option : ${sailingPurposes}" th:value="${option}" th:text="${option.displayName}">Cruising</option>
-                </select>
+                <span class="form-label small d-block" id="where-label">Where</span>
+                <!--/* Anywhere, whole groups, or any regions; a whole group's own regions are ticked and locked with it,
+                       so a group and some of its regions can't be asked for together */-->
+                <details class="yottr-multi" aria-labelledby="where-label" data-none="Anywhere">
+                    <summary class="form-select" th:text="${search.whereChosen.isEmpty()} ? 'Anywhere' : ${#strings.listJoin(search.whereChosen, ', ')}">Anywhere</summary>
+                    <div class="yottr-multi-menu yottr-multi-menu-wide">
+                        <fieldset th:each="group : ${sailingRegions}" class="mb-2">
+                            <div class="form-check fw-semibold">
+                                <input class="form-check-input yottr-region-group" type="checkbox" name="regionGroup" th:value="${group.key}"
+                                       th:id="'regionGroup-' + ${group.key}" th:checked="${#lists.contains(search.regionGroup, group.key)}"/>
+                                <label class="form-check-label" th:for="'regionGroup-' + ${group.key}" th:text="${group.key.displayName} + ' (all)'">UK and Ireland (all)</label>
+                            </div>
+                            <div class="form-check ms-3" th:each="option : ${group.value}" th:with="inGroup=${#lists.contains(search.regionGroup, group.key)}">
+                                <input class="form-check-input" type="checkbox" name="region" th:value="${option}" th:id="'region-' + ${option}"
+                                       th:attr="data-group=${group.key}" th:checked="${inGroup or #lists.contains(search.region, option)}" th:disabled="${inGroup}"/>
+                                <label class="form-check-label" th:for="'region-' + ${option}" th:text="${option.displayName}">West Country</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </details>
             </div>
             <div class="col-6 col-md-3 col-lg-2">
-                <label class="form-label small" for="when">When</label>
-                <select class="form-select" th:field="*{when}">
-                    <option value="">Any</option>
-                    <option th:each="option : ${frequencies}" th:value="${option}" th:text="${option.displayName}">Weekends</option>
-                </select>
+                <span class="form-label small d-block" id="purpose-label">Purpose</span>
+                <details class="yottr-multi" aria-labelledby="purpose-label" data-none="Any">
+                    <summary class="form-select" th:text="${search.purpose.isEmpty()} ? 'Any' : ${#strings.listJoin(search.purpose.![displayName], ', ')}">Any</summary>
+                    <div class="yottr-multi-menu">
+                        <div class="form-check" th:each="option : ${sailingPurposes}">
+                            <input class="form-check-input" type="checkbox" name="purpose" th:value="${option}" th:id="'purpose-' + ${option}"
+                                   th:checked="${#lists.contains(search.purpose, option)}"/>
+                            <label class="form-check-label" th:for="'purpose-' + ${option}" th:text="${option.displayName}">Cruising</label>
+                        </div>
+                    </div>
+                </details>
             </div>
             <div class="col-6 col-md-3 col-lg-2">
-                <label class="form-label small" for="costs">Costs</label>
-                <select class="form-select" th:field="*{costs}">
-                    <option value="">Any</option>
-                    <option th:each="option : ${financialArrangements}" th:value="${option}" th:text="${option.displayName}">Shared</option>
-                </select>
+                <span class="form-label small d-block" id="when-label">When</span>
+                <details class="yottr-multi" aria-labelledby="when-label" data-none="Any">
+                    <summary class="form-select" th:text="${search.when.isEmpty()} ? 'Any' : ${#strings.listJoin(search.when.![displayName], ', ')}">Any</summary>
+                    <div class="yottr-multi-menu">
+                        <div class="form-check" th:each="option : ${frequencies}">
+                            <input class="form-check-input" type="checkbox" name="when" th:value="${option}" th:id="'when-' + ${option}"
+                                   th:checked="${#lists.contains(search.when.![name()], option.name)}"/>
+                            <label class="form-check-label" th:for="'when-' + ${option}" th:text="${option.displayName}">Weekends</label>
+                        </div>
+                    </div>
+                </details>
             </div>
             <div class="col-6 col-md-3 col-lg-2">
-                <label class="form-label small" for="myLevel">My level</label>
-                <select class="form-select" th:field="*{myLevel}">
-                    <option value="">Any</option>
-                    <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.rank}" th:text="${level.displayName}">Day Skipper</option>
-                </select>
+                <span class="form-label small d-block" id="costs-label">Costs</span>
+                <details class="yottr-multi" aria-labelledby="costs-label" data-none="Any">
+                    <summary class="form-select" th:text="${search.costs.isEmpty()} ? 'Any' : ${#strings.listJoin(search.costs.![displayName], ', ')}">Any</summary>
+                    <div class="yottr-multi-menu yottr-multi-menu-wide">
+                        <div class="form-check" th:each="option : ${financialArrangements}">
+                            <input class="form-check-input" type="checkbox" name="costs" th:value="${option}" th:id="'costs-' + ${option}"
+                                   th:checked="${#lists.contains(search.costs.![name()], option.name)}"/>
+                            <label class="form-check-label" th:for="'costs-' + ${option}" th:text="${option.displayName}">Shared</label>
+                        </div>
+                    </div>
+                </details>
             </div>
         </div>
         <div class="row g-2 align-items-end mt-1">
             <div class="col-6 col-md-3 col-lg-2">
-                <label class="form-label small" for="region">Where</label>
-                <select class="form-select" th:field="*{region}">
-                    <option value="">Anywhere</option>
-                    <optgroup th:each="group : ${sailingRegions}" th:label="${group.key}">
-                        <option th:each="option : ${group.value}" th:value="${option}" th:text="${option.displayName}">West Country</option>
-                    </optgroup>
+                <label class="form-label small" for="myLevel">My highest level</label>
+                <select class="form-select" th:field="*{myLevel}" aria-describedby="myLevel-hint">
+                    <option value="">Any</option>
+                    <option th:each="level : ${ryaSailCruisingLevels}" th:value="${level.rank}" th:text="${level.displayName}">Day Skipper</option>
                 </select>
+                <span class="visually-hidden" id="myLevel-hint">Finds boats asking for this level or less.</span>
             </div>
             <div class="col-6 col-md-3 col-lg-2">
                 <label class="form-label small" for="postedWithin">Posted</label>
@@ -75,17 +110,16 @@
             </div>
             <div class="col-6 col-md-3 col-lg-2">
                 <label class="form-label small" for="minLength">Length from (ft)</label>
-                <input type="number" min="0" class="form-control" th:field="*{minLength}"/>
+                <input type="number" class="form-control" th:field="*{minLength}"/>
             </div>
             <div class="col-6 col-md-3 col-lg-2">
                 <label class="form-label small" for="maxLength">Length to (ft)</label>
-                <input type="number" min="0" class="form-control" th:field="*{maxLength}"/>
+                <input type="number" class="form-control" th:field="*{maxLength}"/>
             </div>
         </div>
-        <!--/* with htmx the results already keep up, but a button is what people look for */-->
-        <div class="mt-3 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" id="search-button"><i class="bi bi-search" aria-hidden="true"></i> Search</button>
-            <a class="btn btn-link" th:href="@{/s/listings/all}">Clear</a>
+        <div class="mt-2 d-flex gap-2 align-items-center">
+            <noscript><button type="submit" class="btn btn-primary">Search</button></noscript>
+            <a class="btn btn-link btn-sm px-0" th:href="@{/s/listings/all}" id="clear-search">Clear the search</a>
         </div>
     </form>
 
@@ -101,9 +135,13 @@
          th:data-leaflet-images="@{/webjars/leaflet/dist/images/}"></div>
 
     <div id="results" th:fragment="results" aria-live="polite">
-        <p class="text-body-secondary small mb-3"
+        <div class="alert alert-warning" id="search-problems" th:unless="${problems.isEmpty()}">
+            <p class="mb-1">The search can't be done as it is:</p>
+            <ul class="mb-0"><li th:each="problem : ${problems}" th:text="${problem}">Length from is more than length to.</li></ul>
+        </div>
+        <p class="text-body-secondary small mb-3" th:if="${problems.isEmpty()}"
            th:text="${wrapper.page.totalElements} == 1 ? '1 boat' : ${wrapper.page.totalElements} + ' boats'">12 boats</p>
-        <p th:if="${wrapper.page.empty}" class="text-body-secondary">No boats match. Try fewer filters.</p>
+        <p th:if="${wrapper.page.empty and problems.isEmpty()}" class="text-body-secondary">No boats match. Try fewer filters.</p>
         <th:block th:each="boat : ${wrapper.page}">
             <article th:replace="~{listing :: card(boat=${boat}, actions=~{:: saveAction})}">A listing.</article>
         </th:block>
@@ -121,6 +159,7 @@
     </div>
     <script th:src="@{/webjars/leaflet/dist/leaflet.js}" defer></script>
     <script th:src="@{/resources/js/map.js}" defer></script>
+    <script th:src="@{/resources/js/search.js}" defer></script>
 </section>
 </body>
 </html>

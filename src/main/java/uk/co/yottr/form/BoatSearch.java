@@ -1,5 +1,7 @@
 package uk.co.yottr.form;
 
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Min;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.yottr.model.FinancialArrangement.FinancialArrangementEnum;
@@ -8,11 +10,14 @@ import uk.co.yottr.model.SailingPurpose;
 import uk.co.yottr.model.SailingRegion;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * What a member is looking for in the list of boats. Every criterion is optional; an empty search finds every
- * visible listing.
+ * visible listing. Where several choices of one criterion are given, a listing matching any of them will do.
  */
 public class BoatSearch {
 
@@ -21,19 +26,24 @@ public class BoatSearch {
      */
     public static final List<Integer> POSTED_WITHIN_DAYS = List.of(7, 30, 90);
 
-    // matched against the title, make and model, description and places, or the whole reference
+    // matched against the title, make and model, description, places and region names, or the whole reference
     private String text;
 
-    // a listing sailing from or to it
-    private SailingRegion region;
+    // Where: whole groups of regions, and regions; a listing matches if it sails from or to any of them. A group
+    // and some of its own regions together is just the group (getRegionsWanted).
+    private List<SailingRegion.Group> regionGroup = new ArrayList<>();
 
-    private SailingPurpose purpose;
+    private List<SailingRegion> region = new ArrayList<>();
 
-    private FrequencyEnum when;
+    // any of each
+    private List<SailingPurpose> purpose = new ArrayList<>();
 
-    private FinancialArrangementEnum costs;
+    private List<FrequencyEnum> when = new ArrayList<>();
 
-    // the rank of the searcher's own RYA level: listings that need more are left out
+    private List<FinancialArrangementEnum> costs = new ArrayList<>();
+
+    // the rank of the searcher's own highest RYA level: listings that need it or less match, and those that need
+    // more are left out
     private Integer myLevel;
 
     // listings first posted this many days ago or since
@@ -47,9 +57,40 @@ public class BoatSearch {
     private LocalDate sailingTo;
 
     // in feet, whichever units the listing gives its length in
+    @Min(value = 0, message = "Length from can't be less than nothing.")
     private Integer minLength;
 
+    @Min(value = 0, message = "Length to can't be less than nothing.")
     private Integer maxLength;
+
+    @AssertTrue(message = "Length from is more than length to.")
+    public boolean isLengthsInOrder() {
+        return minLength == null || maxLength == null || minLength <= maxLength;
+    }
+
+    @AssertTrue(message = "Sailing from is after sailing to.")
+    public boolean isDatesInOrder() {
+        return sailingFrom == null || sailingTo == null || !sailingFrom.isAfter(sailingTo);
+    }
+
+    /**
+     * What Where shows: the names of the whole groups asked for, then of the other regions.
+     */
+    public List<String> getWhereChosen() {
+        final List<String> chosen = new ArrayList<>(regionGroup.stream().map(SailingRegion.Group::getDisplayName).toList());
+        region.stream().filter(one -> !regionGroup.contains(one.getGroup())).map(SailingRegion::getDisplayName).forEach(chosen::add);
+        return chosen;
+    }
+
+    /**
+     * Every region asked for, by itself or as part of a whole group, or none if it's anywhere.
+     */
+    public Set<SailingRegion> getRegionsWanted() {
+        final Set<SailingRegion> wanted = EnumSet.noneOf(SailingRegion.class);
+        regionGroup.forEach(group -> wanted.addAll(group.getRegions()));
+        wanted.addAll(region);
+        return wanted;
+    }
 
     /**
      * The criteria as a query string, without the leading ?, so that page links keep the search.
@@ -59,18 +100,12 @@ public class BoatSearch {
         if (text != null && !text.isBlank()) {
             query.queryParam("text", text.trim());
         }
-        if (region != null) {
-            query.queryParam("region", region.name());
-        }
-        if (purpose != null) {
-            query.queryParam("purpose", purpose.name());
-        }
-        if (when != null) {
-            query.queryParam("when", when.name());
-        }
-        if (costs != null) {
-            query.queryParam("costs", costs.name());
-        }
+        regionGroup.forEach(group -> query.queryParam("regionGroup", group.name()));
+        // a region in a whole group asked for is left out, being the group already
+        region.stream().filter(one -> !regionGroup.contains(one.getGroup())).forEach(one -> query.queryParam("region", one.name()));
+        purpose.forEach(one -> query.queryParam("purpose", one.name()));
+        when.forEach(one -> query.queryParam("when", one.name()));
+        costs.forEach(one -> query.queryParam("costs", one.name()));
         if (myLevel != null) {
             query.queryParam("myLevel", myLevel);
         }
@@ -101,36 +136,44 @@ public class BoatSearch {
         this.text = text;
     }
 
-    public SailingRegion getRegion() {
+    public List<SailingRegion.Group> getRegionGroup() {
+        return regionGroup;
+    }
+
+    public void setRegionGroup(List<SailingRegion.Group> regionGroup) {
+        this.regionGroup = regionGroup == null ? new ArrayList<>() : regionGroup;
+    }
+
+    public List<SailingRegion> getRegion() {
         return region;
     }
 
-    public void setRegion(SailingRegion region) {
-        this.region = region;
+    public void setRegion(List<SailingRegion> region) {
+        this.region = region == null ? new ArrayList<>() : region;
     }
 
-    public SailingPurpose getPurpose() {
+    public List<SailingPurpose> getPurpose() {
         return purpose;
     }
 
-    public void setPurpose(SailingPurpose purpose) {
-        this.purpose = purpose;
+    public void setPurpose(List<SailingPurpose> purpose) {
+        this.purpose = purpose == null ? new ArrayList<>() : purpose;
     }
 
-    public FrequencyEnum getWhen() {
+    public List<FrequencyEnum> getWhen() {
         return when;
     }
 
-    public void setWhen(FrequencyEnum when) {
-        this.when = when;
+    public void setWhen(List<FrequencyEnum> when) {
+        this.when = when == null ? new ArrayList<>() : when;
     }
 
-    public FinancialArrangementEnum getCosts() {
+    public List<FinancialArrangementEnum> getCosts() {
         return costs;
     }
 
-    public void setCosts(FinancialArrangementEnum costs) {
-        this.costs = costs;
+    public void setCosts(List<FinancialArrangementEnum> costs) {
+        this.costs = costs == null ? new ArrayList<>() : costs;
     }
 
     public Integer getMyLevel() {

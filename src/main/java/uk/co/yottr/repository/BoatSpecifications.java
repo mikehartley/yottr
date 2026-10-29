@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * The listing queries, as specifications that a search combines.
@@ -46,24 +47,25 @@ public final class BoatSpecifications {
         if (search.getText() != null && !search.getText().isBlank()) {
             specification = specification.and(textMatches(search.getText().trim()));
         }
-        if (search.getRegion() != null) {
+        final Set<SailingRegion> regions = search.getRegionsWanted();
+        if (!regions.isEmpty()) {
             specification = specification.and((boat, query, cb) ->
-                    cb.or(cb.equal(boat.get("fromRegion"), search.getRegion()), cb.equal(boat.get("toRegion"), search.getRegion())));
+                    cb.or(boat.get("fromRegion").in(regions), boat.get("toRegion").in(regions)));
         }
-        if (search.getPurpose() != null) {
-            specification = specification.and((boat, query, cb) -> cb.equal(boat.get("sailingPurpose"), search.getPurpose()));
+        if (!search.getPurpose().isEmpty()) {
+            specification = specification.and((boat, query, cb) -> boat.get("sailingPurpose").in(search.getPurpose()));
         }
-        if (search.getWhen() != null) {
+        if (!search.getWhen().isEmpty()) {
             specification = specification.and((boat, query, cb) -> {
                 // a listing can have several frequencies, so the join could repeat it
                 query.distinct(true);
                 final Join<Boat, Frequency> frequency = boat.join("frequency");
-                return cb.equal(frequency.get("name"), search.getWhen().name());
+                return frequency.get("name").in(search.getWhen().stream().map(Enum::name).toList());
             });
         }
-        if (search.getCosts() != null) {
+        if (!search.getCosts().isEmpty()) {
             specification = specification.and((boat, query, cb) ->
-                    cb.equal(boat.get("financialArrangement").get("name"), search.getCosts().name()));
+                    boat.get("financialArrangement").get("name").in(search.getCosts().stream().map(Enum::name).toList()));
         }
         if (search.getMyLevel() != null) {
             specification = specification.and((boat, query, cb) ->
