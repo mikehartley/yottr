@@ -394,3 +394,12 @@ main {
 .yottr-map-popup li + li {
     margin-top: .5rem;
 }
+
+/* the sign-up form's honeypot field, out of sight (SignupForm) */
+.yottr-honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

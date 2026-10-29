@@ -10,6 +10,8 @@
             <p class="text-body-secondary">It's free. Owners can post up to two boats.</p>
 
             <form method="post" th:action="@{/signup}" th:object="${user}" id="signup-form" class="yottr-card p-4" novalidate="novalidate">
+                <div class="alert alert-danger" id="honeypot-problem" th:if="${#fields.hasErrors('leftTheHoneypotAlone')}"
+                     th:errors="*{leftTheHoneypotAlone}">We couldn't accept this.</div>
                 <h2 class="h5 mb-3">Your account</h2>
                 <div class="row g-3">
                     <div class="col-sm-6">
@@ -23,8 +25,16 @@
                 <h2 class="h5 mt-2 mb-3">About you</h2>
                 <th:block th:replace="~{personalDetails :: fields}"></th:block>
 
+                <!--/* the honeypot: out of sight and out of the tab order, so only a robot fills it in (SignupForm) */-->
+                <div class="yottr-honeypot" aria-hidden="true">
+                    <label for="website">Leave this empty</label>
+                    <input type="text" th:field="*{website}" tabindex="-1" autocomplete="off"/>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Join</button>
-                <p class="small mt-3 mb-0">Already a member? <a th:href="@{/index}">Sign in</a></p>
+                <p class="small text-body-secondary mt-3 mb-0">By joining, you agree to the <a th:href="@{/terms}">terms</a>.
+                    See also <a th:href="@{/privacy}">privacy</a>.</p>
+                <p class="small mt-2 mb-0">Already a member? <a th:href="@{/index}">Sign in</a></p>
             </form>
         </div>
     </div>

@@ -123,6 +123,28 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void aSignupThatFillsInTheHoneypotIsRefused() throws Exception {
+        mockMvc.perform(post("/signup").contentType(MediaType.TEXT_HTML)
+                        .param("username", "robot")
+                        .param("password", "a-long-password-for-a-robot")
+                        .param("firstName", "Robo")
+                        .param("lastName", "Tic")
+                        .param("email", "robot@example.test")
+                        .param("mobile", "07700 900123")
+                        .param("country", "UK")
+                        .param("postcode", "PO1 1AA")
+                        .param("website", "http://spam.example.test"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("signup"))
+                .andExpect(model().attributeHasFieldErrors("user", "leftTheHoneypotAlone"))
+                .andExpect(model().errorCount(1))
+                .andExpect(content().string(containsString("id=\"honeypot-problem\"")));
+
+        verify(mockUserService, never()).signUp(any(User.class));
+        verify(mockReferenceDataService).countries();
+    }
+
+    @Test
     public void testSignupActionWhenInError() throws Exception {
         final String userAttribute = "user";
         final String usernameProperty = "username";

@@ -1,5 +1,6 @@
 package uk.co.yottr.form;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.User;
@@ -19,6 +20,10 @@ public class SignupForm extends PersonalDetailsForm {
     @AcceptablePassword
     private String password;
 
+    // A honeypot (#34): the form hides this field from people, so only a robot filling in every field fills it in.
+    // It's never kept.
+    private String website;
+
     /**
      * A new user with these details and the plain-text password, still to be encoded. Roles, the listing
      * limit and whether the account is enabled are the caller's to decide.
@@ -29,6 +34,19 @@ public class SignupForm extends PersonalDetailsForm {
         user.setPassword(password);
         copyTo(user);
         return user;
+    }
+
+    @AssertTrue(message = "We couldn't accept this. If you're a person, please try again.")
+    public boolean isLeftTheHoneypotAlone() {
+        return website == null || website.isEmpty();
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
     public String getUsername() {
