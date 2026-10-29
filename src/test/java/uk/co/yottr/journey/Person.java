@@ -492,6 +492,34 @@ class Person {
 
     // --- running the site
 
+    /**
+     * Blocks an address or range, and returns any problem the page reports.
+     */
+    String blocks(String address, String note) {
+        goesTo("Blocked");
+        final HtmlForm form = form("block-form");
+        form.getInputByName("address").setValue(address);
+        form.getInputByName("note").setValue(note);
+        show(click(page.getHtmlElementById("block-button")));
+        final HtmlElement problem = page.getFirstByXPath("//*[@id='block-problem']");
+        return problem == null ? "" : problem.asNormalizedText();
+    }
+
+    String ownAddressOnTheBlockedPage() {
+        goesTo("Blocked");
+        return page.getHtmlElementById("own-address").asNormalizedText();
+    }
+
+    String blockedAddresses() {
+        goesTo("Blocked");
+        return page.getHtmlElementById("blocked-content").asNormalizedText();
+    }
+
+    void unblocks(String address) {
+        goesTo("Blocked");
+        show(click(page.getFirstByXPath("//button[normalize-space()='Unblock " + address + "']")));
+    }
+
     void setsTheLogLevel(String logger, String level) {
         goesTo("Logging");
         final HtmlForm form = form("set-level-form");

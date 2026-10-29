@@ -9,6 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.co.yottr.config.TestUsers;
 import uk.co.yottr.repository.UserRepository;
+import uk.co.yottr.service.BlockedAddressService;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.CrewService;
 import uk.co.yottr.service.ListingPictureService;
@@ -53,4 +54,7 @@ public abstract class AbstractControllerTest {
 
     @MockitoBean
     CrewService mockCrewService;
+
+    @MockitoBean
+    BlockedAddressService mockBlockedAddressService;
 }

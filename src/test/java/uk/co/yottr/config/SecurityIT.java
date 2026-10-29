@@ -10,9 +10,11 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.User;
 import uk.co.yottr.security.Role;
+import uk.co.yottr.service.BlockedAddressService;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ListingPictureService;
 import uk.co.yottr.service.PictureProcessor;
@@ -57,6 +59,9 @@ public class SecurityIT {
 
     @Autowired
     private PictureProcessor pictureProcessor;
+
+    @Autowired
+    private BlockedAddressService blockedAddressService;
 
     private static final SimpleGrantedAuthority ADMIN = new SimpleGrantedAuthority(Role.ADMIN.name());
     private static final SimpleGrantedAuthority FREE = new SimpleGrantedAuthority(Role.FREE.name());
@@ -133,6 +138,10 @@ public class SecurityIT {
                 .andExpect(status().isForbidden());
         mockMvc.perform(post("/admin/listings/any/pictures/1/delete").with(user("alice").authorities(FREE)).with(csrf()))
                 .andExpect(status().isForbidden());
+        mockMvc.perform(get("/admin/blocked").with(user("alice").authorities(FREE)))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post("/admin/blocked").param("address", "203.0.113.0/24").with(user("alice").authorities(FREE)).with(csrf()))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -150,6 +159,30 @@ public class SecurityIT {
                 .andExpect(header().doesNotExist("Pragma"));
         mockMvc.perform(get("/s/listings/" + boat.getReference() + "/pictures/" + pictureId + "/thumbnail"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    public void aBlockedAddressIsTurnedAwayFromEveryPage() throws Exception {
+        blockedAddressService.block("198.51.100.0/24", "for SecurityIT", "127.0.0.1");
+        try {
+            mockMvc.perform(get("/about").with(from("198.51.100.7")))
+                    .andExpect(status().isForbidden())
+                    .andExpect(content().string("Requests from your address have been blocked."));
+            mockMvc.perform(get("/s/listings/all").with(from("198.51.100.7")).with(user("alice").authorities(FREE)))
+                    .andExpect(status().isForbidden());
+            mockMvc.perform(get("/about").with(from("198.51.101.7"))).andExpect(status().isOk());
+        } finally {
+            blockedAddressService.all().stream().filter(entry -> entry.getAddress().equals("198.51.100.0/24"))
+                    .forEach(entry -> blockedAddressService.unblock(entry.getId()));
+        }
+        mockMvc.perform(get("/about").with(from("198.51.100.7"))).andExpect(status().isOk());
+    }
+
+    private static RequestPostProcessor from(String address) {
+        return request -> {
+            request.setRemoteAddr(address);
+            return request;
+        };
     }
 
     @Test

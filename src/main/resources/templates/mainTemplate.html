@@ -44,6 +44,7 @@
                 <li class="nav-item" sec:authorize="hasAuthority('FREE')"><a th:replace="~{menu :: menuLink(path='/s/myDetails', text='My Details')}">My Details</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/users', text='Members')}">Members</a></li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/logging', text='Logging', id='logging-link')}">Logging</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a th:replace="~{menu :: menuLink(path='/admin/blocked', text='Blocked')}">Blocked</a></li>
                 <li class="nav-item" sec:authorize="isAnonymous()"><a th:replace="~{menu :: menuLink(path='/signup', text='Join')}">Join</a></li>
                 <li class="nav-item ms-lg-2" sec:authorize="hasAuthority('FREE')">
                     <a class="btn btn-light btn-sm" th:href="@{/s/listings/new}" th:attr="aria-current=${currentMenuItem == '/s/listings/new'} ? 'page'"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a boat</a>

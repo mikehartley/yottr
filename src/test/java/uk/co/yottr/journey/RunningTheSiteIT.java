@@ -24,4 +24,19 @@ class RunningTheSiteIT extends Journey {
         ada.setsTheLogLevel(CONTROLLERS, "");
         assertThat(ada.logLevelOf(CONTROLLERS).get(0)).as("its own level").isEqualTo("-");
     }
+
+    @Test
+    void anAdministratorBlocksARangeOfAddressesButNotTheirOwn() {
+        final Person ada = administrator("ada");
+        ada.signsIn();
+
+        assertThat(ada.blocks("203.0.113.0/24", "Spam listings")).isEmpty();
+        assertThat(ada.blockedAddresses()).contains("203.0.113.0/24", "Spam listings");
+
+        final String own = ada.ownAddressOnTheBlockedPage();
+        assertThat(ada.blocks(own, "")).contains("your own address");
+
+        ada.unblocks("203.0.113.0/24");
+        assertThat(ada.blockedAddresses()).contains("Nothing is blocked");
+    }
 }

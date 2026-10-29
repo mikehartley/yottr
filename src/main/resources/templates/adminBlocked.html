@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html layout:decorate="~{mainTemplate}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<section layout:fragment="content" id="blocked-content" class="container py-4">
+    <h1 class="h2">Blocked addresses</h1>
+    <p class="text-body-secondary">Requests from these addresses are turned away from the whole site. For a flood of
+        requests, block it in front of the site instead. Your own address is <span id="own-address" th:text="${ownAddress}">192.0.2.1</span>.</p>
+
+    <div class="alert alert-danger" id="block-problem" th:if="${problem != null}" th:text="${problem}">That isn't an IP address.</div>
+
+    <form method="post" th:action="@{/admin/blocked}" id="block-form" class="yottr-card p-4 mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label" for="address">Address or range</label>
+                <input type="text" name="address" id="address" class="form-control" placeholder="203.0.113.0/24"
+                       th:value="${address}" required="required"/>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="note">Why</label>
+                <input type="text" name="note" id="note" class="form-control" maxlength="200" th:value="${note}"/>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100" id="block-button">Block</button>
+            </div>
+        </div>
+    </form>
+
+    <p th:if="${blocked.empty}" class="text-body-secondary">Nothing is blocked.</p>
+    <table class="table align-middle" id="blocked-addresses" th:unless="${blocked.empty}">
+        <thead>
+        <tr><th scope="col">Address</th><th scope="col">Why</th><th scope="col">Since</th><th scope="col"></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${blocked}">
+            <td><code th:text="${entry.address}">203.0.113.0/24</code></td>
+            <td th:text="${entry.note}">Spam listings</td>
+            <td th:text="${#temporals.format(entry.blockedOn, 'd MMM yyyy')}">29 Oct 2026</td>
+            <td class="text-end">
+                <form class="inline-action" method="post" th:action="@{/admin/blocked/{id}/delete(id=${entry.id})}">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="'Unblock ' + ${entry.address}">Unblock</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>
