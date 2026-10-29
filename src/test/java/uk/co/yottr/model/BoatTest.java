@@ -362,4 +362,23 @@ public class BoatTest {
         boat.setToPlace("St Peter Port");
         assertEquals("St Peter Port, Channel Islands", boat.getWhereTo());
     }
+
+    @Test
+    public void aListingIsOnTheMapAtItsPlaceOrElseItsRegion() {
+        assertNull(boat.getMapPosition(), "posted before listings said where");
+
+        boat.setFromRegion(SailingRegion.WEST_SCOTLAND);
+        assertEquals(SailingRegion.WEST_SCOTLAND.getCentre(), boat.getMapPosition());
+
+        boat.setFromLocation(new Coordinates(56.41, -5.47));
+        assertEquals(new Coordinates(56.41, -5.47), boat.getMapPosition());
+    }
+
+    @Test
+    public void distancesAreAlongTheEarthsSurface() {
+        // London to Paris is about 344 km
+        assertEquals(344, new Coordinates(51.5074, -0.1278).kilometresTo(new Coordinates(48.8566, 2.3522)), 2);
+        assertTrue(SailingRegion.SOUTH_COAST.reaches(new Coordinates(50.86, -1.31)), "Hamble");
+        assertFalse(SailingRegion.SOUTH_COAST.reaches(new Coordinates(56.41, -5.47)), "Oban");
+    }
 }

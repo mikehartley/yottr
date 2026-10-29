@@ -318,6 +318,15 @@ public class BoatServiceIT {
     }
 
     @Test
+    public void theMapHasTheMatchingListingsThatSayWhere() throws Exception {
+        final Boat says = boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_COUNTRY, "Falmouth").build());
+        boatService.save(aBoat().withOwner(owner).from(null, null).to(null, null).build());
+        boatService.save(aBoat().withOwner(owner).withSuspended(true).build());
+
+        assertEquals(List.of(says.getReference()), boatService.searchForMap(new BoatSearch()).stream().map(Boat::getReference).toList());
+    }
+
+    @Test
     public void searchFindsAWholeReference() throws Exception {
         final Boat boat = boatService.save(aBoat().withOwner(owner).build());
         boatService.save(aBoat().withOwner(owner).build());

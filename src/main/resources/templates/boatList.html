@@ -85,6 +85,17 @@
         <noscript><button type="submit" class="btn btn-primary mt-3">Search</button></noscript>
     </form>
 
+    <!--/* The matching boats on a map, by where they sail from: map.js fetches them, and keeps up as the search
+           changes. Without JavaScript the button stays hidden. */-->
+    <link rel="stylesheet" th:href="@{/webjars/leaflet/dist/leaflet.css}"/>
+    <div class="mb-3">
+        <button type="button" class="btn btn-outline-primary btn-sm d-none" id="show-map" aria-expanded="false" aria-controls="results-map">
+            <i class="bi bi-map" aria-hidden="true"></i> <span>Show on a map</span></button>
+    </div>
+    <div id="results-map" class="yottr-map mb-4" hidden
+         th:data-map-url="@{/s/listings/map}" th:data-listing-url="@{/s/listings/}"
+         th:data-leaflet-images="@{/webjars/leaflet/dist/images/}"></div>
+
     <div id="results" th:fragment="results" aria-live="polite">
         <p class="text-body-secondary small mb-3"
            th:text="${wrapper.page.totalElements} == 1 ? '1 boat' : ${wrapper.page.totalElements} + ' boats'">12 boats</p>
@@ -104,6 +115,8 @@
             <form th:replace="~{listing :: saveButton(reference=${boat.reference}, saved=${savedReferences.contains(boat.reference)}, next=${next}, inPlace=true)}">Save</form>
         </div>
     </div>
+    <script th:src="@{/webjars/leaflet/dist/leaflet.js}" defer></script>
+    <script th:src="@{/resources/js/map.js}" defer></script>
 </section>
 </body>
 </html>

@@ -82,6 +82,12 @@
 			<artifactId>htmx.org</artifactId>
 			<version>2.0.11</version>
 		</dependency>
+		<!-- Leaflet: the map of search results, on OpenStreetMap's tiles -->
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>leaflet</artifactId>
+			<version>1.9.4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>webjars-locator-lite</artifactId>
@@ -225,9 +231,24 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
+			<!-- tests never look places up on OpenStreetMap (PlaceLocator) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<yottr.geocoding.enabled>false</yottr.geocoding.enabled>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<yottr.geocoding.enabled>false</yottr.geocoding.enabled>
+					</systemPropertyVariables>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

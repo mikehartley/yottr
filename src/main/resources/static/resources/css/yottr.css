@@ -378,3 +378,19 @@ main {
     color: var(--bs-link-color);
     text-decoration: underline;
 }
+
+/* the map of search results (map.js) */
+.yottr-map {
+    height: 420px;
+    border-radius: var(--bs-border-radius);
+    border: 1px solid var(--bs-border-color);
+}
+
+.yottr-map-popup {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.yottr-map-popup li + li {
+    margin-top: .5rem;
+}

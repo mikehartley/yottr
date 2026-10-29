@@ -168,6 +168,13 @@ public class Boat {
     @Column(name = "to_place", length = 60)
     private String toPlace;
 
+    // where the place sailed from was found to be (PlaceLocator), or null if it hasn't been
+    @Column(name = "from_latitude")
+    private Double fromLatitude;
+
+    @Column(name = "from_longitude")
+    private Double fromLongitude;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "travel_expenses", nullable = false)
     @NotNull(message = REQUIRED_ERROR_MSG)
@@ -439,6 +446,25 @@ public class Boat {
 
     public void setToPlace(String toPlace) {
         this.toPlace = toPlace;
+    }
+
+    /**
+     * Sets where the place sailed from was found to be, or null if it wasn't.
+     */
+    public void setFromLocation(Coordinates location) {
+        this.fromLatitude = location == null ? null : location.latitude();
+        this.fromLongitude = location == null ? null : location.longitude();
+    }
+
+    /**
+     * Where the listing shows on the map: its place, if that was found, or else the middle of its region. Null for a
+     * listing that doesn't say where it sails from.
+     */
+    public Coordinates getMapPosition() {
+        if (fromLatitude != null && fromLongitude != null) {
+            return new Coordinates(fromLatitude, fromLongitude);
+        }
+        return fromRegion == null ? null : fromRegion.getCentre();
     }
 
     /**

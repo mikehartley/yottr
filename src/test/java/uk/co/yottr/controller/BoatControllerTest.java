@@ -293,6 +293,24 @@ public class BoatControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testTheMapHasWhereTheMatchingBoatsSailFrom() throws Exception {
+        final Boat boat = aBoat().withOwner(aUser().build()).from(SailingRegion.WEST_COUNTRY, "Falmouth").build();
+        boat.setTitle("Weekends from Falmouth");
+        when(mockBoatService.searchForMap(any(BoatSearch.class))).thenReturn(List.of(boat));
+
+        mockMvc.perform(get("/s/listings/map").principal(() -> "crew").param("region", "WEST_COUNTRY"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].reference").value(boat.getReference()))
+                .andExpect(jsonPath("$[0].title").value("Weekends from Falmouth"))
+                .andExpect(jsonPath("$[0].where").value("Falmouth, West Country"))
+                .andExpect(jsonPath("$[0].latitude").value(SailingRegion.WEST_COUNTRY.getCentre().latitude()))
+                .andExpect(jsonPath("$[0].longitude").value(SailingRegion.WEST_COUNTRY.getCentre().longitude()));
+
+        verify(mockBoatService).searchForMap(argThat(search -> search.getRegion() == SailingRegion.WEST_COUNTRY));
+    }
+
+    @Test
     public void testListBoatsForHtmxIsOnlyTheResults() throws Exception {
         when(mockBoatService.search(any(BoatSearch.class), eq(NEWEST_FIRST))).thenReturn(new PageImpl<>(new ArrayList<>()));
 

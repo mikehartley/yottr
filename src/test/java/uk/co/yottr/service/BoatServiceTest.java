@@ -63,6 +63,9 @@ public class BoatServiceTest {
     @Mock
     private TemporalProvider temporalProvider;
 
+    @Mock
+    private PlaceLocator placeLocator;
+
     private User owner;
 
     @BeforeEach
@@ -72,7 +75,7 @@ public class BoatServiceTest {
         reset(temporalProvider);
 
         boatService = new BoatService(boatRepository, userRepository, ryaSailCruisingLevelRepository, frequencyRepository,
-                financialArrangementRepository, temporalProvider);
+                financialArrangementRepository, temporalProvider, placeLocator);
 
         owner = aUser().withUsername("owner").withMaxListings(2).build();
     }
@@ -178,6 +181,29 @@ public class BoatServiceTest {
         assertEquals(reference, updated.getReference(), "reference");
         assertSame(owner, updated.getOwner(), "owner");
         assertTrue(updated.isSuspended(), "editing must not change whether the listing is suspended");
+    }
+
+    @Test
+    public void wherePlaceIsIsLookedUpOnlyWhenItChanges() {
+        givenStoredReferenceData();
+        final Coordinates hamble = new Coordinates(50.86, -1.31);
+        when(placeLocator.locate("Hamble", SailingRegion.SOUTH_COAST)).thenReturn(Optional.of(hamble));
+        final ListingForm form = aListingForm();
+        form.setFromRegion(SailingRegion.SOUTH_COAST);
+        form.setFromPlace("Hamble");
+        final Boat boat = BoatBuilder.aBoat().withOwner(owner).from(null, null).build();
+
+        boatService.update(boat, form);
+        assertEquals(hamble, boat.getMapPosition());
+
+        form.setTitle("Something else");
+        boatService.update(boat, form);
+        verify(placeLocator, times(1)).locate(any(), any());
+
+        form.setFromPlace("Nowhere in particular");
+        boatService.update(boat, form);
+        assertEquals(SailingRegion.SOUTH_COAST.getCentre(), boat.getMapPosition(), "not found, so the region's centre");
+        verify(placeLocator).locate("Nowhere in particular", SailingRegion.SOUTH_COAST);
     }
 
     @Test

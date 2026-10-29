@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import uk.co.yottr.config.TestUsers;
 import uk.co.yottr.exception.ResourceNotFoundException;
@@ -115,6 +117,24 @@ public class BoatController {
         }
 
         return modelAndView;
+    }
+
+    /**
+     * Where the boats that match the search sail from, for the map on the list of boats (map.js).
+     */
+    @RequestMapping(value = "/s/listings/map", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<MapListing> mapOfBoats(@ModelAttribute("search") BoatSearch search) {
+        return boatService.searchForMap(search).stream()
+                .map(boat -> new MapListing(boat.getReference(), boat.getTitle(), boat.getMakeAndModel(), boat.getWhereFrom(),
+                        boat.getMapPosition().latitude(), boat.getMapPosition().longitude()))
+                .toList();
+    }
+
+    /**
+     * A pin on the map.
+     */
+    public record MapListing(String reference, String title, String makeAndModel, String where, double latitude, double longitude) {
     }
 
     @RequestMapping(value = "/s/listings/mine", method = RequestMethod.GET)

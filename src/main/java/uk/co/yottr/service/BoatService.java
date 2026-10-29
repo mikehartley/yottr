@@ -2,7 +2,10 @@ package uk.co.yottr.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.yottr.exception.IllegalOperationException;
@@ -12,6 +15,7 @@ import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.FinancialArrangement;
 import uk.co.yottr.model.Frequency;
 import uk.co.yottr.model.RyaSailCruisingLevel;
+import uk.co.yottr.model.SailingRegion;
 import uk.co.yottr.model.User;
 import uk.co.yottr.repository.BoatRepository;
 import uk.co.yottr.repository.BoatSpecifications;
@@ -22,10 +26,13 @@ import uk.co.yottr.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class BoatService {
+
+    public static final int MAP_LIMIT = 500;
 
     private BoatRepository boatRepository;
     private UserRepository userRepository;
@@ -33,6 +40,7 @@ public class BoatService {
     private FrequencyRepository frequencyRepository;
     private FinancialArrangementRepository financialArrangementRepository;
     private TemporalProvider temporalProvider;
+    private PlaceLocator placeLocator;
 
     @Autowired
     public BoatService(BoatRepository boatRepository,
@@ -40,13 +48,15 @@ public class BoatService {
                        RyaSailCruisingLevelRepository ryaSailCruisingLevelRepository,
                        FrequencyRepository frequencyRepository,
                        FinancialArrangementRepository financialArrangementRepository,
-                       TemporalProvider temporalProvider) {
+                       TemporalProvider temporalProvider,
+                       PlaceLocator placeLocator) {
         this.boatRepository = boatRepository;
         this.userRepository = userRepository;
         this.ryaSailCruisingLevelRepository = ryaSailCruisingLevelRepository;
         this.frequencyRepository = frequencyRepository;
         this.financialArrangementRepository = financialArrangementRepository;
         this.temporalProvider = temporalProvider;
+        this.placeLocator = placeLocator;
     }
 
     @Transactional
@@ -142,8 +152,14 @@ public class BoatService {
         final FinancialArrangement financialArrangement = financialArrangementRepository.findById(listingForm.getFinancialArrangement().name())
                 .orElseThrow(() -> new IllegalStateException("No financial arrangement " + listingForm.getFinancialArrangement()));
 
+        final String placeBefore = boat.getFromPlace();
+        final SailingRegion regionBefore = boat.getFromRegion();
         listingForm.copyTo(boat);
         boat.setMinimumRequiredLevel(level);
+        // looked up only when it changes, to go easy on OpenStreetMap
+        if (!Objects.equals(placeBefore, boat.getFromPlace()) || regionBefore != boat.getFromRegion()) {
+            boat.setFromLocation(placeLocator.locate(boat.getFromPlace(), boat.getFromRegion()).orElse(null));
+        }
         boat.setFrequency(frequencies);
         boat.setFinancialArrangement(financialArrangement);
     }
@@ -169,5 +185,16 @@ public class BoatService {
     @Transactional(readOnly = true)
     public Page<Boat> search(BoatSearch search, Pageable pageable) {
         return boatRepository.findAll(BoatSpecifications.matching(search, temporalProvider.today()), pageable);
+    }
+
+    /**
+     * The newest of the listings that match the search and say where they sail from, for the map: up to
+     * MAP_LIMIT of them, since every one is a pin.
+     */
+    @Transactional(readOnly = true)
+    public List<Boat> searchForMap(BoatSearch search) {
+        final Specification<Boat> sayWhere = (boat, query, cb) -> cb.isNotNull(boat.get("fromRegion"));
+        return boatRepository.findAll(BoatSpecifications.matching(search, temporalProvider.today()).and(sayWhere),
+                PageRequest.of(0, MAP_LIMIT, Sort.by(Sort.Direction.DESC, "id"))).getContent();
     }
 }
