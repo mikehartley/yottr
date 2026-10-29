@@ -1,0 +1,41 @@
+# Words refused in what members write (Inoffensive): listings, usernames, names and "about me".
+# One word a line, lower case. Only whole words match, so "Scunthorpe" and "Penistone" are fine, and a word also
+# matches with a plain English ending: fuck covers fucks, fucker, fuckers, fucking and fucked.
+# A starting list, kept short to keep false alarms down: words with an innocent meaning aboard or in British
+# English (a chink of light, a fag, pricking off a position, a cocker spaniel) are left out. A fuller list, such
+# as LDNOOBW, could replace it.
+arsehole
+asshole
+bastard
+bellend
+bollocks
+bugger
+bullshit
+cocksucker
+coon
+cunt
+dickhead
+faggot
+fuck
+fuckwit
+gook
+knobhead
+kike
+motherfucker
+nigga
+nigger
+paki
+piss
+retard
+shit
+shite
+slag
+slut
+spastic
+spic
+tosser
+twat
+wank
+wanker
+whore
+wog

@@ -441,6 +441,29 @@ public class FormsTest {
     }
 
     @Test
+    public void listingFormRefusesOffensiveWordsAndSaysWhich() {
+        final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
+        form.setDescription("No wankers.");
+
+        final Set<ConstraintViolation<ListingForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("description", violations.iterator().next().getPropertyPath().toString());
+        assertEquals("has a word that isn't allowed here: \"wank\"", violations.iterator().next().getMessage());
+    }
+
+    @Test
+    public void signupRefusesAnOffensiveUsername() {
+        final SignupForm form = aSignupForm();
+        form.setUsername("big_tosser");
+
+        final Set<ConstraintViolation<SignupForm>> violations = validator.validate(form);
+
+        assertEquals(1, violations.size(), "should be one violation: " + violations);
+        assertEquals("username", violations.iterator().next().getPropertyPath().toString());
+    }
+
+    @Test
     public void listingFormRefusesAStartAfterTheEnd() {
         final ListingForm form = ListingForm.from(aBoat().withOwner(aUser().build()).build());
         form.setWhenFrom(LocalDate.of(2027, 6, 28));

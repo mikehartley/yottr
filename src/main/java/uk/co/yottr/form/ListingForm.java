@@ -21,6 +21,7 @@ import uk.co.yottr.model.SailingRegion;
 import uk.co.yottr.model.Smoking;
 import uk.co.yottr.model.TravelExpenses;
 import uk.co.yottr.model.VesselType;
+import uk.co.yottr.validator.Inoffensive;
 import uk.co.yottr.validator.YearBuilt;
 
 import java.time.LocalDate;
@@ -39,10 +40,12 @@ public class ListingForm {
 
     @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 2, max = 64)
+    @Inoffensive
     private String title;
 
     @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 1, max = 60)
+    @Inoffensive
     private String makeAndModel;
 
     @NotNull(message = REQUIRED_ERROR_MSG)
@@ -64,6 +67,7 @@ public class ListingForm {
 
     @NotEmpty(message = REQUIRED_ERROR_MSG)
     @Size(max = 2000)
+    @Inoffensive
     private String description;
 
     @NotNull(message = REQUIRED_ERROR_MSG)
@@ -111,12 +115,14 @@ public class ListingForm {
     private SailingRegion fromRegion;
 
     @Size(max = 60)
+    @Inoffensive
     private String fromPlace;
 
     // needed for a trip or a delivery, or with a place (isWhereToGivenWhenNeeded)
     private SailingRegion toRegion;
 
     @Size(max = 60)
+    @Inoffensive
     private String toPlace;
 
     // either may be left out, and no end means open-ended (isWhenFromNotAfterWhenTo)

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import uk.co.yottr.model.Country;
 import uk.co.yottr.model.User;
+import uk.co.yottr.validator.Inoffensive;
 import uk.co.yottr.validator.PhoneNumber;
 import uk.co.yottr.validator.PostcodeMatchesCountry;
 
@@ -25,10 +26,12 @@ public abstract class PersonalDetailsForm {
 
     @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 1, max = 50)
+    @Inoffensive
     private String firstName;
 
     @NotNull(message = REQUIRED_ERROR_MSG)
     @Size(min = 1, max = 50)
+    @Inoffensive
     private String lastName;
 
     @NotBlank(message = REQUIRED_ERROR_MSG)
@@ -47,6 +50,7 @@ public abstract class PersonalDetailsForm {
     private String postcode;
 
     @Size(max = 400)
+    @Inoffensive
     private String aboutMe;
 
     void copyFrom(User user) {
