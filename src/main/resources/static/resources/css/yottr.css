@@ -274,6 +274,60 @@ main {
     border-radius: var(--bs-border-radius);
 }
 
+.yottr-gallery-stage {
+    cursor: zoom-in;
+}
+
+/* a picture over the whole page, on black whatever the theme */
+.yottr-lightbox .modal-content {
+    background-color: #000;
+    color: #fff;
+}
+
+.yottr-lightbox .modal-body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 1rem;
+}
+
+.yottr-lightbox-picture {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.yottr-lightbox-previous,
+.yottr-lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.yottr-lightbox-previous:hover,
+.yottr-lightbox-next:hover,
+.yottr-lightbox-previous:focus-visible,
+.yottr-lightbox-next:focus-visible {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.yottr-lightbox-previous {
+    left: 1rem;
+}
+
+.yottr-lightbox-next {
+    right: 1rem;
+}
+
 /* the owner's Pictures page */
 .yottr-pictures {
     display: grid;

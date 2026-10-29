@@ -217,7 +217,7 @@ class Person {
         if (!thumbnails.isEmpty()) {
             return thumbnails;
         }
-        return page.<HtmlImage>getByXPath("//section[@id='gallery']//img").stream()
+        return page.<HtmlImage>getByXPath("//section[@id='gallery']/a[contains(@class, 'yottr-gallery-stage')]/img").stream()
                 .map(HtmlImage::getSrcAttribute)
                 .toList();
     }

@@ -27,7 +27,8 @@
 
                 <!--/* One picture at a time, with buttons to flip through them and every one in the strip of thumbnails.
                        Each button and thumbnail is a link to this page showing that picture; gallery.js shows it in
-                       place instead. The picture itself links to the picture alone. */-->
+                       place instead. The picture itself links to the picture alone, which gallery.js opens over the
+                       page instead. */-->
                 <section class="yottr-gallery mb-3" id="gallery" aria-label="Pictures" th:unless="${pictures.isEmpty()}"
                          th:with="count=${pictures.size()}, current=${pictures[shown]},
                                   pictureUrl=@{/s/listings/{boatReference}/pictures/(boatReference=${boat.reference})},
@@ -58,6 +59,24 @@
                             </li>
                         </ol>
                     </th:block>
+                    <!--/* the picture over the whole page, opened by gallery.js from the one above */-->
+                    <div class="modal fade yottr-lightbox" id="gallery-lightbox" tabindex="-1" aria-label="Pictures" aria-hidden="true">
+                        <div class="modal-dialog modal-fullscreen">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <span class="yottr-lightbox-counter" th:text="${shown + 1} + ' of ' + ${count}">1 of 3</span>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <img class="yottr-lightbox-picture" alt=""/>
+                                    <th:block th:if="${count > 1}">
+                                        <button type="button" class="yottr-lightbox-previous" aria-label="Previous picture"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+                                        <button type="button" class="yottr-lightbox-next" aria-label="Next picture"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <p class="yottr-prose" th:text="${boat.description}">The boat, the plans and the people.</p>
