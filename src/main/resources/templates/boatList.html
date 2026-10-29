@@ -82,7 +82,11 @@
                 <input type="number" min="0" class="form-control" th:field="*{maxLength}"/>
             </div>
         </div>
-        <noscript><button type="submit" class="btn btn-primary mt-3">Search</button></noscript>
+        <!--/* with htmx the results already keep up, but a button is what people look for */-->
+        <div class="mt-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" id="search-button"><i class="bi bi-search" aria-hidden="true"></i> Search</button>
+            <a class="btn btn-link" th:href="@{/s/listings/all}">Clear</a>
+        </div>
     </form>
 
     <!--/* The matching boats on a map, by where they sail from: map.js fetches them, and keeps up as the search

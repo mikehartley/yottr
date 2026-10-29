@@ -284,14 +284,15 @@ public class BoatServiceIT {
 
     @Test
     public void searchFindsTextInTheTitleMakeOrDescriptionIgnoringCase() throws Exception {
-        final Boat byTitle = boatService.save(aBoat().withOwner(owner).build());
+        // away from the Solent, whose region would match too (searchTextFindsARegionByName)
+        final Boat byTitle = boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_SCOTLAND, "Oban").to(null, null).build());
         byTitle.setTitle("Weekends in the SOLENT");
         boatService.save(byTitle);
-        final Boat byMake = boatService.save(aBoat().withOwner(owner).build());
+        final Boat byMake = boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_SCOTLAND, "Oban").to(null, null).build());
         byMake.setMakeAndModel("Solent Sprinter");
         boatService.save(byMake);
-        final Boat byDescription = boatService.save(aBoat().withOwner(owner).withDescription("Based on the solent.").build());
-        boatService.save(aBoat().withOwner(owner).withDescription("Clyde cruising").build());
+        final Boat byDescription = boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_SCOTLAND, "Oban").to(null, null).withDescription("Based on the solent.").build());
+        boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_SCOTLAND, "Oban").to(null, null).withDescription("Clyde cruising").build());
 
         assertEquals(Set.of(byTitle.getReference(), byMake.getReference(), byDescription.getReference()), references(search(s -> s.setText("Solent"))));
     }
@@ -303,6 +304,14 @@ public class BoatServiceIT {
         boatService.save(aBoat().withOwner(owner).from(SailingRegion.SOUTH_COAST, "Chichester").to(null, null).build());
 
         assertEquals(Set.of(from.getReference(), to.getReference()), references(search(s -> s.setText("hamble"))));
+    }
+
+    @Test
+    public void searchTextFindsARegionByName() throws Exception {
+        final Boat solent = boatService.save(aBoat().withOwner(owner).from(SailingRegion.SOUTH_COAST, "Hamble").to(null, null).build());
+        boatService.save(aBoat().withOwner(owner).from(SailingRegion.WEST_SCOTLAND, "Oban").to(null, null).build());
+
+        assertEquals(Set.of(solent.getReference()), references(search(s -> s.setText("solent"))));
     }
 
     @Test

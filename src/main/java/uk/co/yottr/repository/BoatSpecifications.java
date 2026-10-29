@@ -8,9 +8,13 @@ import org.springframework.data.jpa.domain.Specification;
 import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.model.Boat;
 import uk.co.yottr.model.Frequency;
+import uk.co.yottr.model.SailingRegion;
 import uk.co.yottr.model.User;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * The listing queries, as specifications that a search combines.
@@ -100,11 +104,18 @@ public final class BoatSpecifications {
     }
 
     /**
-     * The text anywhere in the title, make and model, description or places, ignoring case, or the whole reference.
+     * The text anywhere in the title, make and model, description, places or region names, ignoring case, or the whole
+     * reference.
      */
     private static Specification<Boat> textMatches(String text) {
         final String pattern = Like.containing(text);
+        // a region whose name has the text, such as Solent, finds the listings sailing from or to it
+        final List<SailingRegion> regions = Arrays.stream(SailingRegion.values())
+                .filter(region -> region.getDisplayName().toLowerCase(Locale.UK).contains(text.toLowerCase(Locale.UK)))
+                .toList();
         return (boat, query, cb) -> cb.or(
+                regions.isEmpty() ? cb.disjunction() : boat.get("fromRegion").in(regions),
+                regions.isEmpty() ? cb.disjunction() : boat.get("toRegion").in(regions),
                 cb.like(cb.lower(boat.get("title")), pattern, Like.ESCAPE),
                 cb.like(cb.lower(boat.get("makeAndModel")), pattern, Like.ESCAPE),
                 cb.like(cb.lower(boat.get("description")), pattern, Like.ESCAPE),
