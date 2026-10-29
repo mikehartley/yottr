@@ -17,3 +17,4 @@ target/
 
 # local credentials, never committed
 local-credentials.properties
+test-users.properties

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.co.yottr.config.TestUsers;
 import uk.co.yottr.exception.ResourceNotFoundException;
 import uk.co.yottr.form.BoatSearch;
 import uk.co.yottr.form.ListingForm;
@@ -46,15 +47,18 @@ public class BoatController {
     private ReferenceDataService referenceDataService;
     private SavedBoatsService savedBoatsService;
     private ListingPictureService listingPictureService;
+    private TestUsers testUsers;
 
     @Autowired
     public BoatController(BoatService boatService, UserService userService, ReferenceDataService referenceDataService,
-                          SavedBoatsService savedBoatsService, ListingPictureService listingPictureService) {
+                          SavedBoatsService savedBoatsService, ListingPictureService listingPictureService,
+                          TestUsers testUsers) {
         this.boatService = boatService;
         this.userService = userService;
         this.referenceDataService = referenceDataService;
         this.savedBoatsService = savedBoatsService;
         this.listingPictureService = listingPictureService;
+        this.testUsers = testUsers;
     }
 
     @RequestMapping(value = "/s/listings/new", method = RequestMethod.GET)
@@ -276,7 +280,9 @@ public class BoatController {
 
     @RequestMapping(value = { "/", "index" }, method = RequestMethod.GET)
     public ModelAndView index() {
-        return new ModelAndView("index");
+        final ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.addObject("testUsers", testUsers.all());
+        return modelAndView;
     }
 
     private void addModelAttributesForNewListing(ModelAndView modelAndView, User user) {

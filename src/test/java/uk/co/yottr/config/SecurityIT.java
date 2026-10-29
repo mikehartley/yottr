@@ -104,7 +104,10 @@ public class SecurityIT {
     @Test
     public void publicPagesAreOpen() throws Exception {
         mockMvc.perform(get("/")).andExpect(status().isOk());
-        mockMvc.perform(get("/index")).andExpect(status().isOk());
+        // and with no test users configured, none are offered (see TestUsersIT)
+        mockMvc.perform(get("/index")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("main-sign-in-form")))
+                .andExpect(content().string(not(containsString("test-users"))));
         mockMvc.perform(get("/signup")).andExpect(status().isOk());
         mockMvc.perform(get("/about")).andExpect(status().isOk()).andExpect(content().string(containsString("Useful links")));
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());

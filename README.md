@@ -67,6 +67,20 @@ To put an admin user `mike` and some boats in the local database:
 No password is kept in the source. If you want somewhere to note yours, `local-credentials.properties`
 in the project root is ignored by git. Nothing reads it.
 
+### Test users
+
+To sign in as different members with one click, list them in `test-users.properties` in the project
+root, which is ignored by git. With the `dev` profile, the home page shows each one under the sign-in
+box, as a button that signs in with their details:
+
+```properties
+yottr.test-users[0].username=alice
+yottr.test-users[0].password=<her password>
+yottr.test-users[0].description=Owns listings with pictures
+```
+
+The members must already exist. Without the file, or without the `dev` profile, nothing is shown.
+
 ## Database
 
 Flyway owns the schema, in `src/main/resources/db/migration`. V2 loads the reference data

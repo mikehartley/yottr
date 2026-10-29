@@ -336,7 +336,8 @@ public class BoatControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().size(0));
+                .andExpect(model().size(1))
+                .andExpect(model().attribute("testUsers", empty()));
     }
 
     @Test

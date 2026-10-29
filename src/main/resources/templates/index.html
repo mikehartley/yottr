@@ -49,6 +49,23 @@
                         </form>
                         <p class="small mt-3 mb-0">New here? <a th:href="@{/signup}">Join Yottr</a></p>
                     </div>
+                    <!--/* Locally only, with the dev profile: members to sign in as with one click (see TestUsers). Each
+                           is the sign-in form with their details already in it. */-->
+                    <div class="yottr-card p-4 mt-3 text-body" id="test-users" th:unless="${testUsers.isEmpty()}">
+                        <h2 class="h6 mb-1">Test users</h2>
+                        <p class="small text-body-secondary">From test-users.properties, for trying the site out locally.</p>
+                        <ul class="list-unstyled mb-0">
+                            <li th:each="testUser : ${testUsers}" class="mb-2">
+                                <form th:action="@{/index}" method="post" class="d-flex align-items-baseline gap-2">
+                                    <input type="hidden" name="username" th:value="${testUser.username}"/>
+                                    <input type="hidden" name="password" th:value="${testUser.password}"/>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary text-nowrap"
+                                            th:text="${testUser.username}">alice</button>
+                                    <span class="small" th:text="${testUser.description}">Owns a listing with pictures</span>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

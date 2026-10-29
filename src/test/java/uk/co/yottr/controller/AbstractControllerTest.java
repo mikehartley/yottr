@@ -7,6 +7,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.co.yottr.config.TestUsers;
 import uk.co.yottr.repository.UserRepository;
 import uk.co.yottr.service.BoatService;
 import uk.co.yottr.service.ListingPictureService;
@@ -17,10 +18,10 @@ import uk.co.yottr.service.UserService;
 
 /**
  * Controllers with mocked services and no security filters, as the old ControllerTestConfig set up. The picture
- * processor is the real one, which needs nothing else.
+ * processor and the test users are the real ones, which need nothing else.
  */
 @WebMvcTest
-@Import(PictureProcessor.class)
+@Import({PictureProcessor.class, TestUsers.class})
 @AutoConfigureMockMvc(addFilters = false)
 public abstract class AbstractControllerTest {
 
